@@ -11,9 +11,8 @@ test_def: calc_def
 	./calc_def < test.bad.calc > test.bad.defoutput
 
 test_scan: calc 
-	./calc -s < test.good.calc > test.good.tokens
-	./calc -s < test.bad.calc > test.bad.tokens
-
+	./calc -s < input > output
+	
 test_parse: calc
 	./calc < test.good.calc > test.good.dot
 	dot -Tpng test.good.dot -o test.good.png

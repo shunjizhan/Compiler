@@ -91,6 +91,9 @@ class scanner_t {
 	void scan_string();		// this will fill string_tokens, Ex: [1, +, 33, *, 44]
 	void modify_token();	// this will modify string_tokens to real tokens, Ex:  [num, T_plus, num, T_times, num]
 
+	void print_string_tokens();
+	void print_tokens();
+
   private:
 
 	vector<string> string_tokens;   	// stores strings 
@@ -133,9 +136,15 @@ scanner_t::scanner_t() {
 	this->line = 1;
 	this->index = 0;
 	this->s_index = 0;
+	// printf("finished initializing\n");
 
 	scan_string();	
+	printf("finished scan_string()\n");
+	print_string_tokens();
+
 	modify_token();	
+	printf("finished modify_token()\n");
+
 }
 
 
@@ -165,7 +174,7 @@ void scanner_t::scan_string() {
 			string_tokens.push_back(token);
 			token = "";
 			token += c;
-			string_tokens.push_back(token);
+			// string_tokens.push_back(token);   // ????????????????
 			token = "";
 		}
 
@@ -213,6 +222,22 @@ void scanner_t::mismatch_error (token_type x) {
 	printf("syntax error: found %s ",token_to_string(next_token()) );
 	printf("expecting %s - line %d\n", token_to_string(x), get_line());
 	exit(1);
+}
+
+void scanner_t::print_tokens() {
+	for (int i=0; i<tokens.size(); i++) {
+		printf(token_to_string(tokens.at(i)));
+		printf(" ");
+	}
+	printf("\n");
+} 
+
+void scanner_t::print_string_tokens() {
+	for (int i=0; i<string_tokens.size(); i++) {
+		printf("%s\n", string_tokens.at(i));
+		printf(" ");
+	}
+	printf("\n");
 }
 
 
@@ -451,8 +476,13 @@ int main(int argc, char* argv[])
 	if (argc > 1) {
                 //If strcmp returns zero than equal
 		if (strcmp(argv[1], "-s") == 0) {
+			printf("YES!!!!!!\n");
 			scanner_t scanner;
 			token_type tok = scanner.next_token();
+
+			printf(token_to_string(tok));
+			printf("\n");
+
 			while(tok != T_eof){
 				scanner.eat_token(tok);
 				printf("%s", token_to_string(tok));
@@ -462,6 +492,7 @@ int main(int argc, char* argv[])
 		}
 	}
 	else {
+		printf("NO!!!!!!\n");
 		parser_t parser;
 		parser.parse();
 	}
