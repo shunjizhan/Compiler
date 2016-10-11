@@ -9,7 +9,7 @@
 %%
 
 List    : List Expr '.' {printf("parsed expresion\n");}
-	| Expr '.' {printf("parsed expresion\n");}
+		| Expr '.' {printf("parsed expresion\n");}
         ;
 
 Expr    : Expr '*' Expr 

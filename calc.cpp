@@ -4,6 +4,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <stack>
+#include <vector>
+#include <iostream>
+
 
 using namespace std;
 
@@ -51,7 +54,8 @@ char* token_to_string(token_type c) {
 //according to your grammar.. these are used for printing the thing out)
 //please follow the convention we set up so that we can tell what the heck you
 //are doing when we grade
-typedef enum {
+typedef enum 
+{
 	epsilon = 100,
 	NT_List,
 	NT_Expr
@@ -63,8 +67,7 @@ typedef enum {
 //into a picture).  Note that the return char* is a reference to a local copy
 //and it needs to be duplicated if you are a going require multiple instances
 //simultaniously. 
-char* nonterm_to_string(nonterm_type nt)
-{
+char* nonterm_to_string(nonterm_type nt) {
 	static char buffer[MAX_SYMBOL_NAME_SIZE];
 	switch( nt ) {
 		  case epsilon: strncpy(buffer,"e",MAX_SYMBOL_NAME_SIZE); break;
@@ -80,80 +83,133 @@ char* nonterm_to_string(nonterm_type nt)
 class scanner_t {
   public:
 
-	//eats the next token and prints an error if it is not of type c
-	void eat_token(token_type c);
+	void eat_token(token_type c);	//eats the next token and prints an error if it is not of type c
+	token_type next_token();	//peeks at the lookahead token
+	int get_line();			//return line number for errors
+	scanner_t();			//constructor - inits g_next_token
 
-	//peeks at the lookahead token
-	token_type next_token();
-
-	//return line number for errors
-	int get_line();
-
-	//constructor - inits g_next_token
-	scanner_t();
+	void scan_string();		// this will fill string_tokens, Ex: [1, +, 33, *, 44]
+	void modify_token();	// this will modify string_tokens to real tokens, Ex:  [num, T_plus, num, T_times, num]
 
   private:
 
-	//WRITEME: Figure out what you will need to write the scanner
-	//and to implement the above interface.  It does not have to
-	//be a state machine or anything fancy.  Just read in the
-	//characters one at a time (using getchar would be a good way)
-	//and group them into tokens.  All of the tokens in this calculator
-	//are trivial except for the numbers, so it should not be that bad
-	//(10 lines or so)
-
-	//This is a bogus member for implementing a useful stub, it should
-	//be cut out once you get the scanner up and going.
-	token_type bogo_token;
-
-	//error message and exit if weird character
-	void scan_error(char x);
-	//error message and exit for mismatch
-	void mismatch_error(token_type c);
+	vector<string> string_tokens;   	// stores strings 
+	vector<token_type> tokens;	// stores real tokens
+	int line;                   // line number
+	int index;                  // current (next) token index
+	int s_index;				// current (next) string_token index
+	
+	void scan_error(char x);	//error message and exit if weird character
+	void mismatch_error(token_type c);	//error message and exit for mismatch
 
 };
 
-token_type scanner_t::next_token()
-{
-	//WRITEME: replace this bogus junk with code that will take a peek
-	//at the next token and return it to the parser.  It should _not_
-	//actually consume a token - you should be able to call next_token()
-	//multiple times without actually reading any more tokens in 
-	if ( bogo_token!=T_plus && bogo_token!=T_eof ) return T_plus;
-	else return bogo_token;
+
+token_type scanner_t::next_token() {
+	if (tokens.size() == 0)
+		return T_eof;   // no more tokens, end of file
+	else
+		return tokens.at(index);	// else return current (next) token
 }
+
 
 void scanner_t::eat_token(token_type c)
 {
-	//if we are supposed to eat token c, and it does not match
-	//what we are supposed to be reading from file, then it is a 
-	//mismatch error ( call - mismatch_error(c) )
+	if (c != tokens.at(index)) { mismatch_error(c); }
 
-	//WRITEME: cut this bogus stuff out and implement eat_token
-	if ( rand()%10 < 8 ) bogo_token = T_plus;
-	else bogo_token = T_eof;
+	else if (string_tokens.at(s_index) == "\n") {
+		line++;
+		s_index++;
+	}
 
+	else {
+		index++;
+		s_index++;
+	}
 }
 
-scanner_t::scanner_t()
-{
-	//WRITEME
+
+scanner_t::scanner_t() {
+	this->line = 1;
+	this->index = 0;
+	this->s_index = 0;
+
+	scan_string();	
+	modify_token();	
 }
 
-int scanner_t::get_line()
-{
-	//WRITEME
+
+void scanner_t::scan_string() {
+	string token;
+	char c;
+
+	while( (c = getchar()) != EOF ) {
+		while(c == ' ') {c = getchar();}	// eliminate whitespaces
+
+		if( c=='\n' || c=='+' || c=='-' || c=='*' || c=='.' || c=='%' || c=='(' || c==')' ) {
+			token += c;
+			string_tokens.push_back(token);
+			token = "";
+		}
+
+		else if (c == EOF) { return; }
+
+		// if c is a number, need to determine how many digits the whole number is
+		else if (c=='0' || c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7' || c=='8' || c=='9') {
+			token += c;		// first digit
+			c = getchar();	// next digit
+			while ( c=='0' || c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7' || c=='8' || c=='9') {
+				// if still number, add it to the whole number
+				token += c;
+			}
+			string_tokens.push_back(token);
+			token = "";
+			token += c;
+			string_tokens.push_back(token);
+			token = "";
+		}
+
+		else 
+			scan_error(c);
+	}
+
+	string_tokens.push_back("EOF");	// finished reading inputs
 }
 
-void scanner_t::scan_error (char x)
-{
+void scanner_t::modify_token() {
+	for(int i=0; i<string_tokens.size(); i++) {
+		if(string_tokens.at(i) == "+") { tokens.push_back(T_plus); }
+		else if (string_tokens.at(i) == "-") { tokens.push_back(T_minus); }
+		else if (string_tokens.at(i) == "*") { tokens.push_back(T_times); }
+		else if (string_tokens.at(i) == ".") { tokens.push_back(T_period); }
+		else if (string_tokens.at(i) == "%") { tokens.push_back(T_modulo); }
+		else if (string_tokens.at(i) == "(") { tokens.push_back(T_openparen); }
+		else if (string_tokens.at(i) == ")") { tokens.push_back(T_closeparen); }
+		else if (string_tokens.at(i) == "EOF") { tokens.push_back(T_eof); }
+		else if (string_tokens.at(i) == "0") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "1") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "2") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "3") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "4") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "5") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "6") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "7") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "8") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i) == "9") { tokens.push_back(T_num); }
+		else { scan_error(string_tokens.at(i)[0]); }
+	}
+}
+
+int scanner_t::get_line() {
+	return line;
+}
+
+void scanner_t::scan_error (char x) {
 	printf("scan error: unrecognized character '%c'\n",x);  
 	exit(1);
-
 }
 
-void scanner_t::mismatch_error (token_type x)
-{
+void scanner_t::mismatch_error (token_type x) {
 	printf("syntax error: found %s ",token_to_string(next_token()) );
 	printf("expecting %s - line %d\n", token_to_string(x), get_line());
 	exit(1);
@@ -389,9 +445,25 @@ void parser_t::List()
 
 /*** Main ***********************************************/
 
-int main()
+int main(int argc, char* argv[])
 {
-	parser_t parser;
-	parser.parse();
+	// just scanner
+	if (argc > 1) {
+                //If strcmp returns zero than equal
+		if (strcmp(argv[1], "-s") == 0) {
+			scanner_t scanner;
+			token_type tok = scanner.next_token();
+			while(tok != T_eof){
+				scanner.eat_token(tok);
+				printf("%s", token_to_string(tok));
+				tok = scanner.next_token();
+			}
+			printf("%s\n", token_to_string(tok));
+		}
+	}
+	else {
+		parser_t parser;
+		parser.parse();
+	}
 	return 0;
 }

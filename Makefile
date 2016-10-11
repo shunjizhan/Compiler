@@ -4,15 +4,26 @@ CC	= gcc
 CPP	= g++
 DEFTARGET = calc_def
 
-all: calc_def calc 
+all: calc_def calc  
+
 test_def: calc_def
 	./calc_def < test.good.calc > test.good.defoutput
 	./calc_def < test.bad.calc > test.bad.defoutput
+
+test_scan: calc 
+	./calc -s < test.good.calc > test.good.tokens
+	./calc -s < test.bad.calc > test.bad.tokens
+
 test_parse: calc
 	./calc < test.good.calc > test.good.dot
+	dot -Tpng test.good.dot -o test.good.png
 	./calc < test.bad.calc > test.bad.dot
-	dot -Tps test.good.dot > test.good.ps
-	ps2pdf test.good.ps test.good.pdf
+
+test: calc
+	./calc < input > test.graph.dot
+	dot -Tps test.graph.dot > test.graph.ps
+	ps2pdf test.graph.ps result.pdf
+
 
 
 ###############################################
@@ -43,7 +54,5 @@ lex.yy.c: $(DEFTARGET).l
 
 clean:
 	rm -f calc calc.o $(DEFTARGET) y.tab.o y.tab.c y.tab.h lex.yy.o lex.yy.c
-	rm -f test.good.defoutput test.bad.defoutput test.good.dot test.bad.dot test.good.ps test.good.pdf
+	rm -f test.good.defoutput test.bad.defoutput test.good.dot test.bad.dot test.good.png test.good.tokens test.bad.tokens
 
-submit: calc
-	turnin proj1@cs160 .
