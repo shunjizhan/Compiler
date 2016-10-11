@@ -185,7 +185,13 @@ void scanner_t::scan_string() {
 			  token = "";
 			}
 
-			else if (c == EOF) { return; }
+			else if (c == EOF) {  // 1+4+55555
+			  //string_tokens.push_back(token);
+			  return;
+			}
+
+			else
+			  scan_error(c);   // 111kk111
 			/*** finished add extra token ***/
 		}
 		// end c is a number
@@ -208,16 +214,16 @@ void scanner_t::modify_token() {
 		else if (string_tokens.at(i) == "(") { tokens.push_back(T_openparen); }
 		else if (string_tokens.at(i) == ")") { tokens.push_back(T_closeparen); }
 		else if (string_tokens.at(i) == "EOF") { tokens.push_back(T_eof); }
-		else if (string_tokens.at(i) == "0") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "1") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "2") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "3") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "4") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "5") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "6") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "7") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "8") { tokens.push_back(T_num); }
-		else if (string_tokens.at(i) == "9") { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '0') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '1') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '2') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '3') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '4') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '5') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '6') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '7') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '8') { tokens.push_back(T_num); }
+		else if (string_tokens.at(i)[0] == '9') { tokens.push_back(T_num); }
 		else { scan_error(string_tokens.at(i)[0]); }
 	}
 }
