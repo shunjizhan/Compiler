@@ -109,7 +109,7 @@ class scanner_t {
 
 
 token_type scanner_t::next_token() {
-	if (tokens.size() == 0)
+        if ((index<tokens.size()))    
 		return T_eof;   // no more tokens, end of file
 	else
 		return tokens.at(index);	// else return current (next) token
@@ -142,11 +142,10 @@ scanner_t::scanner_t() {
 	printf("finished scan_string()\n");
        	print_string_tokens();
 
-	/*
+	
 	modify_token();	
 	printf("finished modify_token()\n");
 	print_tokens();
-	*/
 }
 
 
@@ -241,18 +240,19 @@ void scanner_t::mismatch_error (token_type x) {
 	exit(1);
 }
 
-void scanner_t::print_tokens() {
-	for (int i=0; i<tokens.size(); i++) {
-		cout << token_to_string(tokens.at(i));
+
+void scanner_t::print_string_tokens() {
+	for (int i=0; i<string_tokens.size(); i++) {
+		cout << string_tokens.at(i);
 		printf(" ");
 	}
 	printf("\n");
 }
 
 
-void scanner_t::print_string_tokens() {
-	for (int i=0; i<string_tokens.size(); i++) {
-		cout << string_tokens.at(i);
+void scanner_t::print_tokens() {
+	for (int i=0; i<tokens.size(); i++) {
+	  cout << token_to_string(tokens.at(i));
 		printf(" ");
 	}
 	printf("\n");
