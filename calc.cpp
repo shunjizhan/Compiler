@@ -140,12 +140,13 @@ scanner_t::scanner_t() {
 
 	scan_string();	
 	printf("finished scan_string()\n");
-	print_string_tokens();
+       	print_string_tokens();
 
+	/*
 	modify_token();	
 	printf("finished modify_token()\n");
 	print_tokens();
-
+	*/
 }
 
 
@@ -171,29 +172,32 @@ void scanner_t::scan_string() {
 			while ( c=='0' || c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7' || c=='8' || c=='9') {
 				// if still number, add it to the whole number
 				token += c;
+				c = getchar();
 			}
 			string_tokens.push_back(token);
 			token = "";
 
-			// add the extra one token //
+			/*** add the extra one token ***/
 		        while(c == ' ') {c = getchar();}	// eliminate whitespaces
 
 			if( c=='\n' || c=='+' || c=='-' || c=='*' || c=='.' || c=='%' || c=='(' || c==')' ) {
-			token += c;
-			string_tokens.push_back(token);
-			token = "";
+			  token += c;
+			  string_tokens.push_back(token);
+			  token = "";
 			}
 
 			else if (c == EOF) { return; }
-			// end add extra token //
+			/*** finished add extra token ***/
 		}
+		// end c is a number
 
 		else 
 			scan_error(c);
-	}
+	} // end while
 
 	string_tokens.push_back("EOF");	// finished reading inputs
 }
+
 
 void scanner_t::modify_token() {
 	for(int i=0; i<string_tokens.size(); i++) {
@@ -219,14 +223,17 @@ void scanner_t::modify_token() {
 	}
 }
 
+
 int scanner_t::get_line() {
 	return line;
 }
+
 
 void scanner_t::scan_error (char x) {
 	printf("scan error: unrecognized character '%c'\n",x);  
 	exit(1);
 }
+
 
 void scanner_t::mismatch_error (token_type x) {
 	printf("syntax error: found %s ",token_to_string(next_token()) );
@@ -240,7 +247,8 @@ void scanner_t::print_tokens() {
 		printf(" ");
 	}
 	printf("\n");
-} 
+}
+
 
 void scanner_t::print_string_tokens() {
 	for (int i=0; i<string_tokens.size(); i++) {
@@ -490,15 +498,15 @@ int main(int argc, char* argv[])
 			scanner_t scanner;
 			token_type tok = scanner.next_token();
 
-			cout << token_to_string(tok);
+			// cout << token_to_string(tok);
 			printf("\n");
 
 			while(tok != T_eof){
 				scanner.eat_token(tok);
-				printf("%s", token_to_string(tok));
+				//printf("%s", token_to_string(tok));
 				tok = scanner.next_token();
 			}
-			printf("%s\n", token_to_string(tok));
+			// printf("%s\n", token_to_string(tok));
 		}
 	}
 	else {
