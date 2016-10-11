@@ -226,7 +226,7 @@ void scanner_t::mismatch_error (token_type x) {
 
 void scanner_t::print_tokens() {
 	for (int i=0; i<tokens.size(); i++) {
-		printf(token_to_string(tokens.at(i)));
+		cout << token_to_string(tokens.at(i));
 		printf(" ");
 	}
 	printf("\n");
@@ -234,7 +234,7 @@ void scanner_t::print_tokens() {
 
 void scanner_t::print_string_tokens() {
 	for (int i=0; i<string_tokens.size(); i++) {
-		printf("%s\n", string_tokens.at(i));
+		cout << string_tokens.at(i);
 		printf(" ");
 	}
 	printf("\n");
@@ -480,7 +480,7 @@ int main(int argc, char* argv[])
 			scanner_t scanner;
 			token_type tok = scanner.next_token();
 
-			printf(token_to_string(tok));
+			cout << token_to_string(tok);
 			printf("\n");
 
 			while(tok != T_eof){
