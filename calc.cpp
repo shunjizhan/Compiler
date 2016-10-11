@@ -144,6 +144,7 @@ scanner_t::scanner_t() {
 
 	modify_token();	
 	printf("finished modify_token()\n");
+	print_tokens();
 
 }
 
@@ -173,9 +174,18 @@ void scanner_t::scan_string() {
 			}
 			string_tokens.push_back(token);
 			token = "";
+
+			// add the extra one token //
+		        while(c == ' ') {c = getchar();}	// eliminate whitespaces
+
+			if( c=='\n' || c=='+' || c=='-' || c=='*' || c=='.' || c=='%' || c=='(' || c==')' ) {
 			token += c;
-			// string_tokens.push_back(token);   // ????????????????
+			string_tokens.push_back(token);
 			token = "";
+			}
+
+			else if (c == EOF) { return; }
+			// end add extra token //
 		}
 
 		else 
