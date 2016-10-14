@@ -11,7 +11,7 @@ test_def: calc_def
 	./calc_def < test.bad.calc > test.bad.defoutput
 
 test_scan: calc 
-	./calc -s < input > output
+	./calc -s < input 
 	
 test_parse: calc
 	./calc < test.good.calc > test.good.dot

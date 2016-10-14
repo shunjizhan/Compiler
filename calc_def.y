@@ -8,17 +8,32 @@
 
 %%
 
-List    : List Expr '.' {printf("parsed expresion\n");}
-		| Expr '.' {printf("parsed expresion\n");}
+
+S    :    F R {printf("parsed expresion\n");}
+       | 'E'
+       ;
+
+R    :    '+' F R 
+        | '-' F R
+        | Z
         ;
 
-Expr    : Expr '*' Expr 
-        | Expr '+' Expr 
-        | Expr '-' Expr
-        | Expr '%' Expr
-        | 'n'
-        | '(' Expr ')'
+Z    :    '*' F R
+        | '/' F R
+        | ',' S
         ;
+
+F    :  'n' 
+        | '(' F A ')'
+        ;
+
+A   :   '+' F A
+        | '-' F A
+        | B
+
+B   :   '*' F A
+        | '/' F A
+|
 
 %%
 

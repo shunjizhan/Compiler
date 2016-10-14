@@ -14,7 +14,7 @@ void yyerror(char *);
 [ \t\n]  		; /* skip whitespace */
 
 
-.	yyerror("invalid character");
+.	yyerror("invalid character");    /* anything except from new line */
 
 %%
 
