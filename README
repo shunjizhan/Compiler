@@ -1,0 +1,6 @@
+I divide the scanner to two parts, both of them will be constructed in the scanner constructor:
+1, read in all the file as string tokens, and saved them into a vector. It is done by the function scan_string().
+2, read all tokens from the string vector, and transformed them into real token. It is done by the function modify_token().
+A example of the procedure is 1 2 3 --> "1" | "2" | "3" --> num | num | num
+
+note that string tokens will read in '\n', which indicates a increase in line number. However, real tokens will not save '\n', but skip it.
