@@ -15,14 +15,12 @@ test_scan: calc
 	
 test_parse: calc
 	./calc < test.good.calc > test.good.dot
-	dot -Tpng test.good.dot -o test.good.png
 	./calc < test.bad.calc > test.bad.dot
+	dot -Tps test.good.dot > test.good.ps
+	ps2pdf test.good.ps test.good.pdf
 
-test: calc
-	./calc < input > test.graph.dot
-	dot -Tps test.graph.dot > test.graph.ps
-	ps2pdf test.graph.ps result.pdf
-
+test_grammar: calc_def
+	./calc_def < input
 
 
 ###############################################
