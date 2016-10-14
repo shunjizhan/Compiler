@@ -140,8 +140,8 @@ scanner_t::scanner_t() {
 
 	scan_string();	
 	printf("finished scan_string()\n");
-       	print_string_tokens();
-
+    print_string_tokens();
+    cout << endl;
 	
 	modify_token();	
 	printf("finished modify_token()\n");
@@ -224,7 +224,7 @@ void scanner_t::modify_token() {
 		else if (string_tokens.at(i)[0] == '7') { tokens.push_back(T_num); }
 		else if (string_tokens.at(i)[0] == '8') { tokens.push_back(T_num); }
 		else if (string_tokens.at(i)[0] == '9') { tokens.push_back(T_num); }
-		else { scan_error(string_tokens.at(i)[0]); }
+		else if (string_tokens.at(i)[0] != '\n'){ scan_error(string_tokens.at(i)[0]); }
 	}
 }
 
