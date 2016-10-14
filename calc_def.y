@@ -9,31 +9,31 @@
 %%
 
 
-S    :    F R {printf("parsed expresion\n");}
-       | 'E'
-       ;
+S   :   E '.'    {printf("parsed expresion\n");}
+	|	E '.' S  {printf("parsed expresion\n");}
+	;
 
-R    :    '+' F R 
-        | '-' F R
-        | Z
-        ;
+E 	:	T	Ee
+	;
 
-Z    :    '*' F R
-        | '/' F R
-        | ',' S
-        ;
+Ee 	:	'+' T Ee
+	|	'-' T Ee
+	|	
+	;
 
-F    :  'n' 
-        | '(' F A ')'
-        ;
+T	:	F Tt
+	;
 
-A   :   '+' F A
-        | '-' F A
-        | B
+Tt	:	'*'	F Tt
+	|	'%' F Tt
+	|	
+	;
 
-B   :   '*' F A
-        | '/' F A
-|
+F 	:	'(' E ')'
+	|	'n'
+	;
+
+
 
 %%
 

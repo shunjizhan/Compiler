@@ -20,7 +20,7 @@ test_parse: calc
 	ps2pdf test.good.ps test.good.pdf
 
 test_grammar: calc_def
-	./calc_def < input
+	./calc_def < test.good.calc
 
 
 ###############################################
