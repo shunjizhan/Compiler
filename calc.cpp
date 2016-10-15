@@ -134,13 +134,12 @@ void scanner_t::eat_token(token_type c) {
 	else if (string_tokens.at(s_index) == "\n") {
 		line++;
 		s_index++;
-		index++;
+
 	}
 
-	else {
 		index++;
 		s_index++;
-	}
+
 	
 	//cout << "finished eating" << endl;
 }
