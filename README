@@ -4,3 +4,39 @@ I divide the scanner to two parts, both of them will be constructed in the scann
 A example of the procedure is 1 2 3 --> "1" | "2" | "3" --> num | num | num
 
 note that string tokens will read in '\n', which indicates a increase in line number. However, real tokens will not save '\n', but skip it.
+
+
+Then I wrote my grammar:
+
+S 	:	L {printf("parsed expresion\n");}
+	;
+
+L   :   E '.' K 
+	|   'EOF'
+	;
+
+K	:	L
+	|	'EOF'
+	;
+
+E 	:	T	Ee
+	;
+
+Ee 	:	'+' T Ee
+	|	'-' T Ee
+	|	
+	;
+
+T	:	F Tt
+	;
+
+Tt	:	'*'	F Tt
+	|	'%' F Tt
+	|	
+	;
+
+F 	:	'(' E ')'
+	|	'n'
+	;
+
+I tested it by "make test_grammar" to make sure it is valid and not ambiguous. After this, I started to implement the parser.

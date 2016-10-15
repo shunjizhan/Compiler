@@ -8,9 +8,14 @@
 
 %%
 
+S 	:	L {printf("parsed expresion\n");}
+	;
 
-S   :   E '.'    {printf("parsed expresion\n");}
-	|	E '.' S  {printf("parsed expresion\n");}
+L   :   E '.' K 
+	;
+
+K	:	S
+	|
 	;
 
 E 	:	T	Ee

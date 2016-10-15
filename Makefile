@@ -6,7 +6,7 @@ DEFTARGET = calc_def
 
 all: calc_def calc  
 
-test_def: calc_def
+test_def: calc_def    
 	./calc_def < test.good.calc > test.good.defoutput
 	./calc_def < test.bad.calc > test.bad.defoutput
 
@@ -14,15 +14,15 @@ test_scan: calc
 	./calc -s < input 
 	
 test_parse: calc
-	./calc < test.good.calc > test.good.dot
-	./calc < test.bad.calc > test.bad.dot
+	./calc < input > test.good.dot
+
 	dot -Tps test.good.dot > test.good.ps
 	ps2pdf test.good.ps test.good.pdf
 
-test_grammar: calc_def
+test_grammar: calc_def 	# use lex to test grammar
 	./calc_def < test.good.calc
 
-
+	#./calc < test.bad.calc > test.bad.dot
 ###############################################
 # This part makes your parse tree generator
 #
