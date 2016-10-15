@@ -123,19 +123,25 @@ token_type scanner_t::next_token() {
 void scanner_t::eat_token(token_type c) {
 	cout << "***** eat:";
 	cout <<	token_to_string(tokens.at(index));
+	cout << token_to_string(c);
 	cout << endl;	
 
+
 	if (c != tokens.at(index)) { mismatch_error(c); }
+
 
 	else if (string_tokens.at(s_index) == "\n") {
 		line++;
 		s_index++;
+		index++;
 	}
 
 	else {
 		index++;
 		s_index++;
 	}
+	
+	//cout << "finished eating" << endl;
 }
 
 
@@ -465,33 +471,23 @@ void parser_t::parse()
 }
 
 void parser_t::List() {
+	/*
 	cout << "List() ";
 	cout << scanner.s_index;
 	cout << scanner.index;
 	cout << token_to_string(scanner.next_token());
 	cout << endl;
-
+*/
+	
 	parsetree.push(NT_List);
 	switch( scanner.next_token() ) {
 		case T_eof:		
 			parsetree.drawepsilon();
-			eat_token(T_eof);
 			break;
 
-		case T_openparen:		// '(' E ')' Tt Ee '.' L
-			eat_token(T_openparen);
+		case T_openparen:
+		case T_num:
 			E();
-			eat_token(T_closeparen);
-			Tt();
-			Ee();
-			eat_token(T_period);
-			List();
-			break;
-
-		case T_num:			// 'n' Tt Ee '.' L
-			eat_token(T_num);
-			Tt();
-			Ee();
 			eat_token(T_period);
 			List();
 			break;
@@ -518,16 +514,11 @@ void parser_t::K() {
 			eat_token(T_eof);
 			break;
 
-		case T_openparen:
-			E();
-			eat_token(T_period);
-			K();
-			break;
-
+		case T_openparen:	// E '.' L
 		case T_num:
 			E();
 			eat_token(T_period);
-			K();
+			List();
 			break;
 
 		default:
@@ -539,25 +530,19 @@ void parser_t::K() {
 }
 */
 void parser_t::E() {
+	/*
 	cout << "E() ";
 	cout << scanner.s_index;
 	cout << scanner.index;
 	cout << token_to_string(scanner.next_token());
 	cout << endl;
+*/
 
 	parsetree.push(NT_Expr);
 	switch( scanner.next_token() ) {
-		case T_openparen:		// '(' E ')' Tt Ee
-			eat_token(T_openparen);
-			E();
-			eat_token(T_closeparen);
-			Tt();
-			Ee();
-			break;
-
-		case T_num:			// 'n' Tt Ee
-			eat_token(T_num);
-			Tt();
+		case T_openparen:	// T Ee
+		case T_num:
+			T();
 			Ee();
 			break;
 
@@ -570,29 +555,31 @@ void parser_t::E() {
 }
 
 void parser_t::Ee() {
+	/*
 	cout << "Ee() ";
 	cout << scanner.s_index;
 	cout << scanner.index;
 	cout << token_to_string(scanner.next_token());
 	cout << endl;
+	*/
 
 	parsetree.push(NT_Expr_Prime);
 	switch( scanner.next_token() ) {
-		case T_minus:
-			eat_token(T_minus);		// '-' T Ee
+		case T_minus:	// '-' T Ee
+			eat_token(T_minus);
 			T();
 			Ee();
 			break;
 
-		case T_plus:
-			eat_token(T_plus); 		// '+' T Ee
+		case T_plus:	// '+' T Ee
+			eat_token(T_plus);
 			T();
 			Ee();
 			break;
 
-		case T_period:			// '.' L
-			eat_token(T_period);
-			List();
+		case T_period:
+		case T_closeparen:
+		case T_eof:
 			break;
 
 		default:
@@ -604,23 +591,19 @@ void parser_t::Ee() {
 }
 
 void parser_t::T() {
+	/*
 	cout << "T() ";
 	cout << scanner.s_index;
 	cout << scanner.index;
 	cout << token_to_string(scanner.next_token());
 	cout << endl;
+	*/
 
 	parsetree.push(NT_Term);
 	switch( scanner.next_token() ) {
-		case T_openparen:		// '(' E ')' Tt
-			eat_token(T_openparen);
-			E();
-			eat_token(T_closeparen);
-			Tt();
-			break;
-
-		case T_num:			// 'n' Tt
-			eat_token(T_num);
+		case T_openparen:	// F Tt
+		case T_num:
+			F();
 			Tt();
 			break;
 
@@ -633,36 +616,33 @@ void parser_t::T() {
 }
 
 void parser_t::Tt() {
+	/*
 	cout << "Tt() ";
 	cout << scanner.s_index;
 	cout << scanner.index;
 	cout << token_to_string(scanner.next_token());
 	cout << endl;
+	*/
 
 	parsetree.push(NT_Term_Prime);
 	switch( scanner.next_token() ) {
-		case T_times:			// '*'	F Tt
-			eat_token(T_times);		
+		case T_times:		// '*'	F Tt
+			eat_token(T_times);
 			F();
 			Tt();
 			break;
 
-		case T_modulo:			// '%' F Tt
+		case T_modulo:		// '%' F Tt
 			eat_token(T_modulo);
 			F();
 			Tt();
 			break;
 
 		case T_minus:
-			Ee();
-			break;
-
 		case T_plus:
-			Ee();
-			break;
-
-		case T_period:			
-			Ee();
+		case T_period:
+		case T_closeparen:
+		case T_eof:
 			break;
 
 		default:
@@ -675,11 +655,13 @@ void parser_t::Tt() {
 
 
 void parser_t::F() {
+	/*
 	cout << "F() ";
 	cout << scanner.s_index;
 	cout << scanner.index;
 	cout << token_to_string(scanner.next_token());
 	cout << endl;
+	*/
 
 	parsetree.push(NT_Factor);
 	switch( scanner.next_token() ) {
@@ -690,7 +672,7 @@ void parser_t::F() {
 		case T_openparen:	// '(' E ')'
 			eat_token(T_openparen);
 			E();
-			eat_token(T_openparen);
+			eat_token(T_closeparen);
 			break;
 
 		default:

@@ -14,8 +14,7 @@ test_scan: calc
 	./calc -s < input 
 	
 test_parse: calc
-	./calc < input > test.good.dot
-
+	./calc < test.good.calc > test.good.dot
 	dot -Tps test.good.dot > test.good.ps
 	ps2pdf test.good.ps test.good.pdf
 

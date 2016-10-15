@@ -11,13 +11,12 @@
 S 	:	L {printf("parsed expresion\n");}
 	;
 
-L   :   '(' E ')' Tt Ee '.' L
-	|	'n' Tt Ee '.' L
+L   :   E '.' L
 	|
 	;
 
-E 	:	'(' E ')' Tt Ee
-	|	'n' Tt Ee
+
+E 	:	T	Ee
 	;
 
 Ee 	:	'+' T Ee
@@ -25,8 +24,7 @@ Ee 	:	'+' T Ee
 	|	
 	;
 
-T	:	'(' E ')' Tt
-	|	'n' Tt
+T	:	F Tt
 	;
 
 Tt	:	'*'	F Tt
