@@ -1,0 +1,45 @@
+I divide the scanner to two parts, both of them will be constructed in the scanner constructor:
+1, read in all the file as string tokens, and saved them into a vector. It is done by the function scan_string().
+2, read all tokens from the string vector, and transformed them into real token. It is done by the function modify_token().
+A example of the procedure is 1 2 3 --> "1" | "2" | "3" --> num | num | num
+
+note that string tokens will read in '\n', which indicates a increase in line number. However, real tokens will not save '\n', but skip it.
+
+
+Then I wrote my grammar: (this is transformed from a basic calculatioin grammar from class.)
+
+S 	:	L {printf("parsed expresion\n");}
+	;
+
+L   :   E '.' L
+	|
+	;
+
+
+E 	:	T	Ee
+	;
+
+Ee 	:	'+' T Ee
+	|	'-' T Ee
+	|	
+	;
+
+T	:	F Tt
+	;
+
+Tt	:	'*'	F Tt
+	|	'%' F Tt
+	|	
+	;
+
+F 	:	'(' E ')'
+	|	'n'
+	;
+
+I tested it by "make test_grammar" to make sure it is valid and not ambiguous.( I used to print out the result of the two vectors, after initializing the scanner.)
+
+After this, I started to implement the parser.
+
+By finding all first sets and follow sets, the implementation for the parser can be found in my code, which is straight forward. However, there were some mis-type of the Non-terminals, which forced me to hand write the parse, and track the code to debug, which is really painful and took me a whole night...
+
+Last I found it cannot print the right line of error, but I then found a little problem in eat_token(). Because I need to line++ when encounter '\n', and str_vector index ++, I forgot to add the latter one (str_vector index ++). After I add it, it can now print the correct line of error!
