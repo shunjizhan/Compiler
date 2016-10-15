@@ -11,12 +11,8 @@ Then I wrote my grammar:
 S 	:	L {printf("parsed expresion\n");}
 	;
 
-L   :   E '.' K 
-	|   'EOF'
-	;
-
-K	:	L
-	|	'EOF'
+L   :   E '.' L
+	|
 	;
 
 E 	:	T	Ee
@@ -38,5 +34,6 @@ Tt	:	'*'	F Tt
 F 	:	'(' E ')'
 	|	'n'
 	;
+
 
 I tested it by "make test_grammar" to make sure it is valid and not ambiguous. After this, I started to implement the parser.

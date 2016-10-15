@@ -423,7 +423,7 @@ class parser_t {
 	void syntax_error(nonterm_type);
 
 	void List();
-	void K();
+	//void K();
 	void E();
 	void Ee();
 	void T();
@@ -478,16 +478,22 @@ void parser_t::List() {
 			eat_token(T_eof);
 			break;
 
-		case T_openparen:
+		case T_openparen:		// '(' E ')' Tt Ee '.' L
+			eat_token(T_openparen);
 			E();
+			eat_token(T_closeparen);
+			Tt();
+			Ee();
 			eat_token(T_period);
-			K();
+			List();
 			break;
 
-		case T_num:
-			E();
+		case T_num:			// 'n' Tt Ee '.' L
+			eat_token(T_num);
+			Tt();
+			Ee();
 			eat_token(T_period);
-			K();
+			List();
 			break;
 
 		default:
@@ -496,7 +502,7 @@ void parser_t::List() {
 	}
 	parsetree.pop();
 }
-
+/*
 void parser_t::K() {
 	cout << "K() ";
 	cout << scanner.s_index;
@@ -531,7 +537,7 @@ void parser_t::K() {
 
 	parsetree.pop();
 }
-
+*/
 void parser_t::E() {
 	cout << "E() ";
 	cout << scanner.s_index;
@@ -541,13 +547,17 @@ void parser_t::E() {
 
 	parsetree.push(NT_Expr);
 	switch( scanner.next_token() ) {
-		case T_openparen:
-			T();
+		case T_openparen:		// '(' E ')' Tt Ee
+			eat_token(T_openparen);
+			E();
+			eat_token(T_closeparen);
+			Tt();
 			Ee();
 			break;
 
-		case T_num:
-			T();
+		case T_num:			// 'n' Tt Ee
+			eat_token(T_num);
+			Tt();
 			Ee();
 			break;
 
@@ -569,20 +579,20 @@ void parser_t::Ee() {
 	parsetree.push(NT_Expr_Prime);
 	switch( scanner.next_token() ) {
 		case T_minus:
-			eat_token(T_minus);
+			eat_token(T_minus);		// '-' T Ee
 			T();
 			Ee();
 			break;
 
 		case T_plus:
-			eat_token(T_plus);
+			eat_token(T_plus); 		// '+' T Ee
 			T();
 			Ee();
 			break;
 
-		case T_period:
+		case T_period:			// '.' L
 			eat_token(T_period);
-			K();
+			List();
 			break;
 
 		default:
@@ -602,13 +612,15 @@ void parser_t::T() {
 
 	parsetree.push(NT_Term);
 	switch( scanner.next_token() ) {
-		case T_openparen:
-			F();
+		case T_openparen:		// '(' E ')' Tt
+			eat_token(T_openparen);
+			E();
+			eat_token(T_closeparen);
 			Tt();
 			break;
 
-		case T_num:
-			F();
+		case T_num:			// 'n' Tt
+			eat_token(T_num);
 			Tt();
 			break;
 
@@ -629,33 +641,28 @@ void parser_t::Tt() {
 
 	parsetree.push(NT_Term_Prime);
 	switch( scanner.next_token() ) {
-		case T_times:
-			eat_token(T_times);
+		case T_times:			// '*'	F Tt
+			eat_token(T_times);		
 			F();
 			Tt();
 			break;
 
-		case T_modulo:
+		case T_modulo:			// '%' F Tt
 			eat_token(T_modulo);
 			F();
 			Tt();
 			break;
 
 		case T_minus:
-			eat_token(T_minus);
-			T();
 			Ee();
 			break;
 
 		case T_plus:
-			eat_token(T_plus);
-			T();
 			Ee();
 			break;
 
-		case T_period:
-			eat_token(T_period);
-			K();
+		case T_period:			
+			Ee();
 			break;
 
 		default:
