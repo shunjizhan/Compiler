@@ -6,7 +6,7 @@ A example of the procedure is 1 2 3 --> "1" | "2" | "3" --> num | num | num
 note that string tokens will read in '\n', which indicates a increase in line number. However, real tokens will not save '\n', but skip it.
 
 
-Then I wrote my grammar:
+Then I wrote my grammar: (this is transformed from a basic calculatioin grammar from class.)
 
 S 	:	L {printf("parsed expresion\n");}
 	;
@@ -36,4 +36,8 @@ F 	:	'(' E ')'
 	|	'n'
 	;
 
-I tested it by "make test_grammar" to make sure it is valid and not ambiguous. After this, I started to implement the parser.
+I tested it by "make test_grammar" to make sure it is valid and not ambiguous.( I used to print out the result of the two vectors, after initializing the scanner.)
+
+After this, I started to implement the parser.
+
+By finding all first sets and follow sets, the implementation for the parser can be found in my code, which is straight forward. However, there were some mis-type of the Non-terminals, which forced me to hand write the parse, and track the code to debug, which is really painful and took me a whole night...

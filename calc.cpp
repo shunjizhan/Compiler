@@ -121,11 +121,12 @@ token_type scanner_t::next_token() {
 
 
 void scanner_t::eat_token(token_type c) {
+	/*
 	cout << "***** eat:";
 	cout <<	token_to_string(tokens.at(index));
 	cout << token_to_string(c);
 	cout << endl;	
-
+*/
 
 	if (c != tokens.at(index)) { mismatch_error(c); }
 
@@ -152,14 +153,14 @@ scanner_t::scanner_t() {
 	// printf("finished initializing\n");
 
 	scan_string();	
-	printf("finished scan_string()\n");
-    print_string_tokens();
-    cout << endl;
+	//printf("finished scan_string()\n");
+    //print_string_tokens();
+    //cout << endl;
 	
 	modify_token();	
-	printf("finished modify_token()\n");
-	print_tokens();
-	cout << endl;
+	//printf("finished modify_token()\n");
+	//print_tokens();
+	//cout << endl;
 }
 
 
@@ -318,7 +319,7 @@ class parsetree_t {
 parsetree_t::parsetree_t()
 {
 	counter = 0;
-	// printf("digraph G { page=\"8.5,11\"; size=\"7.5, 10\"\n");
+	printf("digraph G { page=\"8.5,11\"; size=\"7.5, 10\"\n");
 }
 
 //This push function taken a non terminal and keeps it on the parsetree
@@ -359,7 +360,7 @@ void parsetree_t::pop()
 	}
 
 	if ( stuple_stack.empty() ) {
-		//printf( "}\n" );
+		printf( "}\n" );
 	}
 }
 
@@ -375,7 +376,7 @@ void parsetree_t::drawepsilon()
 // to the new symbol that was just pushed.  If it happens to be a terminal
 // then it makes it a snazzy blue color so you can see your program on the leaves 
 void parsetree_t::printedge(stuple temp)
-{/*
+{
 	if ( temp.stype == TERMINAL ) {
 		printf("\t\"%s%d\" [label=\"%s\",style=filled,fillcolor=powderblue]\n",
 		  stuple_to_string(temp),
@@ -391,10 +392,9 @@ void parsetree_t::printedge(stuple temp)
 	//no edge to print if this is the first node
 	if ( !stuple_stack.empty() ) {
 		//print the edge
-		//printf( "\t\"%s%d\" ", stuple_to_string(stuple_stack.top()), stuple_stack.top().uniq ); 
-		//printf( "-> \"%s%d\"\n", stuple_to_string(temp), temp.uniq );
+		printf( "\t\"%s%d\" ", stuple_to_string(stuple_stack.top()), stuple_stack.top().uniq ); 
+		printf( "-> \"%s%d\"\n", stuple_to_string(temp), temp.uniq );
 	}
-	*/
 }
 
 //just a private utility for helping with the printing of the dot stuff
@@ -478,7 +478,7 @@ void parser_t::List() {
 	cout << token_to_string(scanner.next_token());
 	cout << endl;
 */
-	
+
 	parsetree.push(NT_List);
 	switch( scanner.next_token() ) {
 		case T_eof:		
@@ -689,29 +689,8 @@ void parser_t::F() {
 
 int main(int argc, char* argv[])
 {
-	// just scanner
-	if (argc > 1) {
-                //If strcmp returns zero than equal
-		if (strcmp(argv[1], "-s") == 0) {
-			printf("YES!!!!!!\n");
-			scanner_t scanner;
-			token_type tok = scanner.next_token();
+	parser_t parser;
+	parser.parse();
 
-			// cout << token_to_string(tok);
-			printf("\n");
-
-			while(tok != T_eof){
-				scanner.eat_token(tok);
-				//printf("%s", token_to_string(tok));
-				tok = scanner.next_token();
-			}
-			// printf("%s\n", token_to_string(tok));
-		}
-	}
-	else {
-		printf("YEAH!!!!!!\n");
-		parser_t parser;
-		parser.parse();
-	}
 	return 0;
 }

@@ -4,15 +4,10 @@ CC	= gcc
 CPP	= g++
 DEFTARGET = calc_def
 
-all: calc_def calc  
-
-test_def: calc_def    
+all: calc_def calc 
+test_def: calc_def
 	./calc_def < test.good.calc > test.good.defoutput
 	./calc_def < test.bad.calc > test.bad.defoutput
-
-test_scan: calc 
-	./calc -s < input 
-	
 test_parse: calc
 	./calc < test.good.calc > test.good.dot
 	dot -Tps test.good.dot > test.good.ps
@@ -21,7 +16,7 @@ test_parse: calc
 test_grammar: calc_def 	# use lex to test grammar
 	./calc_def < test.good.calc
 
-	#./calc < test.bad.calc > test.bad.dot
+
 ###############################################
 # This part makes your parse tree generator
 #
@@ -50,5 +45,8 @@ lex.yy.c: $(DEFTARGET).l
 
 clean:
 	rm -f calc calc.o $(DEFTARGET) y.tab.o y.tab.c y.tab.h lex.yy.o lex.yy.c
-	rm -f test.good.defoutput test.bad.defoutput test.good.dot test.bad.dot test.good.png test.good.tokens test.bad.tokens
+	rm -f test.good.defoutput test.bad.defoutput test.good.dot test.bad.dot test.good.ps test.good.pdf
+
+submit: calc
+	turnin proj1@cs160 .
 
