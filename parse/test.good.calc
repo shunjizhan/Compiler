@@ -1,0 +1,53 @@
+var x : integer;
+x = true;
+
+x = 4 + (true == 5 % 56 + 4) / x;
+
+1) x = 'c' + true;
+2) x = 'c' + 2;
+3) x = ^^y;
+4) x = ^123;
+5) x = ^true;
+6) x = ^&x;
+7) x = &x + 4;
+8) x = |4|;
+9) x = |true|;
+
+procedure foo() return integer { return 0; }
+
+ x = expr;                /% lhs is variable identifier %/
+ string[expr] = expr;     /% lhs is string element %/
+ ^ptr = expr;             /% lhs is dereferenced pointer %/
+
+For this project, we won't check whether names (variables or procedures in the same scope) are unique
+
+----2
+
+return x[7+1];
+
+/***********************/
+
+
+var i : integer;
+
+procedure Main() return integer
+{
+    var a : integer;
+    a = foo();
+    return 0;
+}
+
+
+10) x = "stringliteral" + 4;
+11) x = ^"stringliteral";
+12) x = |"stringliteral"|;
+13) x = "stringliteral"[2];
+14) x = 123[123]
+15) x = 123[123][123]
+16) x = y[123][123]
+
+var x : string[i];
+
+< 2
+
+procedure foo_3() return integer { return foo(); }

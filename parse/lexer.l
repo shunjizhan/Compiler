@@ -1,0 +1,96 @@
+%option yylineno
+%pointer
+
+%{
+    #include <stdlib.h>
+    #include <string.h>
+    #include "parser.hpp"
+
+    void yyerror(const char *);
+%}
+
+/** WRITE ME:
+ *  Put any definitions you need here. Add your own regular expressions
+ *  below for ALL tokens defined in the manual. You can choose not to use
+ *  definitions here.
+ */
+
+/** The example below is very simple, but it shows almost everything you will
+ *  need to do for this first part. The syntax is as follows:
+ *
+ *  regular_expression      {  c code  }
+ *
+ * The lexer will try to match each regular expression. When it does it will
+ * execute the corresponding C code.
+*/
+
+%%
+
+bool  { return BOOL; }
+char  { return CHAR; }  
+integer  { return INTEGER; }
+string  { return STRING; }
+intptr  { return INTP; }
+charptr  { return CHARP; }
+if  { return IF; }
+else  { return ELSE; }
+while  { return WHILE; }
+var  { return VAR; }
+procedure  { return PRO; }
+return  { return RETURN; }
+null  { return NULL; }
+
+"&&"  { return AND2; }
+"/"  { return SLASH; }
+"="  { return EQUAL; }
+"=="  { return EQUAL2; }
+">"  { return BIGER; }
+">="  { return  BIGERE; }
+"<"  { return LESS; }
+"<="  { return LESSE; }
+"-"  { return MINUS; }
+"!"  { return NOT; }
+"!="  { return NOTEQUAL; }
+"||"  { return OR2; }
+"+"  { return PLUS; }
+"*"  { return TIMES; }
+"&"  { return ADDRESS; }
+"^"  { return DEREF; }
+
+";"  { return SEMI; }
+":"  { return COLON; }
+","  { return COMMA; }
+"|"  { return OR; }
+"{"  { return LBRACE; }
+"}"  { return RBRACE; }
+"("  { return LP; }
+")"  { return RP; }
+"["  { return LBRAKET; }
+"]"  { return RBRAKET; }
+
+[a-zA-Z]  { return C; }		/* character */ /*???????????*/
+
+true  { return TRUE; }
+false  { return FALSE; }
+
+[1-9][0-9]*  { return INT; }
+[0]  { return INT; } 			   /* 0 */
+[0][x|X][0-9A-F]+  { return INT; } /* hex */
+[0][0-7]+  { return INT; } 	       /* octal */
+[0-1]+[b]  { return INT; } 	   /* binary */
+
+[a-zA-Z][a-zA-Z0-9_]  { return ID; } /* identifier */
+
+[ \t\n]             ; /* skip whitespace */
+
+.                   yyerror((char *) "invalid character");
+
+%%
+
+/** You shall not pass!
+ *  You should not  have to do or edit anything past this.
+ */
+
+int yywrap(void) {
+    return 1;
+}
