@@ -1,0 +1,95 @@
+procedure foo() return integer{
+
+}
+procedure bar() return int{
+}
+procedure baz(num:int) return int{
+}
+procedure hello(boolean:bool) return int{
+}
+procedure start(num:int, boolean:bool) return int{
+}
+procedure Variables() return int{
+
+}
+procedure Assign() return int{
+
+}
+procedure ALL() return int{
+
+}
+procedure hey() return int{
+
+}
+procedure to(g:int) return bool{
+
+}
+procedure Main() return int{
+
+}
+procedure Hello(p:bool,g:int) return bool{
+
+}
+					
+				
+				
+                                                                     
+                                                                     
+                                                                  
+                                             
+procedure test(t:int, a:bool) return int
+{
+
+
+}
+
+procedure newtest() return int
+{
+    
+}
+
+procedure foo(i : int, j : int, k : int) return int
+{
+}
+
+procedure foo()  return  int
+        {
+            
+        }
+        procedure Main()  return int
+        {
+            
+        }
+procedure foo(i : int, j : int, k : int)  return  int
+        {
+      
+        }
+procedure foo()  return int { }
+        procedure foo2()  return int {}
+        procedure f234()  return  int { }
+procedure foo(i:int, j:bool, k:int)  return int {  }
+        procedure fee(a:int, b:int)  return int {  }
+        procedure fie()  return  bool { }
+procedure foo(i:int, j:int, k:int)  return  int
+        {
+           
+        }
+
+procedure foo()  return  int { 
+
+}
+procedure foo()  return  int { 
+
+}
+procedure foo()  return  int { 
+  
+}
+procedure first(a : int, b: bool) return  bool {
+
+}
+procedure Main()  return  int {
+
+}
+				
+				
+				

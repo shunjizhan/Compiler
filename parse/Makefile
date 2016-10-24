@@ -42,7 +42,14 @@ clean:
 test_token: csimple
 	./csimple < test_token
 
+test_grammar: csimple
+	./csimple < test.1
+	./csimple < test.2
+	./csimple < test.3
+	./csimple < test.4
 
+test_no_body: csimple	# referenced to ramonrovirosa's tests on github
+	./csimple < test1
 
 
 

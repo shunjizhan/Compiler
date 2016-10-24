@@ -62,8 +62,155 @@
 
 %%
 
+/***
 Start   :	BOOL CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  VAR PROCEDURE RETURN ANDAND SLASH EQUAL EQEQ BIGER BIGERE LESS LESSE MINUS NOT NOTEQUAL OROR PLUS TIMES ADDRESS DEREF SEMI COLON COMMA OR LBRACE RBRACE LP RP LBRAKET RBRAKET   C C C C C TRUE FALSE INT  INT INT INT  INT  INT INT INT INT INT  INT INT INT INT  INT  INT INT INT INT INT  INT  INT INT INT INT ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID  ID ID ID ID ID ID ID{printf("accepted!\n")}
         ;
+***/
+
+Start   	: 	PROCEDURE procedure {printf("accepted!\n");}
+        	;
+
+procedure   : 	PROCEDURE procedure
+        	| 
+        	;
+
+procedure   :   ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+        	;
+
+para_list   : 	ID id_more COLON type para_more
+       		|
+       		;
+
+id_more		:	COMMA ID id_more
+			|
+			;
+
+para_more   : 	SEMI para_list
+            |
+            ;
+
+type    : 	BOOL
+        | 	CHAR
+        | 	INTEGER
+        | 	CHARPTR
+        | 	INTPTR
+        ;
+
+body_of_p	:
+			;
+
+/*****
+
+INT_ARRAY : INTARRAY LEFTBRACKET INTEGER RIGHTBRACKET
+          ;
+INT_ARRAY_EXP: ID LEFTBRACKET EXPR_ESSION RIGHTBRACKET
+             ;
+
+R_T     : type
+        ;
+
+B_O_F   : VAR_DECLERATIONS BODY_CHOICE RETURN_
+        ;
+
+BODY_CHOICE   : MULT_FUNCTIONS BODY_STATEMENTS
+              ;
+MULT_FUNCTIONS: F MULT_FUNCTIONS
+              |
+              ;
+BODY_STATEMENTS :   STATEMENTS_   BODY_STATEMENTS
+                |
+                ;
+
+VAR_DECLERATIONS : VAR_DEC VAR_DECLERATIONS
+                 |
+                 ;
+
+VAR_DEC          : VAR ID MULT_DEC COLON type_2 SEMICOLON
+                 ;
+
+MULT_DEC :   COMMA ID MULT_DEC
+            |COMMA INT_ARRAY MULT_DEC
+            |
+            ;
+
+STATEMENTS_  : ASIGN_MENT SEMICOLON 
+             | FUNCTION_CALL SEMICOLON
+             | IF_
+             | IF_ELSE
+             | FOR_
+             ;
+
+RETURN_     : RETURN EXPR_ESSION SEMICOLON
+            ;
+
+IF_         : IF LP EXPR_ESSION RP LBRACE BODY_STATEMENTS RBRACE
+
+IF_ELSE     : IF_ ELSE LBRACE BODY_STATEMENTS RBRACE
+
+FOR_        : FOR LP FOR_PARAMS RP LBRACE BODY_STATEMENTS RBRACE
+            ;
+
+FOR_PARAMS  : FOR_ASIGN LP EXPR_ESSION RP FOR_ASIGN
+            ;
+
+FOR_ASIGN   :   ASIGN_MENT SEMICOLON
+             |
+             ;
+
+ASIGN_MENT  : ID ASSIGNMENT EXPR_ESSION
+            | INT_ARRAY_EXP ASSIGNMENT EXPR_ESSION
+            ;
+
+EXPR_ESSION : MULT_EXPRESSION
+            | LP EXPR_ESSION RP OPE_RATOR
+            | NOT LP EXPR_ESSION RP OPE_RATOR
+            | ABSOLUTEVALUE EXPR_ESSION ABSOLUTEVALUE OPE_RATOR
+            ;
+
+SINGLE_EXPRESSION : MINUS INTEGER %prec NOT
+                  | INTEGER
+                  | TRUE
+                  | FALSE
+                  | ID
+                  | INT_ARRAY_EXP
+                  | NOT SINGLE_EXPRESSION
+                  ;
+
+                  
+MULT_EXPRESSION   : SINGLE_EXPRESSION OPE_RATOR
+                  ;
+
+OPE_RATOR         : 
+                  | PLUS EXPR_ESSION
+                  | MINUS EXPR_ESSION
+                  | TIMES EXPR_ESSION
+                  | DIVIDE EXPR_ESSION
+                  | OROR EXPR_ESSION
+                  | ANDAND EXPR_ESSION
+                  | EQEQ EXPR_ESSION
+                  | GT EXPR_ESSION
+                  | GTE EXPR_ESSION
+                  | LT EXPR_ESSION
+                  | LTE EXPR_ESSION
+                  | NE EXPR_ESSION
+                  ;
+
+FUNCTION_CALL   : ID ASSIGNMENT ID LP IN_PARAMS RP
+                | INT_ARRAY_EXP  ASSIGNMENT ID LP IN_PARAMS RP
+                ;
+
+IN_PARAMS       : EXPR_ESSION NEXT_PARAM
+                |
+                ;
+
+NEXT_PARAM  :   COMMA IN_PARAMS
+            |
+            ;
+
+
+******/
+
+
 
 
 %%
