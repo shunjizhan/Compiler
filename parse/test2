@@ -1,0 +1,184 @@
+procedure foo() return integer{
+return 0;
+}
+procedure bar() return integer{return 0;
+}
+procedure baz(num:integer) return integer{return 0;
+}
+procedure hello(boolean:bool) return integer{return 0;
+}
+procedure start(num:integer; boolean:bool) return integer{
+return 0;
+}
+procedure Variables() return integer{
+	var a,b,c:integer;
+	var h,g:bool;
+	return 0;
+}
+procedure Assign() return integer{
+	var a,b,c:integer;
+return 0;
+}
+procedure ALL() return integer{
+
+
+	procedure Hello() return integer{
+	return 0;
+	}
+	procedure hi(a:integer) return integer{
+	return 0;
+	}
+	procedure l(g:bool;g:integer) return bool{
+		
+
+		procedure hi(a:integer) return integer{
+		return 0;
+		}
+
+		var a,g:integer;
+		var g,t:bool;
+		return 0;
+	}
+		var a,b,c:integer;
+	var h,g:bool;
+return 0;
+}
+procedure hey() return integer{
+	var a:bool;
+return 0;
+}
+procedure to(g:integer) return bool{
+	var g:bool;
+return 0;
+}
+procedure Main() return integer{
+	procedure goob() return integer{
+	return 0;
+	}
+	var agh:integer;
+	var ghlo:bool;
+
+return 0;
+}
+procedure Hello(p:bool;g:integer) return bool{
+
+
+	procedure bye(p:integer;g:bool;l:bool) return integer{
+
+		procedure foo() return integer{
+return 0;
+		}
+		procedure bar() return bool{
+			procedure baz(num:integer) return integer{return 0;
+			}return 0;
+		}
+		procedure baz(num:integer) return integer{return 0;
+		}
+
+				var fgg,h:integer;
+		var fgg,h:integer; 
+		var fjdfidf, ogjfd:bool;
+return 0;
+}
+
+	var fgg,h:integer;
+	var fgg,h:integer;
+		var g:bool;
+		var t:integer;
+	return 0;
+}
+					
+				
+				
+                                                                     
+                                                                     
+                                                                     
+                                             
+procedure test(t:integer; a:bool) return  integer
+{
+
+
+        procedure inside() return  bool{
+return 0;
+        }
+                var ID2 : integer;
+        var ID3, ID4 : bool;
+return 0;
+}
+
+procedure newtest() return  integer
+{
+        var a : integer;
+        var b : intptr[100];
+        var d, c : intptr[100];
+       return 0;
+}
+
+procedure foo(i : integer; j : integer; k : integer) return integer
+{return 0;
+}
+
+procedure foo() return integer
+        {
+return 0;
+        }
+
+        procedure Main() return integer
+        {
+            var a : integer;
+            var b : bool;
+            var c: integer;
+            return 0;
+        }
+procedure foo(i : integer; j : integer; k : integer) return integer
+        {
+            procedure fee(l : integer; m : bool; n : integer) return bool
+            {return 0;
+            }
+            return 0;
+        }
+procedure foo() return integer { return 0; }
+        procedure foo2() return integer {return 0; }
+        procedure f234() return integer { return 0;}
+procedure foo(i:integer; j:bool; k:integer) return integer {return 0; }
+        procedure fee(a:integer; b:integer) return integer { return 0;}
+        procedure fie() return bool {return 0;  }
+procedure foo(i:integer; j:integer; k:integer) return integer
+        {
+            
+            
+            procedure square(t:integer) return integer 
+            {
+                var temp : integer;
+                var i : integer;
+                var m, n : bool;
+                var o : intptr[100];
+                return 0;
+            }
+
+            var total : integer; 
+            return 0;
+            
+        }
+
+procedure foo() return integer { 
+var a, b : intptr[100];
+            var c : integer;
+return 0;
+}
+procedure foo() return integer { 
+return 0;
+}
+procedure foo() return integer { 
+    var c : integer;
+return 0;
+}
+procedure first(a : integer; b: bool) return bool {
+return 0;
+}
+procedure Main() return integer {
+ var x, y : integer;
+ var z : bool;
+ return 0;
+}
+		

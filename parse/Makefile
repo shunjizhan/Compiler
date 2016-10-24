@@ -48,9 +48,12 @@ test_grammar: csimple
 	./csimple < test.3
 	./csimple < test.4
 
-test_no_body: csimple	# referenced to ramonrovirosa's tests on github
+# referenced to ramonrovirosa's tests on github
+test_no_body: csimple	
 	./csimple < test1
 
+test_no_statement: csimple	
+	./csimple < test2
 
 
 

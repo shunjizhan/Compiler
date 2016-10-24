@@ -89,15 +89,59 @@ para_more   : 	SEMI para_list
             |
             ;
 
-type    : 	BOOL
-        | 	CHAR
-        | 	INTEGER
-        | 	CHARPTR
-        | 	INTPTR
-        ;
+type   		: 	BOOL
+       		| 	CHAR
+      		| 	INTEGER
+       		| 	CHARPTR
+       		| 	INTPTR
+      		;
 
-body_of_p	:
+body_of_p	:	p_nest var_dec statements return
 			;
+
+p_nest		:	LBRACE RBRACE p_nest
+			|	LBRACE body_of_p RBRACE p_nest
+			|	procedure p_nest
+			|	
+			;
+
+var_dec 	:	VAR ID id_more COLON var_type SEMI var_dec
+			|
+			;
+
+var_type	:	STRING index
+			|   INTPTR index
+			|	BOOL
+			|	CHAR
+			|	INTEGER
+			;
+
+index		:	LBRAKET int_literal RBRAKET
+			;
+
+int_literal :	INT   			/* ?????????????? */
+			;
+
+statements 	:	
+			;
+
+return 		: 	RETURN return_type SEMI
+			;
+
+return_type : 	TRUE
+       		| 	FALSE
+       		|	C        /* ?????????????? */
+      		| 	INT
+       		| 	charptr  /* ?????????????? */
+       		| 	intptr   /* ?????????????? */
+      		;
+
+charptr 	:
+			;
+
+intptr 		:
+			;
+
 
 /*****
 
