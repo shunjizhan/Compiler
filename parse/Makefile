@@ -38,5 +38,17 @@ main.o: parser.hpp
 clean:
 	rm -f $(RMFILES)
 
-test: csimple
-	./csimple < test
+
+test_token: csimple
+	./csimple < test_token
+
+
+
+
+
+
+
+
+
+
+
