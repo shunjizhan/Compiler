@@ -9,7 +9,7 @@
     void yyerror(const char *);
 %}
 
-/** WRITE ME:
+/** WRITE ME:sudo apt-get install bison
  *  Put any definitions you need here. Add your own regular expressions
  *  below for ALL tokens defined in the manual. You can choose not to use
  *  definitions here.
@@ -30,20 +30,19 @@ bool  { return BOOL; }
 char  { return CHAR; }  
 integer  { return INTEGER; }
 string  { return STRING; }
-intptr  { return INTP; }
-charptr  { return CHARP; }
+intptr  { return INTPTR; }
+charptr  { return CHARPTR; }
 if  { return IF; }
 else  { return ELSE; }
 while  { return WHILE; }
 var  { return VAR; }
-procedure  { return PRO; }
+procedure  { return PROCEDURE; }
 return  { return RETURN; }
-null  { return NULL; }
 
-"&&"  { return AND2; }
+"&&"  { return ANDAND; }
 "/"  { return SLASH; }
 "="  { return EQUAL; }
-"=="  { return EQUAL2; }
+"=="  { return EQEQ; }
 ">"  { return BIGER; }
 ">="  { return  BIGERE; }
 "<"  { return LESS; }
@@ -51,7 +50,7 @@ null  { return NULL; }
 "-"  { return MINUS; }
 "!"  { return NOT; }
 "!="  { return NOTEQUAL; }
-"||"  { return OR2; }
+"||"  { return OROR; }
 "+"  { return PLUS; }
 "*"  { return TIMES; }
 "&"  { return ADDRESS; }
@@ -84,6 +83,8 @@ false  { return FALSE; }
 [ \t\n]             ; /* skip whitespace */
 
 .                   yyerror((char *) "invalid character");
+
+
 
 %%
 

@@ -37,3 +37,6 @@ main.o: parser.hpp
 
 clean:
 	rm -f $(RMFILES)
+
+test: csimple
+	./csimple < test.1

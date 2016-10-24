@@ -11,11 +11,62 @@
 %error-verbose
 
 %start Start
+%token BOOL
+%token CHAR
+%token INTEGER
+%token STRING
+%token INTPTR
+%token CHARPTR
+%token IF
+%token ELSE
+%token WHILE
+%token VAR
+%token PROCEDURE
+%token RETURN
+
+%token ANDAND
+%token SLASH
+%token EQUAL
+%token EQEQ
+%token BIGER
+%token BIGERE
+%token LESS
+%token LESSE
+%token MINUS
+%token NOT
+%token NOTEQUAL
+%token OROR
+%token PLUS
+%token TIMES
+%token ADDRESS
+%token DEREF
+
+%token SEMI
+%token COLON
+%token COMMA
+%token OR
+%token LBRACE
+%token RBRACE
+%token LP
+%token RP
+%token LBRAKET
+%token RBRAKET
+
+%token C
+%token TRUE
+%token FALSE
+%token INT
+%token ID
+
+
 
 %%
 
-start   :
+Start   :
         ;
+
+
+%%
 
 /** You shall not pass!
  *  You should not  have to do or edit anything past this.
