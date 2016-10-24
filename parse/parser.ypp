@@ -122,8 +122,38 @@ index		:	LBRAKET int_literal RBRAKET
 int_literal :	INT   			/* ?????????????? */
 			;
 
-statements 	:	
+statements  :
 			;
+
+statements 	:	assignment
+			|	f_call
+			|	if
+			|	if_else
+			|	while
+			|	code_block
+			|
+			;
+
+assignment 	:
+			;
+
+f_call 		:
+			;
+
+if 			:
+			;
+
+if_else 	:
+			;
+
+while 		:
+			;
+
+code_block	:
+			;
+
+
+
 
 return 		: 	RETURN return_type SEMI
 			;
@@ -150,9 +180,6 @@ INT_ARRAY : INTARRAY LEFTBRACKET INTEGER RIGHTBRACKET
 INT_ARRAY_EXP: ID LEFTBRACKET EXPR_ESSION RIGHTBRACKET
              ;
 
-R_T     : type
-        ;
-
 B_O_F   : VAR_DECLERATIONS BODY_CHOICE RETURN_
         ;
 
@@ -165,17 +192,6 @@ BODY_STATEMENTS :   STATEMENTS_   BODY_STATEMENTS
                 |
                 ;
 
-VAR_DECLERATIONS : VAR_DEC VAR_DECLERATIONS
-                 |
-                 ;
-
-VAR_DEC          : VAR ID MULT_DEC COLON type_2 SEMICOLON
-                 ;
-
-MULT_DEC :   COMMA ID MULT_DEC
-            |COMMA INT_ARRAY MULT_DEC
-            |
-            ;
 
 STATEMENTS_  : ASIGN_MENT SEMICOLON 
              | FUNCTION_CALL SEMICOLON
