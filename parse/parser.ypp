@@ -67,14 +67,14 @@ Start   :	BOOL CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  VAR PROCEDURE R
         ;
 ***/
 
-Start   	: 	PROCEDURE procedure {printf("accepted!\n");}
+Start   	: 	procedure p_more {printf("accepted!\n");}
         	;
 
-procedure   : 	PROCEDURE procedure
+p_more  	: 	procedure p_more
         	| 
         	;
 
-procedure   :   ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+procedure   :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
         	;
 
 para_list   : 	ID id_more COLON type para_more

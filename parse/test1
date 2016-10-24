@@ -1,33 +1,33 @@
 procedure foo() return integer{
 
 }
-procedure bar() return int{
+procedure bar() return integer{
 }
-procedure baz(num:int) return int{
+procedure baz(num:integer) return integer{
 }
-procedure hello(boolean:bool) return int{
+procedure hello(boolean:bool) return integer{
 }
-procedure start(num:int, boolean:bool) return int{
+procedure start(num:integer; boolean:bool) return integer{
 }
-procedure Variables() return int{
+procedure Variables() return integer{
 
 }
-procedure Assign() return int{
+procedure Assign() return integer{
 
 }
-procedure ALL() return int{
+procedure ALL() return integer{
 
 }
-procedure hey() return int{
+procedure hey() return integer{
 
 }
-procedure to(g:int) return bool{
+procedure to(g:integer) return bool{
 
 }
-procedure Main() return int{
+procedure Main() return integer{
 
 }
-procedure Hello(p:bool,g:int) return bool{
+procedure Hello(p:bool;g:integer) return bool{
 
 }
 					
@@ -37,57 +37,57 @@ procedure Hello(p:bool,g:int) return bool{
                                                                      
                                                                   
                                              
-procedure test(t:int, a:bool) return int
+procedure test(t:integer; a:bool) return integer
 {
 
 
 }
 
-procedure newtest() return int
+procedure newtest() return integer
 {
     
 }
 
-procedure foo(i : int, j : int, k : int) return int
+procedure foo(i : integer; j : integer; k : integer) return integer
 {
 }
 
-procedure foo()  return  int
+procedure foo()  return  integer
         {
             
         }
-        procedure Main()  return int
+        procedure Main()  return integer
         {
             
         }
-procedure foo(i : int, j : int, k : int)  return  int
+procedure foo(i : integer; j : integer; k : integer)  return  integer
         {
       
         }
-procedure foo()  return int { }
-        procedure foo2()  return int {}
-        procedure f234()  return  int { }
-procedure foo(i:int, j:bool, k:int)  return int {  }
-        procedure fee(a:int, b:int)  return int {  }
+procedure foo()  return integer { }
+        procedure foo2()  return integer {}
+        procedure f234()  return  integer { }
+procedure foo(i:integer; j:bool; k:integer)  return integer {  }
+        procedure fee(a:integer; b:integer)  return integer {  }
         procedure fie()  return  bool { }
-procedure foo(i:int, j:int, k:int)  return  int
+procedure foo(i:integer; j:integer; k:integer)  return  integer
         {
            
         }
 
-procedure foo()  return  int { 
+procedure foo()  return  integer { 
 
 }
-procedure foo()  return  int { 
+procedure foo()  return  integer { 
 
 }
-procedure foo()  return  int { 
+procedure foo()  return  integer { 
   
 }
-procedure first(a : int, b: bool) return  bool {
+procedure first(a : integer; b: bool) return  bool {
 
 }
-procedure Main()  return  int {
+procedure Main()  return  integer {
 
 }
 				

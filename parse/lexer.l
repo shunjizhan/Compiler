@@ -67,8 +67,6 @@ return  { return RETURN; }
 "["  { return LBRAKET; }
 "]"  { return RBRAKET; }
 
-[a-zA-Z]  { return C; }		/* character */ /*???????????*/
-
 true  { return TRUE; }
 false  { return FALSE; }
 
@@ -79,6 +77,8 @@ false  { return FALSE; }
 [0-1]+[b]  { return INT; } 	   /* binary */
 
 [a-zA-Z][a-zA-Z0-9_]*  { return ID; } /* identifier */
+
+[a-zA-Z]  { return C; }		/* character */ /*???????????*/
 
 [ \t\n]             ; /* skip whitespace */
 
