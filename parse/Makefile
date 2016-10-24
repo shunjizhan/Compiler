@@ -39,4 +39,4 @@ clean:
 	rm -f $(RMFILES)
 
 test: csimple
-	./csimple < test.1
+	./csimple < test
