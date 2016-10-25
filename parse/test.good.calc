@@ -13,8 +13,6 @@ x = 4 + (true == 5 % 56 + 4) / x;
 8) x = |4|;
 9) x = |true|;
 
-procedure foo() return integer { return 0; }
-
  x = expr;                /% lhs is variable identifier %/
  string[expr] = expr;     /% lhs is string element %/
  ^ptr = expr;             /% lhs is dereferenced pointer %/

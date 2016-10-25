@@ -96,6 +96,8 @@ type   		: 	BOOL
        		| 	INTPTR
       		;
 
+/*------------------ body of procedure ----------------------*/
+
 body_of_p	:	p_nest var_dec statements return
 			;
 
@@ -109,24 +111,13 @@ var_dec 	:	VAR ID id_more COLON var_type SEMI var_dec
 			|
 			;
 
-var_type	:	STRING index
-			|   INTPTR index
-			|	BOOL
-			|	CHAR
-			|	INTEGER
-			;
+/*---------------------- statements -------------------------*/
 
-index		:	LBRAKET int_literal RBRAKET
-			;
+statements	:	statement statements
+			|
 
-int_literal :	INT   			/* ?????????????? */
-			;
-
-statements  :
-			;
-
-statements 	:	assignment
-			|	f_call
+statement 	:	assignment SEMI
+			|	f_call SEMI
 			|	if
 			|	if_else
 			|	while
@@ -134,25 +125,80 @@ statements 	:	assignment
 			|
 			;
 
-assignment 	:
+assignment  : 	lhs EQUAL expression SEMI
+            | 	lhs EQUAL str_literal SEMI
+            ;
+
+f_call   	: 	ID EQUAL ID LP call_para RP
+            | 	intptr_exp EQUAL ID LP call_para RP
+            ;
+
+if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
 			;
 
-f_call 		:
+if_else 	:	if ELSE LBRACE b_o_n_s RBRACE
 			;
 
-if 			:
-			;
-
-if_else 	:
-			;
-
-while 		:
+while 		:	IF LP expression RP LBRACE b_o_n_s RBRACE
 			;
 
 code_block	:
 			;
 
+/*------------------------------------------------------------*/
 
+var_type	:	STRING LBRAKET int_literal RBRAKET
+			|   INTPTR LBRAKET int_literal RBRAKET
+			|	BOOL
+			|	CHAR
+			|	INTEGER
+			;
+
+
+int_literal :	expression   			/* ?????????????? */
+			;
+
+
+call_para   : 	expression para_more
+            |
+            ;
+
+para_more   :   COMMA para_more
+            |
+            ;
+
+expression 	:
+			;
+
+single 		: ID
+            | TRUE
+            | FALSE
+            | INT
+            | intptr
+            | strptr
+            | operators single
+            ;
+
+intptr		:	ID LBRACKET expression RBRACKET			/* ?????????????? */
+			;
+
+strptr		:	ID LBRACKET expression RBRACKET			/* ?????????????? */
+			;
+
+operators 	: 	operator operators
+			|
+			;
+
+operator 	:	NOT
+			|	PLUS
+			|	MINUS
+			|	ADDRESS
+			|	DEREF
+			;
+
+b_o_n_s 	:   statement   b_o_n_s
+            |
+            ;
 
 
 return 		: 	RETURN return_type SEMI
@@ -166,106 +212,60 @@ return_type : 	TRUE
        		| 	intptr   /* ?????????????? */
       		;
 
-charptr 	:
-			;
-
-intptr 		:
-			;
-
 
 /*****
 
-INT_ARRAY : INTARRAY LEFTBRACKET INTEGER RIGHTBRACKET
+INT_ARRAY : INTARRAY LBRACKET INTEGER RBRACKET
           ;
-INT_ARRAY_EXP: ID LEFTBRACKET EXPR_ESSION RIGHTBRACKET
-             ;
 
 B_O_F   : VAR_DECLERATIONS BODY_CHOICE RETURN_
         ;
 
-BODY_CHOICE   : MULT_FUNCTIONS BODY_STATEMENTS
+BODY_CHOICE   : MULT_FUNCTIONS b_o_n_s
               ;
 MULT_FUNCTIONS: F MULT_FUNCTIONS
               |
               ;
-BODY_STATEMENTS :   STATEMENTS_   BODY_STATEMENTS
-                |
-                ;
 
-
-STATEMENTS_  : ASIGN_MENT SEMICOLON 
-             | FUNCTION_CALL SEMICOLON
-             | IF_
-             | IF_ELSE
-             | FOR_
-             ;
-
-RETURN_     : RETURN EXPR_ESSION SEMICOLON
+assignment  : ID EQUAL expression
+            | intptr_exp EQUAL expression
             ;
 
-IF_         : IF LP EXPR_ESSION RP LBRACE BODY_STATEMENTS RBRACE
 
-IF_ELSE     : IF_ ELSE LBRACE BODY_STATEMENTS RBRACE
-
-FOR_        : FOR LP FOR_PARAMS RP LBRACE BODY_STATEMENTS RBRACE
+RETURN_     : RETURN expression SEMICOLON
             ;
 
-FOR_PARAMS  : FOR_ASIGN LP EXPR_ESSION RP FOR_ASIGN
+
+
+
+
+expression : MULT_EXPRESSION
+            | LP expression RP OPE_RATOR
+            | NOT LP expression RP OPE_RATOR
+            | ABSOLUTEVALUE expression ABSOLUTEVALUE OPE_RATOR
             ;
 
-FOR_ASIGN   :   ASIGN_MENT SEMICOLON
-             |
-             ;
 
-ASIGN_MENT  : ID ASSIGNMENT EXPR_ESSION
-            | INT_ARRAY_EXP ASSIGNMENT EXPR_ESSION
-            ;
-
-EXPR_ESSION : MULT_EXPRESSION
-            | LP EXPR_ESSION RP OPE_RATOR
-            | NOT LP EXPR_ESSION RP OPE_RATOR
-            | ABSOLUTEVALUE EXPR_ESSION ABSOLUTEVALUE OPE_RATOR
-            ;
-
-SINGLE_EXPRESSION : MINUS INTEGER %prec NOT
-                  | INTEGER
-                  | TRUE
-                  | FALSE
-                  | ID
-                  | INT_ARRAY_EXP
-                  | NOT SINGLE_EXPRESSION
-                  ;
 
                   
-MULT_EXPRESSION   : SINGLE_EXPRESSION OPE_RATOR
+MULT_EXPRESSION   : single OPE_RATOR
                   ;
 
 OPE_RATOR         : 
-                  | PLUS EXPR_ESSION
-                  | MINUS EXPR_ESSION
-                  | TIMES EXPR_ESSION
-                  | DIVIDE EXPR_ESSION
-                  | OROR EXPR_ESSION
-                  | ANDAND EXPR_ESSION
-                  | EQEQ EXPR_ESSION
-                  | GT EXPR_ESSION
-                  | GTE EXPR_ESSION
-                  | LT EXPR_ESSION
-                  | LTE EXPR_ESSION
-                  | NE EXPR_ESSION
+                  | PLUS expression
+                  | MINUS expression
+                  | TIMES expression
+                  | DIVIDE expression
+                  | OROR expression
+                  | ANDAND expression
+                  | EQEQ expression
+                  | GT expression
+                  | GTE expression
+                  | LT expression
+                  | LTE expression
+                  | NE expression
                   ;
 
-FUNCTION_CALL   : ID ASSIGNMENT ID LP IN_PARAMS RP
-                | INT_ARRAY_EXP  ASSIGNMENT ID LP IN_PARAMS RP
-                ;
-
-IN_PARAMS       : EXPR_ESSION NEXT_PARAM
-                |
-                ;
-
-NEXT_PARAM  :   COMMA IN_PARAMS
-            |
-            ;
 
 
 ******/
