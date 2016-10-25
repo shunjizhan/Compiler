@@ -1,1 +1,32 @@
-Proj2 CS160
+first I defined all tokens I will be using in lexer.l, so that all legal tokens will return something that represent it. Then I add all those returned tokens' names to parser.ypp using %token, and added their precedence using %left and %right. This is my basic setup.
+
+After setting up all tokens, in order to test if all tokens can be get correctly from input, I put a grammar like this in parser: 
+
+
+Start   :	BOOL CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  VAR PROCEDURE RETURN ANDAND SLASH EQUAL EQEQ BIGER BIGERE LESS LESSE MINUS NOT NOTEQUAL OROR PLUS TIMES ADDRESS DEREF SEMI COLON COMMA OR LBRACE RBRACE LP RP LBRAKET RBRAKET   C C C C C TRUE FALSE INT  INT INT INT  INT  INT INT INT INT INT  INT INT INT INT  INT  INT INT INT INT INT  INT  INT INT INT INT ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID  ID ID ID ID ID ID ID{printf("accepted!\n")}
+        ;
+
+
+with the input file "test_token" like this:
+
+
+bool char integer string intptr charptr if else while var procedure re
+turn && / = == > >= < <= - ! != || + * & ^  ;  : , | { } ( ) [ ] a u D
+ B P true false 23123  433230 0 0x1 0x123123 0xF 0xDDFFA 0x56343FE 0xA
+BCDFE0987126534 0X8 0X8473241 0XFAA 0X9183653FEDA 0XABCCFE082712 01 05
+43 00212312 007 00000  0b 1b 0000000b 111111b 0101101010b 1010110101b 
+aa hh a2 a7837463 AA T633 S0 Sa Fgfdg GGDERE dH dYHDHD dfsdfdfFDFD U_B
+Hbg  h_ a_2 a78_37_4_63 T633 S0 Sa 
+Fgfdg G_GD__ERE dH d_YHDHD dfsd_fd_fFD_FD UBH__bg a2 a7_837_463 T6_33 
+S0  Sa Fgfdg GGDE_RE dH dYH_D_H_D_ dfsd______fdfFDFD UB_Hb_g 
+
+
+and it turned out to be that all tokens are interpreted correctly. Until now I am confirmed that the tokens have no problem, and I can start to implement my grammar.
+
+I used three steps to develop my grammar little by little. 
+
+First stage in to accept all valid procedures which don't have body (which forms the most basic structure of Csimple). I test it by "make test_no_body", which will input a file "test_no_body" to the program.
+
+Second, after the grammar accept procedures without body, I started to add grammar so it further accept two parts of the body, including precedure declarations and variable declarations. Now the only thing that cann't be recognized is statements, which is the hard part. I tested this by "make test_no_statement, which input a file "test_no_statement" to the program.
+
+Third, I added grammar so it can recognize statements, and thus the whole Csimple language.

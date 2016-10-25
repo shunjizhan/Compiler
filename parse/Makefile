@@ -48,10 +48,10 @@ test_grammar: csimple
 
 # referenced to ramonrovirosa's tests on github
 test_no_body: csimple	# test for many procedures without body
-	./csimple < test1
+	./csimple < test_no_body
 
 test_no_statement: csimple	# test for many procedures without statements
-	./csimple < test2
+	./csimple < test_no_statement
 
 
 
