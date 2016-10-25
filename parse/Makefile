@@ -44,15 +44,13 @@ test_token: csimple
 
 test_grammar: csimple
 	./csimple < test.1
-	./csimple < test.2
-	./csimple < test.3
-	./csimple < test.4
+
 
 # referenced to ramonrovirosa's tests on github
-test_no_body: csimple	
+test_no_body: csimple	# test for many procedures without body
 	./csimple < test1
 
-test_no_statement: csimple	
+test_no_statement: csimple	# test for many procedures without statements
 	./csimple < test2
 
 

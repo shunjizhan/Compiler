@@ -26,7 +26,7 @@
 
 %%
 
-bool  { return BOOL; }
+boolean  { return BOOL; }
 char  { return CHAR; }  
 integer  { return INTEGER; }
 string  { return STRING; }
@@ -40,7 +40,7 @@ procedure  { return PROCEDURE; }
 return  { return RETURN; }
 
 "&&"  { return ANDAND; }
-"/"  { return SLASH; }
+"/"  { return DIVIDE; }
 "="  { return EQUAL; }
 "=="  { return EQEQ; }
 ">"  { return BIGER; }

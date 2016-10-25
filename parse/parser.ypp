@@ -59,6 +59,16 @@
 %token ID
 
 
+%left  OROR
+%left  ANDAND
+%left  EQEQ NOTEQUAL
+%left  BIGGER BIGGERE LESS LESSE 
+%left  PLUS MINUS
+%left  TIMES DIVIDE
+
+%right EQUAL
+%right NOT
+
 
 %%
 
@@ -101,9 +111,7 @@ type   		: 	BOOL
 body_of_p	:	p_nest var_dec statements return
 			;
 
-p_nest		:	LBRACE RBRACE p_nest
-			|	LBRACE body_of_p RBRACE p_nest
-			|	procedure p_nest
+p_nest		:	procedure p_nest
 			|	
 			;
 
@@ -111,27 +119,34 @@ var_dec 	:	VAR ID id_more COLON var_type SEMI var_dec
 			|
 			;
 
-/*---------------------- statements -------------------------*/
-
 statements	:	statement statements
-			|
-
-statement 	:	assignment SEMI
-			|	f_call SEMI
-			|	if
-			|	if_else
-			|	while
-			|	code_block
 			|
 			;
 
-assignment  : 	lhs EQUAL expression SEMI
-            | 	lhs EQUAL str_literal SEMI
+return 		: 	RETURN expression SEMI
+			;
+
+/*---------------------- statements -------------------------*/
+
+statement 	:	{printf("assignment\n");} assignment SEMI
+			|	{printf("f_call\n");}     f_call SEMI
+			|	{printf("if\n");}         if
+			|	{printf("if_else\n");}     if_else
+			|	{printf("while\n");}         while
+			|	{printf("code_block\n");}  code_block
+			|
+			;
+
+assignment  : 	lhs EQUAL expression 
+            | 	lhs EQUAL strptr 
             ;
 
-f_call   	: 	ID EQUAL ID LP call_para RP
-            | 	intptr_exp EQUAL ID LP call_para RP
+f_call   	: 	ID EQUAL func
+            | 	intptr EQUAL func /* intptr has ID as its first*/
             ;
+
+func		:	ID LP call_paras RP
+			;
 
 if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
 			;
@@ -139,13 +154,29 @@ if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
 if_else 	:	if ELSE LBRACE b_o_n_s RBRACE
 			;
 
-while 		:	IF LP expression RP LBRACE b_o_n_s RBRACE
+while 		:	WHILE LP expression RP LBRACE b_o_n_s RBRACE
 			;
 
-code_block	:
+b_o_n_s 	:   statement   b_o_n_s
+            |
+            ;
+
+code_block	:	LBRACE content RBRACE
+			;
+
+content		:	code_block2 var_dec code_block2 RBRACE code_block2
+			;
+
+code_block2	:	LBRACE content RBRACE
+			|
 			;
 
 /*------------------------------------------------------------*/
+
+lhs			: {printf("ID\n");}	    ID 
+			|	{printf("strptr\n");}  strptr	
+			|	{printf("DEREF\n");}   DEREF expression   		/* ?????????????? */
+			;
 
 var_type	:	STRING LBRAKET int_literal RBRAKET
 			|   INTPTR LBRAKET int_literal RBRAKET
@@ -159,34 +190,45 @@ int_literal :	expression   			/* ?????????????? */
 			;
 
 
-call_para   : 	expression para_more
+call_paras  : 	expression para_more
             |
             ;
 
-para_more   :   COMMA para_more
+para_more   :   COMMA call_paras
             |
             ;
 
-expression 	:
+expression 	: 	single single_more 
 			;
 
-single 		: ID
-            | TRUE
-            | FALSE
-            | INT
-            | intptr
-            | strptr
-            | operators single
-            ;
-
-intptr		:	ID LBRACKET expression RBRACKET			/* ?????????????? */
-			;
-
-strptr		:	ID LBRACKET expression RBRACKET			/* ?????????????? */
-			;
-
-operators 	: 	operator operators
+single_more	:	operator single single_more
 			|
+			;
+
+single 		: 	INT
+            | 	TRUE
+            | 	FALSE
+            | 	ID
+            | 	intptr
+            | 	strptr
+            | 	unarys single
+            ;
+
+intptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
+			;
+
+strptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
+			;
+
+unarys		:	unary unarys
+			|
+			;
+
+unary 		:	NOT
+			|	PLUS
+			|	MINUS
+			|	ADDRESS
+			|	DEREF
 			;
 
 operator 	:	NOT
@@ -194,46 +236,22 @@ operator 	:	NOT
 			|	MINUS
 			|	ADDRESS
 			|	DEREF
+			|	TIMES
+			|	DIVIDE
 			;
 
-b_o_n_s 	:   statement   b_o_n_s
-            |
-            ;
 
 
-return 		: 	RETURN return_type SEMI
-			;
 
-return_type : 	TRUE
-       		| 	FALSE
-       		|	C        /* ?????????????? */
-      		| 	INT
-       		| 	charptr  /* ?????????????? */
-       		| 	intptr   /* ?????????????? */
-      		;
+
 
 
 /*****
 
-INT_ARRAY : INTARRAY LBRACKET INTEGER RBRACKET
+INT_ARRAY : INTARRAY LBRAKET INTEGER RBRAKET
           ;
 
-B_O_F   : VAR_DECLERATIONS BODY_CHOICE RETURN_
-        ;
 
-BODY_CHOICE   : MULT_FUNCTIONS b_o_n_s
-              ;
-MULT_FUNCTIONS: F MULT_FUNCTIONS
-              |
-              ;
-
-assignment  : ID EQUAL expression
-            | intptr_exp EQUAL expression
-            ;
-
-
-RETURN_     : RETURN expression SEMICOLON
-            ;
 
 
 
