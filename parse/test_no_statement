@@ -5,14 +5,17 @@ procedure bar() return integer{return 0;
 }
 procedure baz(num:integer) return integer{return 0;
 }
-procedure hello(boolean:bool) return integer{return 0;
+procedure hello(
+bool:
+boolean
+) return integer{return 0;
 }
-procedure start(num:integer; boolean:bool) return integer{
+procedure start(num:integer; bool:boolean) return integer{
 return 0;
 }
 procedure Variables() return integer{
 	var a,b,c:integer;
-	var h,g:bool;
+	var h,g:boolean;
 	return 0;
 }
 procedure Assign() return integer{
@@ -28,7 +31,7 @@ procedure ALL() return integer{
 	procedure hi(a:integer) return integer{
 	return 0;
 	}
-	procedure l(g:bool;g:integer) return bool{
+	procedure l(g:boolean;g:integer) return boolean{
 		
 
 		procedure hi(a:integer) return integer{
@@ -36,19 +39,19 @@ procedure ALL() return integer{
 		}
 
 		var a,g:integer;
-		var g,t:bool;
+		var g,t:boolean;
 		return 0;
 	}
 		var a,b,c:integer;
-	var h,g:bool;
+	var h,g:boolean;
 return 0;
 }
 procedure hey() return integer{
-	var a:bool;
+	var a:boolean;
 return 0;
 }
-procedure to(g:integer) return bool{
-	var g:bool;
+procedure to(g:integer) return boolean{
+	var g:boolean;
 return 0;
 }
 procedure Main() return integer{
@@ -56,19 +59,19 @@ procedure Main() return integer{
 	return 0;
 	}
 	var agh:integer;
-	var ghlo:bool;
+	var ghlo:boolean;
 
 return 0;
 }
-procedure Hello(p:bool;g:integer) return bool{
+procedure Hello(p:boolean;g:integer) return boolean{
 
 
-	procedure bye(p:integer;g:bool;l:bool) return integer{
+	procedure bye(p:integer;g:boolean;l:boolean) return integer{
 
 		procedure foo() return integer{
 return 0;
 		}
-		procedure bar() return bool{
+		procedure bar() return boolean{
 			procedure baz(num:integer) return integer{return 0;
 			}return 0;
 		}
@@ -77,13 +80,13 @@ return 0;
 
 				var fgg,h:integer;
 		var fgg,h:integer; 
-		var fjdfidf, ogjfd:bool;
+		var fjdfidf, ogjfd:boolean;
 return 0;
 }
 
 	var fgg,h:integer;
 	var fgg,h:integer;
-		var g:bool;
+		var g:boolean;
 		var t:integer;
 	return 0;
 }
@@ -94,15 +97,15 @@ return 0;
                                                                      
                                                                      
                                              
-procedure test(t:integer; a:bool) return  integer
+procedure test(t:integer; a:boolean) return  integer
 {
 
 
-        procedure inside() return  bool{
+        procedure inside() return  boolean{
 return 0;
         }
                 var ID2 : integer;
-        var ID3, ID4 : bool;
+        var ID3, ID4 : boolean;
 return 0;
 }
 
@@ -126,13 +129,13 @@ return 0;
         procedure Main() return integer
         {
             var a : integer;
-            var b : bool;
+            var b : boolean;
             var c: integer;
             return 0;
         }
 procedure foo(i : integer; j : integer; k : integer) return integer
         {
-            procedure fee(l : integer; m : bool; n : integer) return bool
+            procedure fee(l : integer; m : boolean; n : integer) return boolean
             {return 0;
             }
             return 0;
@@ -140,9 +143,9 @@ procedure foo(i : integer; j : integer; k : integer) return integer
 procedure foo() return integer { return 0; }
         procedure foo2() return integer {return 0; }
         procedure f234() return integer { return 0;}
-procedure foo(i:integer; j:bool; k:integer) return integer {return 0; }
+procedure foo(i:integer; j:boolean; k:integer) return integer {return 0; }
         procedure fee(a:integer; b:integer) return integer { return 0;}
-        procedure fie() return bool {return 0;  }
+        procedure fie() return boolean {return 0;  }
 procedure foo(i:integer; j:integer; k:integer) return integer
         {
             
@@ -151,7 +154,7 @@ procedure foo(i:integer; j:integer; k:integer) return integer
             {
                 var temp : integer;
                 var i : integer;
-                var m, n : bool;
+                var m, n : boolean;
                 var o : intptr[100];
                 return 0;
             }
@@ -173,12 +176,12 @@ procedure foo() return integer {
     var c : integer;
 return 0;
 }
-procedure first(a : integer; b: bool) return bool {
+procedure first(a : integer; b: boolean) return boolean {
 return 0;
 }
 procedure Main() return integer {
  var x, y : integer;
- var z : bool;
+ var z : boolean;
  return 0;
 }
 		

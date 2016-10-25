@@ -11,7 +11,7 @@
 %error-verbose
 
 %start Start
-%token BOOL
+%token BOOLEAN
 %token CHAR
 %token INTEGER
 %token STRING
@@ -99,7 +99,7 @@ para_more   : 	SEMI para_list
             |
             ;
 
-type   		: 	BOOL
+type   		: 	BOOLEAN
        		| 	CHAR
       		| 	INTEGER
        		| 	CHARPTR
@@ -119,8 +119,13 @@ var_dec 	:	VAR ID id_more COLON var_type SEMI var_dec
 			|
 			;
 
+/*
 statements	:	statement statements
 			|
+			;
+*/
+
+statements	:
 			;
 
 return 		: 	RETURN expression SEMI
@@ -180,7 +185,7 @@ lhs			: {printf("ID\n");}	    ID
 
 var_type	:	STRING LBRAKET int_literal RBRAKET
 			|   INTPTR LBRAKET int_literal RBRAKET
-			|	BOOL
+			|	BOOLEAN
 			|	CHAR
 			|	INTEGER
 			;

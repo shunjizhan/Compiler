@@ -26,7 +26,7 @@
 
 %%
 
-boolean  { return BOOL; }
+boolean  { return BOOLEAN; }
 char  { return CHAR; }  
 integer  { return INTEGER; }
 string  { return STRING; }
