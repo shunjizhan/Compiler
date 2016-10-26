@@ -83,7 +83,6 @@ false  { return FALSE; }
 [ \t\n]             ; /* skip whitespace */
 [/%][0-9a-zA-Z]*[%/]			;	/* comments */
 
-[]
 
 .                   yyerror((char *) "invalid character");
 
