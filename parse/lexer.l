@@ -78,10 +78,13 @@ false  { return FALSE; }
 
 [a-zA-Z][a-zA-Z0-9_]*  { return ID; } /* identifier */
 
-[a-zA-Z]  { return C; }		/* character */ /*???????????*/
+"\""[^\"]*"\""  { return STR; }		/* string */ /*???????????*/
+"'"[a-zA-Z]"'"  { return C; }		/* character */ /*???????????*/
+
 
 [ \t\n]             ; /* skip whitespace */
-[/%][0-9a-zA-Z]*[%/]			;	/* comments */
+
+"/*"([^\$]|\$[^\]])*"*/" 			;	/* comments */
 
 
 .                   yyerror((char *) "invalid character");

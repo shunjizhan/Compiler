@@ -53,6 +53,7 @@
 %token RBRAKET
 
 %token C
+%token STR
 %token TRUE
 %token FALSE
 %token INT
@@ -74,10 +75,10 @@
 
 %%
 
-/***
-Start   :	BOOL CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  VAR PROCEDURE RETURN ANDAND SLASH EQUAL EQEQ BIGER BIGERE LESS LESSE MINUS NOT NOTEQUAL OROR PLUS TIMES ADDRESS DEREF SEMI COLON COMMA OR LBRACE RBRACE LP RP LBRAKET RBRAKET   C C C C C TRUE FALSE INT  INT INT INT  INT  INT INT INT INT INT  INT INT INT INT  INT  INT INT INT INT INT  INT  INT INT INT INT ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID  ID ID ID ID ID ID ID{printf("accepted!\n")}
+/*
+Start   :	C C STR STR BOOLEAN CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  VAR PROCEDURE RETURN ANDAND SLASH EQUAL EQEQ BIGER BIGERE LESS LESSE MINUS NOT NOTEQUAL OROR PLUS TIMES ADDRESS DEREF SEMI COLON COMMA OR LBRACE RBRACE LP RP LBRAKET RBRAKET   C C C C C TRUE FALSE INT  INT INT INT  INT  INT INT INT INT INT  INT INT INT INT  INT  INT INT INT INT INT  INT  INT INT INT INT ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID  ID ID ID ID ID ID ID{printf("accepted!\n")}
         ;
-***/
+*/
 
 Start   	: 	procedure p_more {printf("accepted!\n");}
         	;
@@ -137,23 +138,45 @@ statements	:	statement statements
 statement 	:	{printf("assignment\n");}  assignment  SEMI /* it only go into the first line */
 			/*|	{printf("f_call\n");}      f_call SEMI*/
 			|	{printf("if\n");}          if
-			/*|	{printf("if_else\n");}     if_else*/
 			|	{printf("while\n");}       while
 			|	{printf("code_block\n");}  code_block
 			;
 
-return 		: 	RETURN INT SEMI /* need to change to return expression*/
+return 		: 	RETURN expression SEMI /* need to change to return expression*/
 			;
 
 code_block	:	LBRACE var_dec statements  RBRACE
 			;
-			
+
  /*---------------------- assignment -------------------------*/
 
-assignment  : 	{printf("ID\n");}	    ID EQUAL expression 
-            /*| 	{printf("strptr\n");}   strptr EQUAL expression */
-            /*|	{printf("DEREF\n");}    DEREF expression EQUAL expression   ?????????????? */
+assignment 	: 	lhs EQUAL rhs;
+
+lhs 		:	ID lhs_more
+			|	{printf("DEREF\n");}    DEREF expression
+			;
+
+lhs_more 	:	{printf("strptr\n");} LBRAKET expression RBRAKET
+			|	{printf("ID\n");}
+			;
+
+rhs 		: 	expression
+			|	func_call
+			;
+
+
+/*
+assignment  :	lhs EQUAL expression 
+			|  	ID EQUAL expression
+			|	DEREF	EQUAL expression
+			| 	ID EQUAL ID LP call_paras RP  
+			|   strptr EQUAL ID LP call_paras RP
             ;
+*/
+
+
+func_call 	: 	ID LP call_paras RP  
+			;
 
 expression 	: 	single single_more 
 			;
@@ -168,7 +191,10 @@ single 		: 	ID
             | 	INT
             | 	strptr
             | 	unary single
+            |	STR
+            |	C
             ;
+
 /*
 unarys		:	unary unarys
 			|
@@ -197,12 +223,14 @@ strptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
  /*---------------------- function_call -------------------------*/
 
 /*
-f_call   	: 	f_call_lhs EQUAL ID LP call_paras RP    
+f_call   	: 	ID EQUAL ID LP call_paras RP  
+			|   strptr EQUAL ID LP call_paras RP  
             ;
 
 f_call_lhs	:	ID
-			|	strptr	intptr has ID as its first
+			|	strptr	
 			;
+*/
 
 call_paras  : 	expression para_more
             |
@@ -210,17 +238,15 @@ call_paras  : 	expression para_more
 
 para_more   :   COMMA call_paras
             ;
-*/
+
 
 
  /*---------------------- if else while -----------------------*/
 
 if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
+			| 	IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
 			;
-/*
-if_else 	:	if ELSE LBRACE b_o_n_s RBRACE
-			;
-*/
+
 while 		:	WHILE LP expression RP LBRACE b_o_n_s RBRACE
 			;
 
@@ -229,6 +255,27 @@ b_o_n_s 	:   statement   b_o_n_s
             ;
 
  /*---------------------- code block -----------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

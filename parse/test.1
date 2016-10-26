@@ -1,5 +1,30 @@
 procedure Main() return integer
 {
+        procedure foo( inc : integer ) return boolean 
+        {
+                m = m + inc;
+		return true;
+        }
+	
+	var j, k, m, n: integer; 
+	var x: string[19];
+	var b: boolean;
+
+	j = 2;
+	k = - j;
+	m = 100 - k * k;
+	 /*x[1] = foo( 1 ); */
+	/*n = printint( m );*/
+
+
+	x = "this is a string['5']\n";
+	x = "this is \"; x = "invalid";
+	/*x[1] = 'h';*/
+        return x[7+1];
+}
+
+procedure Main() return integer
+{
 	var j, k, m, n: integer; 
 	var o: boolean;
 
@@ -7,15 +32,25 @@ procedure Main() return integer
 	
 	k = - j;
 
+	{{}{}}{
+		m = 100 - k * k;
+		m = 100 - k * k;
+		{}
+		}
 	m = 100 - k * k;
-	m = 100 - k * k;
-	m = 100 - k * k;
-	m = 100 - k * k;
-	m = 100 - k * k;
-	m = 100 - k * k;
+	{{{m = 100 - k * k;}}}
 
-	/*n = printint( m );*/
+	{{{
+	{
+	m = 100 - k * k;
+	}
+	m = 100 - k * k;
+}}} 
+
+	 n = printint( m ); 
 
 	return 0;
 }
+
+
 

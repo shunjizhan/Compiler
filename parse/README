@@ -33,6 +33,9 @@ Third, I added grammar so it can recognize statements, and thus the whole Csimpl
 
 
 
-
+TODO:
+how to return STRING in lexer.l
+statement conflicts: if & if_else; f_call & assignment
+assignments conflicts: ID & strptr (how? Id & ID[expression])
 
 
