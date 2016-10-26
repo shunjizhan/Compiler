@@ -136,16 +136,19 @@ statements	:	statement statements
 
 statement 	:	{printf("assignment\n");}  assignment  SEMI /* it only go into the first line */
 			/*|	{printf("f_call\n");}      f_call SEMI*/
-			/*|	{printf("if\n");}          if*/
+			|	{printf("if\n");}          if
 			/*|	{printf("if_else\n");}     if_else*/
-			/*|	{printf("while\n");}       while*/
-			/*|	{printf("code_block\n");}  code_block*/
+			|	{printf("while\n");}       while
+			|	{printf("code_block\n");}  code_block
 			;
 
 return 		: 	RETURN INT SEMI /* need to change to return expression*/
 			;
 
-/*------------------------------------------------------------*/
+code_block	:	LBRACE var_dec statements  RBRACE
+			;
+			
+ /*---------------------- assignment -------------------------*/
 
 assignment  : 	{printf("ID\n");}	    ID EQUAL expression 
             /*| 	{printf("strptr\n");}   strptr EQUAL expression */
@@ -190,6 +193,44 @@ operator 	:	NOT
 
 strptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
 			;
+
+ /*---------------------- function_call -------------------------*/
+
+/*
+f_call   	: 	f_call_lhs EQUAL ID LP call_paras RP    
+            ;
+
+f_call_lhs	:	ID
+			|	strptr	intptr has ID as its first
+			;
+
+call_paras  : 	expression para_more
+            |
+            ;
+
+para_more   :   COMMA call_paras
+            ;
+*/
+
+
+ /*---------------------- if else while -----------------------*/
+
+if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
+			;
+/*
+if_else 	:	if ELSE LBRACE b_o_n_s RBRACE
+			;
+*/
+while 		:	WHILE LP expression RP LBRACE b_o_n_s RBRACE
+			;
+
+b_o_n_s 	:   statement   b_o_n_s
+            |
+            ;
+
+ /*---------------------- code block -----------------------*/
+
+
 
 
 

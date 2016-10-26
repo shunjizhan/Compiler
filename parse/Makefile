@@ -18,7 +18,7 @@ $(TARGET): parser.cpp lexer.cpp parser.hpp $(OBJS)
 
 # Rules
 %.cpp: %.ypp
-	$(YACC) -o $(@:%.o=%.d) $< --report=state
+	$(YACC) -o $(@:%.o=%.d) $< --report=all
 
 %.o: %.cpp
 	$(CPP) -o $@ -c $<

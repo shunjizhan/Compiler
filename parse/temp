@@ -3,12 +3,7 @@
 
 
 
-f_call   	: 	f_call_lhs EQUAL ID LP call_paras RP    
-            ;
 
-f_call_lhs	:	ID
-			|	strptr			/* intptr has ID as its first*/
-			;
 
 if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
 			;
@@ -38,32 +33,6 @@ code_block2	:	LBRACE content RBRACE
 
 
 
-call_paras  : 	expression para_more
-            |
-            ;
-
-para_more   :   COMMA call_paras
-            |
-            ;
-
-
-
-intptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
-			;
-
-strptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
-			;
-
-unarys		:	unary unarys
-			|
-			;
-
-unary 		:	NOT
-			|	PLUS
-			|	MINUS
-			|	ADDRESS
-			|	DEREF
-			;
 
 
 
@@ -71,4 +40,10 @@ unary 		:	NOT
 
 
 
-			
+
+
+
+
+
+
+
