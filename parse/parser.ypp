@@ -58,6 +58,8 @@
 %token INT
 %token ID
 
+%token CL
+%token CR
 
 %left  OROR
 %left  ANDAND
@@ -119,38 +121,37 @@ var_dec 	:	VAR ID id_more COLON var_type SEMI var_dec
 			|
 			;
 
+statements	:
+			;
 /*
 statements	:	statement statements
 			|
 			;
 */
-
-statements	:
-			;
-
 return 		: 	RETURN expression SEMI
 			;
 
 /*---------------------- statements -------------------------*/
 
-statement 	:	{printf("assignment\n");} assignment SEMI
-			|	{printf("f_call\n");}     f_call SEMI
-			|	{printf("if\n");}         if
+statement 	:	{printf("assignment\n");}  assignment  SEMI /* it only go into the first line */
+			|	{printf("f_call\n");}      f_call SEMI
+			|	{printf("if\n");}          if
 			|	{printf("if_else\n");}     if_else
-			|	{printf("while\n");}         while
+			|	{printf("while\n");}       while
 			|	{printf("code_block\n");}  code_block
 			|
 			;
 
-assignment  : 	lhs EQUAL expression 
-            | 	lhs EQUAL strptr 
+assignment  : 	{printf("ID\n");}	    ID EQUAL expression 
+            | 	{printf("strptr\n");}   strptr EQUAL expression 
+            |	{printf("DEREF\n");}    DEREF expression EQUAL expression  /* ?????????????? */
             ;
 
-f_call   	: 	ID EQUAL func
-            | 	intptr EQUAL func /* intptr has ID as its first*/
+f_call   	: 	f_call_lhs EQUAL ID LP call_paras RP    
             ;
 
-func		:	ID LP call_paras RP
+f_call_lhs	:	ID
+			|	strptr			/* intptr has ID as its first*/
 			;
 
 if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
@@ -178,20 +179,11 @@ code_block2	:	LBRACE content RBRACE
 
 /*------------------------------------------------------------*/
 
-lhs			: {printf("ID\n");}	    ID 
-			|	{printf("strptr\n");}  strptr	
-			|	{printf("DEREF\n");}   DEREF expression   		/* ?????????????? */
-			;
-
-var_type	:	STRING LBRAKET int_literal RBRAKET
-			|   INTPTR LBRAKET int_literal RBRAKET
+var_type	:	STRING LBRAKET INT RBRAKET
+			|   INTPTR LBRAKET INT RBRAKET
 			|	BOOLEAN
 			|	CHAR
 			|	INTEGER
-			;
-
-
-int_literal :	expression   			/* ?????????????? */
 			;
 
 
@@ -210,10 +202,10 @@ single_more	:	operator single single_more
 			|
 			;
 
-single 		: 	INT
+single 		: 	ID
             | 	TRUE
             | 	FALSE
-            | 	ID
+            | 	INT
             | 	intptr
             | 	strptr
             | 	unarys single
