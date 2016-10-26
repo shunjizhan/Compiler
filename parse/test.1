@@ -1,5 +1,30 @@
 procedure Main() return integer
 {
+    var ret : integer;
+    ret = compare(5,25);
+    return ret; 
+}
+     
+/*returns 1 if numberOne > numberTwo, 0 otherwise */
+procedure compare(numberOne, numberTwo  : integer) return integer
+{
+    var ret : integer;
+
+    if(numberOne > numberTwo)
+    { 
+        ret = 1; 
+    }
+    else 
+    {
+        ret = 0;     
+    }
+
+    return ret;
+}
+
+
+procedure Main() return integer
+{
         procedure foo( inc : integer ) return boolean 
         {
                 m = m + inc;
@@ -13,13 +38,13 @@ procedure Main() return integer
 	j = 2;
 	k = - j;
 	m = 100 - k * k;
-	 /*x[1] = foo( 1 ); */
-	/*n = printint( m );*/
+	 x[1] = foo( 1 ); 
+	n = printint( m );
 
 
 	x = "this is a string['5']\n";
 	x = "this is \"; x = "invalid";
-	/*x[1] = 'h';*/
+	x[1] = 'h';
         return x[7+1];
 }
 

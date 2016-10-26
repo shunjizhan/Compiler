@@ -80,6 +80,9 @@ Start   :	C C STR STR BOOLEAN CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  
         ;
 */
 
+
+/*------------------------- START ----------------------------*/
+
 Start   	: 	procedure p_more {printf("accepted!\n");}
         	;
 
@@ -135,14 +138,13 @@ statements	:	statement statements
 			|
 			;
 
-statement 	:	{printf("assignment\n");}  assignment  SEMI /* it only go into the first line */
-			/*|	{printf("f_call\n");}      f_call SEMI*/
+statement 	:	{printf("assignment\n");}  assignment  SEMI 
 			|	{printf("if\n");}          if
 			|	{printf("while\n");}       while
 			|	{printf("code_block\n");}  code_block
 			;
 
-return 		: 	RETURN expression SEMI /* need to change to return expression*/
+return 		: 	RETURN expression SEMI 
 			;
 
 code_block	:	LBRACE var_dec statements  RBRACE
@@ -153,27 +155,16 @@ code_block	:	LBRACE var_dec statements  RBRACE
 assignment 	: 	lhs EQUAL rhs;
 
 lhs 		:	ID lhs_more
-			|	{printf("DEREF\n");}    DEREF expression
+			|   DEREF expression
 			;
 
-lhs_more 	:	{printf("strptr\n");} LBRAKET expression RBRAKET
-			|	{printf("ID\n");}
+lhs_more 	:   LBRAKET expression RBRAKET
+			|	
 			;
 
 rhs 		: 	expression
 			|	func_call
 			;
-
-
-/*
-assignment  :	lhs EQUAL expression 
-			|  	ID EQUAL expression
-			|	DEREF	EQUAL expression
-			| 	ID EQUAL ID LP call_paras RP  
-			|   strptr EQUAL ID LP call_paras RP
-            ;
-*/
-
 
 func_call 	: 	ID LP call_paras RP  
 			;
@@ -195,11 +186,11 @@ single 		: 	ID
             |	C
             ;
 
-/*
-unarys		:	unary unarys
-			|
-			;
-*/
+
+/*unarys		:	unary unarys*/
+			/*|*/
+			/*;*/
+
 
 unary 		:	NOT
 			|	PLUS
@@ -217,21 +208,6 @@ operator 	:	NOT
 			|	DIVIDE
 			;
 
-strptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
-			;
-
- /*---------------------- function_call -------------------------*/
-
-/*
-f_call   	: 	ID EQUAL ID LP call_paras RP  
-			|   strptr EQUAL ID LP call_paras RP  
-            ;
-
-f_call_lhs	:	ID
-			|	strptr	
-			;
-*/
-
 call_paras  : 	expression para_more
             |
             ;
@@ -239,7 +215,8 @@ call_paras  : 	expression para_more
 para_more   :   COMMA call_paras
             ;
 
-
+strptr		:	ID LBRAKET expression RBRAKET			
+			;
 
  /*---------------------- if else while -----------------------*/
 
@@ -254,7 +231,7 @@ b_o_n_s 	:   statement   b_o_n_s
             |
             ;
 
- /*---------------------- code block -----------------------*/
+
 
 
 
