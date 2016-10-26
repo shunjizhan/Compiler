@@ -121,16 +121,6 @@ var_dec 	:	VAR ID id_more COLON var_type SEMI var_dec
 			|
 			;
 
-statements	:
-			;
-/*
-statements	:	statement statements
-			|
-			;
-*/
-return 		: 	RETURN INT SEMI
-			;
-
 var_type	:	STRING LBRAKET INT RBRAKET
 			|   INTPTR LBRAKET INT RBRAKET
 			|	BOOLEAN
@@ -138,9 +128,68 @@ var_type	:	STRING LBRAKET INT RBRAKET
 			|	INTEGER
 			;
 
+ /*---------------------- statements -------------------------*/
 
+statements	:	statement statements
+			|
+			;
 
+statement 	:	{printf("assignment\n");}  assignment  SEMI /* it only go into the first line */
+			/*|	{printf("f_call\n");}      f_call SEMI*/
+			/*|	{printf("if\n");}          if*/
+			/*|	{printf("if_else\n");}     if_else*/
+			/*|	{printf("while\n");}       while*/
+			/*|	{printf("code_block\n");}  code_block*/
+			;
 
+return 		: 	RETURN INT SEMI /* need to change to return expression*/
+			;
+
+/*------------------------------------------------------------*/
+
+assignment  : 	{printf("ID\n");}	    ID EQUAL expression 
+            /*| 	{printf("strptr\n");}   strptr EQUAL expression */
+            /*|	{printf("DEREF\n");}    DEREF expression EQUAL expression   ?????????????? */
+            ;
+
+expression 	: 	single single_more 
+			;
+
+single_more	:	operator expression
+			|
+			;
+
+single 		: 	ID
+            | 	TRUE
+            | 	FALSE
+            | 	INT
+            | 	strptr
+            | 	unary single
+            ;
+/*
+unarys		:	unary unarys
+			|
+			;
+*/
+
+unary 		:	NOT
+			|	PLUS
+			|	MINUS
+			|	ADDRESS
+			|	DEREF
+			;
+
+operator 	:	NOT
+			|	PLUS
+			|	MINUS
+			|	ADDRESS
+			|	DEREF
+			|	TIMES
+			|	DIVIDE
+			;
+
+strptr		:	ID LBRAKET expression RBRAKET			/* ?????????????? */
+			;
 
 
 

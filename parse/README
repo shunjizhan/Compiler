@@ -29,4 +29,10 @@ First stage in to accept all valid procedures which don't have body (which forms
 
 Second, after the grammar accept procedures without body, I started to add grammar so it further accept two parts of the body, including precedure declarations and variable declarations. Now the only thing that cann't be recognized is statements, which is the hard part. I tested this by "make test_no_statement, which input a file "test_no_statement" to the program.
 
-Third, I added grammar so it can recognize statements, and thus the whole Csimple language.
+Third, I added grammar so it can recognize statements, and thus the whole Csimple language. But it didn't work, and I realized that was because I didn't deal with ambiguity, so I went back to modified second part(see above), so that my grammar will accept procedures without statements and without ambiuity. Then I continue to add statements to my grammar.
+
+
+
+
+
+
