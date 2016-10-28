@@ -186,11 +186,11 @@ single 		: 	ID
             |	C
             ;
 
-
-/*unarys		:	unary unarys*/
-			/*|*/
-			/*;*/
-
+/*
+unarys		:	unary unarys
+			|
+			;
+*/
 
 unary 		:	NOT
 			|	PLUS
@@ -233,73 +233,6 @@ b_o_n_s 	:   statement   b_o_n_s
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*****
-
-INT_ARRAY : INTARRAY LBRAKET INTEGER RBRAKET
-          ;
-
-
-
-
-
-
-
-expression : MULT_EXPRESSION
-            | LP expression RP OPE_RATOR
-            | NOT LP expression RP OPE_RATOR
-            | ABSOLUTEVALUE expression ABSOLUTEVALUE OPE_RATOR
-            ;
-
-
-
-                  
-MULT_EXPRESSION   : single OPE_RATOR
-                  ;
-
-OPE_RATOR         : 
-                  | PLUS expression
-                  | MINUS expression
-                  | TIMES expression
-                  | DIVIDE expression
-                  | OROR expression
-                  | ANDAND expression
-                  | EQEQ expression
-                  | GT expression
-                  | GTE expression
-                  | LT expression
-                  | LTE expression
-                  | NE expression
-                  ;
-
-
-
-******/
 
 
 
