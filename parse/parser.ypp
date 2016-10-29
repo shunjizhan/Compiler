@@ -175,7 +175,6 @@ expression 	: 	 expression_left expression_more
 expression_left   :   single
                   |   ABS expression ABS
                   |   LP expression RP
-                  |   NOT expression_left
                   ;
 
 expression_more	:	operator expression
@@ -205,7 +204,7 @@ para_more   :   COMMA call_paras
 unary 		:	DEREF 
 			|	PLUS
 			|	MINUS
-			/*|	NOT*/
+			|	NOT
 			;
 
 operator 	:	OROR
