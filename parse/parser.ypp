@@ -169,10 +169,13 @@ rhs 		: 	expression
 func_call 	: 	ID LP call_paras RP  
 			;
 
-expression 	: 	single expression_more
-            |   ABS expression ABS
-            |   LP expression RP
+expression 	: 	 expression_left expression_more
 			      ;
+
+expression_left   :   single
+                  |   ABS expression ABS
+                  |   LP expression RP
+                  ;
 
 expression_more	:	operator expression
                 | compare expression
