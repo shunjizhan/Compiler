@@ -78,13 +78,14 @@ false  { return FALSE; }
 
 [a-zA-Z][a-zA-Z0-9_]*  { return ID; } /* identifier */
 
-"\""[^\"]*"\""  { return STR; }		/* string */ /*???????????*/
-"'"[a-zA-Z]"'"  { return C; }		/* character */ /*???????????*/
+"\""[^\"]*"\""  { return STR; }		/* string */ 
+"'"[a-zA-Z]"'"  { return C; }		/* character */ 
 
 
 [ \t\n]             ; /* skip whitespace */
 
-"/*"([^\$]|\$[^\]])*"*/" 			;	/* comments */
+
+"/"\*([^*]|(\*+[^*/]))*\*+"/"   ;   /* comments */
 
 
 .                   yyerror((char *) "invalid character");

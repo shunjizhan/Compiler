@@ -1,106 +1,141 @@
-preoedure foo():integer{
-	g = 4;
-	return 7;
+
+
+					
+				
+				
+                                                                     
+                                                                     
+                                                                     
+                                             
+
+
+procedure newtest() return  integer
+{
+        var a : integer;
+        var b : intarray[100];
+        var d, c : intarray[100];
+        a[4+2] = 0x99;
+        b[3] = b[6]+b[19];
+	a = 5 + [$----!!!!!---$] 4;
+	a[4] = |4 + 2|;
+        afa = 076;
+        xed = -5-4;
+        a = 3 || 2;
+        b=!(3+2)/3;  
+        h = |(5+5)|;
+        d = |5|;
+        h=|a|;
+        c=true && false || false;
+        g=!false;
+        /* same problem d = !5; */
+        g = -5 == 9;
+        e = true;
+        f = c[4] - -5;
+        if ( x+5 ){
+                a = (5*x);
+                for ((true)){ a=5;}
+                for ((true)a=6;){ a = b+1;}
+        }
+        test2 = | |4| + |7| |;
+        test = hey( 5, 5+4 );  [$this broke my shit$]
+        a[6+7] = test();
+
+        for ( i = 3*2; (i+1) a=7*i+(9); ){ e = e+5; }
+
+        return 19;
 }
-procedure bar():integer{
-	return 0x1423FF;
-}
-procedure baz(num:integer):integer{
-	return 01110010b;
-}
-procedure hello(boolean:bool):integer{
-	return 01472364;
-}
-procedure start(num:integer, boolean:bool):integer{
-	return 5;
-}
-procedure Variables():integer{
-	var a,b,c:integer;
-	var h,g:bool;
-	return 5;
-}
-procedure Assign():integer{
-	var a,b,c:integer;
+
+procedure foo() return integer {
+	procedure Main() return integer
+	        {
+	            var a : integer;
+	            a = foo();
+	            return 0;
+	        }
+
+	procedure foo(i : integer; j : integer; k : integer) return integer
+	        {
+	            procedure fee(l : integer; m : boolean; n : integer) return boolean
+	            {
+	                return true;
+	            }
+	            return 0;
+	        }
+
+	procedure foo() return integer { return 0; }
+	procedure foo2() return integer { return 0; }
+	procedure f234() return integer { return 0; }
+
+	procedure foo(i:integer; j:boolean; k:integer) return integer { return 0; }
+	procedure fee(a:integer; b:integer) return integer { return 0; }
+	procedure fie() return boolean { return false; }
+	procedure foo(i:integer; j:integer; k:integer) return integer
+	        {
+	            
+	            
+	            procedure square(t:integer) return integer 
+	            {
+	                var temp : integer;
+	                var i : integer;
+	                var m, n : boolean;
+	                var o : intarray[100];
+	                temp = t * t;
+	                return 0;
+	            }
+	            var total : integer; 
+	            
+	            total = 1; /* statements */
+	            return 0; /* return statement */
+	        }
+
+	procedure foo() return integer { 
+		var a, b : intarray[100];
+	            var c : integer;
+	            a[19] = 24 + 3;
+	            a[4+2] = 5;
+	            b[3] = b[6] + b[19] + |c|;
+	            cdd = -5;
+	return 0; 
+	}
+
 	a = 5;
-	b = 4;
-	return 4;
-}
-procedure ALL():integer{
-	var a,b,c:integer;
-	var h,g:bool;
 
-	procedure Hello():integer{
-		return 5;
-	}
-	procedure hi(a:integer):integer{
-		return 5;
-	}
-	procedure l(g:bool,g:integer):bool{
-		var a,g:integer;
-		var g,t:bool;
-
-		procedure hi(a:integer):integer{
-			return 5;
-		}
-		return false;
-	}
-		g = 4;
-	a = 5;
-	b = 6;
-	return 6;
-}
-procedure hey():integer{
-	var a:bool;
-		a = 4;
-	if(4 > 3){	
-
-	}
-	return 4;
-}
-procedure to(g:integer):bool{
-	var g:bool;
-	if(sdf == oijw){
-
-		}
 	return true;
 }
-procedure Main():integer{
-	var agh:integer;
-	var ghlo:bool;
-	procedure goob():integer{
-		return 5;
-	}
-	if(5==5){
-		g = 7;
-	}
 
-	g = 5;
 
-	return 3;
-}
-procedure Hello(p:bool,g:integer):bool{
-	var fgg,h:integer;
-	var fgg,h:integer;
-		var g:bool;
-		var t:integer;
 
-	procedure bye(p:integer,g:bool,l:bool):integer{
-		var fgg,h:integer;
-		var fgg,h:integer; [$ This is a comment yo $]
-		var fjdfidf, ogjfd:bool;
-		procedure foo():integer{
+
+				
+				
+				
+procedure Hello(p:boolean;g:integer) return boolean{
+
+
+	procedure bye(p:integer;g:boolean;l:boolean) return integer{
+	procedure foo() return integer{
 			g = 4;
 			return 7;
 		}
-		procedure bar():bool{
-			procedure baz(num:integer):integer{
+		procedure bar() return boolean{
+			procedure baz(num:integer) return integer{
 				return 01110010b;
 			}
 			return false;
 		}
-		procedure baz(num:integer):integer{
+		procedure baz(num:integer) return integer{
 			return 01110010b;
 		}
+
+			var fgg,h:integer;
+	var fgg,h:integer;
+		var g:boolean;
+		var t:integer;
+
+		var fgg,h:integer;
+		var fgg,h:integer; /* This is a comment yo */
+		var fjdfidf, ogjfd:boolean;
+		
 		if(4 == 2){
 			f = -5;
 			f = 54-23+678;
@@ -118,9 +153,9 @@ procedure Hello(p:bool,g:integer):bool{
 
 		if(7-1 > 6*g){
 		}else{
-			[$ 348ru9oerigfjrt2635t96r84gfs86
+			/* 348ru9oerigfjrt2635t96r84gfs86
 			
-			g6w8346845686684243;rle;,;l,gdr,ltw$]
+			g6w8346845686684243;rle;,;l,gdr,ltw*/
 		}
 
 		h = 012347561;
@@ -155,170 +190,10 @@ procedure Hello(p:bool,g:integer):bool{
 	a = c[3] + 5;
 	a = !false;
 	return !true;
-}
-					
+}				
 				
 				
-                                                                     
-                                                                     
-                                                                     
-                                             
-procedure test(t:integer, a:bool): integer
-{
-        var ID2 : integer;
-        var ID3, ID4 : bool;
-[$ ignore this $]
-        procedure inside(): bool{
-                if (5+5){
-                 b=c();
-                 a=print(a[8]);
-                }else{
-                        a = 5;
-                }
-                return 1;
-        }
-[$$$$ ingore
-this
-$$ ] $]
-        return 0+9*(4+a);
-[$ test $]
+				
+				
 
-}
 
-procedure newtest(): integer
-{
-        var a : integer;
-        var b : intarray[100];
-        var d, c : intarray[100];
-        a[4+2] = 0x99;
-        b[3] = b[6]+b[19];
-	a = 5 + [$----!!!!!---$] 4;
-	a[4] = |4 + 2|;
-        afa = 076;
-        xed = -5-4;
-        a = 3 || 2;
-        b=!(3+2)/3;  
-        h = |(5+5)|;
-        d = |5|;
-        h=|a|;
-        c=true && false || false;
-        g=!false;
-        [$ same problem d = !5; $]
-        g = -5 == 9;
-        e = true;
-        f = c[4] - -5;
-        if ( x+5 ){
-                a = (5*x);
-                for ((true)){ a=5;}
-                for ((true)a=6;){ a = b+1;}
-        }
-        test2 = | |4| + |7| |;
-        test = hey( 5, 5+4 );  [$this broke my shit$]
-        a[6+7] = test();
-
-        for ( i = 3*2; (i+1) a=7*i+(9); ){ e = e+5; }
-
-        return 19;
-}
-
-procedure foo(i : integer, j : integer, k : integer) : integer
-{
-return 0;
-}
-
-procedure foo() : integer
-        {
-            return 0;
-        }
-        procedure Main() : integer
-        {
-            var a : integer;
-            a = foo();
-            return 0;
-        }
-procedure foo(i : integer, j : integer, k : integer) : integer
-        {
-            procedure fee(l : integer, m : bool, n : integer) : bool
-            {
-                return true;
-            }
-            return 0;
-        }
-procedure foo() : integer { return 0; }
-        procedure foo2() : integer { return 0; }
-        procedure f234() : integer { return 0; }
-procedure foo(i:integer, j:bool, k:integer) : integer { return 0; }
-        procedure fee(a:integer, b:integer) : integer { return 0; }
-        procedure fie() : bool { return false; }
-procedure foo(i:integer, j:integer, k:integer) : integer
-        {
-            var total : integer; [$ variable declarations $]
-            
-            procedure square(t:integer) : integer [$ procedure declarations $]
-            {
-                var temp : integer;
-                var i : integer;
-                var m, n : bool;
-                var o : intarray[100];
-                temp = t * t;
-                return 0;
-            }
-            
-            total = 1; [$ statements $]
-            return 0; [$ return statement $]
-        }
-[$Array's$]
-procedure foo() : integer { 
-var a, b : intarray[100];
-            var c : integer;
-            a[19] = 24 + 3;
-            a[4+2] = 5;
-            b[3] = b[6] + b[19] + |c|;
-            cdd = -5;
-return 0; 
-}
-procedure foo() : integer { 
-for (i = 3 * 2; (i != 9) i = i + 1;) {} [$ we assume i has been declared $]
-        for ((i >= 0) i = z - 3;) { }
-        for (i = 3; (i >= 0)) { }
-        for ((true)) {}
-    return 0;
-}
-procedure foo() : integer { 
-    var c : integer;
-   c=(3 + 2) / 3 - 5 * 2;
-   c=true && false || false;
-   c=5;
-   c=0x012;
-   c=true;
-   c=-5;
-   c=c[3] + 5;
-   c=false ;
-    return 0;
-}
-procedure first(a : integer, b: bool) : bool {
-if(a < 5) {
-  b = b && (a == 10);
- } else {
-  b = b || b;
- }
- return b;
-}
-procedure Main() : integer {
- var x, y : integer;
- var z : bool;
- y = 011b;
- b = false;
- for(x = 071; (x < 0xFF) x = x + y;) {
-  z = first(x, z);
- }
- return x + y;
-}
-				
-				
-				
-				
-				
-				
-				
-				
