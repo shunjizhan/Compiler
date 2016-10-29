@@ -164,6 +164,7 @@ lhs_more 	:   LBRAKET expression RBRAKET
 
 rhs 		: 	expression
 			|	func_call
+      | STR
 			;
 
 func_call 	: 	ID LP call_paras RP  
@@ -188,7 +189,7 @@ single 		  : 	ID
             | 	INT
             | 	strptr
             | 	unary single
-            |	  STR
+            /*|	  STR*/
             |	  C
             |   ADDRESS ID
             |   ADDRESS strptr
