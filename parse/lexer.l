@@ -59,7 +59,7 @@ return  { return RETURN; }
 ";"  { return SEMI; }
 ":"  { return COLON; }
 ","  { return COMMA; }
-"|"  { return OR; }
+"|"  { return ABS; }
 "{"  { return LBRACE; }
 "}"  { return RBRACE; }
 "("  { return LP; }

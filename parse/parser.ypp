@@ -44,7 +44,7 @@
 %token SEMI
 %token COLON
 %token COMMA
-%token OR
+%token ABS
 %token LBRACE
 %token RBRACE
 %token LP
@@ -65,7 +65,7 @@
 %left  OROR
 %left  ANDAND
 %left  EQEQ NOTEQUAL
-%left  BIGGER BIGGERE LESS LESSE 
+%left  BIGER BIGERE LESS LESSE 
 %left  PLUS MINUS
 %left  TIMES DIVIDE
 
@@ -138,10 +138,10 @@ statements	:	statement statements
 			|
 			;
 
-statement 	:	{printf("assignment\n");}  assignment  SEMI 
-			|	{printf("if\n");}          if
-			|	{printf("while\n");}       while
-			|	{printf("code_block\n");}  code_block
+statement 	:	/*{printf("assignment\n");}*/  assignment  SEMI 
+			|	/*{printf("if\n");}   */       if
+			|/*	{printf("while\n");}     */  while
+			|	/*{printf("code_block\n");}*/  code_block
 			;
 
 return 		: 	RETURN expression SEMI 
@@ -169,21 +169,31 @@ rhs 		: 	expression
 func_call 	: 	ID LP call_paras RP  
 			;
 
-expression 	: 	single single_more 
-			;
+expression 	: 	single expression_more
+            |   ABS expression ABS
+            |   LP expression RP
+			      ;
 
-single_more	:	operator expression
-			|
-			;
+expression_more	:	operator expression
+                | compare expression
+			          |
+		          	;
 
-single 		: 	ID
+single 		  : 	ID
             | 	TRUE
             | 	FALSE
             | 	INT
             | 	strptr
             | 	unary single
-            |	STR
-            |	C
+            |	  STR
+            |	  C
+            ;
+
+call_paras  :   expression para_more
+            |
+            ;
+
+para_more   :   COMMA call_paras
             ;
 
 /*
@@ -199,24 +209,24 @@ unary 		:	NOT
 			|	DEREF
 			;
 
-operator 	:	NOT
+operator 	:	OROR
+      | ANDAND
 			|	PLUS
 			|	MINUS
-			|	ADDRESS
-			|	DEREF
 			|	TIMES
 			|	DIVIDE
 			;
 
-call_paras  : 	expression para_more
-            |
-            ;
-
-para_more   :   COMMA call_paras
-            ;
+compare :   BIGER
+        |   BIGERE
+        |   LESS
+        |   LESSE
+        |   EQEQ
+        |   NOTEQUAL
+        ;
 
 strptr		:	ID LBRAKET expression RBRAKET			
-			;
+			   ;
 
  /*---------------------- if else while -----------------------*/
 

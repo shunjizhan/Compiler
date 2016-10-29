@@ -31,6 +31,7 @@ Second, after the grammar accept procedures without body, I started to add gramm
 
 Third, I added grammar so it can recognize statements, and thus the whole Csimple language. But it didn't work, and I realized that was because I didn't deal with ambiguity, so I went back to modified second part(see above), so that my grammar will accept procedures without statements and without ambiuity. Then I continue to add statements to my grammar.
 
+To make the statements part unambiguous is pretty hard, I encountered a lot of difficulties. Fortunately with two TA's help I get over main Shift/Reduce errors and finished the main skeleton of the statements part. Then started to implement details of statements, such as the condition of if/while statement.
 
 
 TODO:
