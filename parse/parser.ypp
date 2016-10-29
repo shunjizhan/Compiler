@@ -128,7 +128,7 @@ var_dec 	:	VAR ID id_more COLON dec_type SEMI var_dec
 dec_type	:  	INTEGER
           |   BOOLEAN
 			    |	  CHAR
-	     		|	  STRING LBRAKET INT RBRAKET
+	     		|	  STRING LBRAKET int_literal RBRAKET
 		    	;
 
  /*---------------------- statements -------------------------*/
@@ -154,7 +154,8 @@ code_block	:	LBRACE var_dec statements  RBRACE
 assignment 	: 	lhs EQUAL rhs;
 
 lhs 		:	ID lhs_more
-			|   DEREF expression
+			|   DEREF LP expression RP
+      |   DEREF ID
 			;
 
 lhs_more 	:   LBRAKET expression RBRAKET
@@ -190,6 +191,8 @@ single 		  : 	ID
             | 	unary single
             |	  STR
             |	  C
+            |   ADDRESS ID
+            |   ADDRESS strptr
             ;
 
 call_paras  :   expression para_more
@@ -199,16 +202,9 @@ call_paras  :   expression para_more
 para_more   :   COMMA call_paras
             ;
 
-/*
-unarys		:	unary unarys
-			|
-			;
-*/
-
 unary 		:	DEREF 
 			|	PLUS
 			|	MINUS
-			|	ADDRESS
 			/*|	NOT*/
 			;
 
@@ -230,6 +226,16 @@ compare :   BIGER
 
 strptr		:	ID LBRAKET expression RBRAKET			
 			   ;
+/*
+int_literal :   INT int_more
+            |   int_more
+            ;
+*/
+
+int_literal :   PLUS INT
+            |   MINUS INT
+            |   INT
+            ;
 
  /*---------------------- if else while -----------------------*/
 
