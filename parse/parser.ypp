@@ -171,6 +171,7 @@ func_call 	: 	ID LP call_paras RP
 			;
 
 expression 	: 	 expression_left expression_more
+            |    unary expression
 			      ;
 
 expression_left   :   single
@@ -188,7 +189,6 @@ single 		  : 	ID
             | 	FALSE
             | 	INT
             | 	strptr
-            | 	unary single
             /*|	  STR*/
             |	  C
             |   ADDRESS ID

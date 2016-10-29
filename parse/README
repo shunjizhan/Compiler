@@ -33,12 +33,6 @@ Third, I added grammar so it can recognize statements, and thus the whole Csimpl
 
 To make the statements part unambiguous is pretty hard, I encountered a lot of difficulties. Fortunately with two TA's help I get over main Shift/Reduce errors and finished the main skeleton of the statements part. Then started to implement details of statements, such as the condition of if/while statement. Then I modified the expression to make it more compact.
 
-When I am almost done, I read through all Piazza post and add all valid/invalid things to my test.1 (where I put all my tests), and make sure my grammar accept all valid ones and don't accpet invalid ones.
-
-
-TODO: 
-CHANGE COMMENT BACK!
-more code blocks
-
+When I am almost done, I read through all Piazza post and add all valid/invalid things to my test.1 (where I put all my tests), and make sure my grammar accept all valid ones and don't accpet invalid ones. Finally I added a lot of random code blocks to the test.1, so that I finished testing all corner cases!
 
 
