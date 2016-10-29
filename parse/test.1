@@ -37,23 +37,23 @@ procedure final() return integer{{}{}{
  x = &x + 4;
  x = |4|;
  x = |true|;
-	/*^(^y + 3);*/
-	/*^&stri[expr] = expr; */
-	/*foo();*/ 
-	/*if(a != "test"){  } */
-	/*x = &y[4]);*/
-	/*x = &(^&y[4]);*/
-	/*myvar = &"xylophone";*/
-	/*c = ||3||;*/
-	/*x = &"test"[0];*/
+	/%^(^y + 3);%/
+	/%^&stri[expr] = expr; %/
+	/%foo();%/ 
+	/%if(a != "test"){  } %/
+	/%x = &y[4]);%/
+	/%x = &(^&y[4]);%/
+	/%myvar = &"xylophone";%/
+	/%c = ||3||;%/
+	/%x = &"test"[0];%/
 
-	/*10) x = "stringliteral" + 4;*/
-/*11) x = ^"stringliteral";*/
-/*12) x = |"stringliteral"|;*/
-/*13) x = "stringliteral"[2];*/
-/*14) x = 123[123]*/
-/*15) x = 123[123][123]*/
-/*16) x = y[123][123]*/
+	/%10) x = "stringliteral" + 4;%/
+/%11) x = ^"stringliteral";%/
+/%12) x = |"stringliteral"|;%/
+/%13) x = "stringliteral"[2];%/
+/%14) x = 123[123]%/
+/%15) x = 123[123][123]%/
+/%16) x = y[123][123]%/
 
 	return x[7+1];
 }
@@ -61,32 +61,32 @@ procedure final() return integer{{}{}{
 procedure foo() return integer{
 	procedure Main() return integer
 {
- /* your scanner should be able */return 0;/* to catch this return */
+ /% your scanner should be able %/return 0;/% to catch this return %/
 }
 procedure Main() return integer
 {
- /* your scanner should be able */ 
+ /% your scanner should be able %/ 
  return 0;
- /* to catch this return */
+ /% to catch this return %/
 }
 procedure Main() return integer
 {
- /* 
-   /*
+ /% 
+   /%
    Simple comment
- */
+ %/
  return 0;
 }
 procedure Main() return integer
 {
- /* Simple comment 2*/         
+ /% Simple comment 2%/         
  return 0;
 }
 procedure Main() return integer
 {
- /* 
+ /% 
    Simple comment 1
- */
+ %/
  return 0;
 }
 	if(3 == 5) {} else {
@@ -191,7 +191,7 @@ procedure Main() return integer
     return ret; 
 }
      
-/*returns 1 if numberOne > numberTwo, 0 otherwise */
+/%returns 1 if numberOne > numberTwo, 0 otherwise %/
 procedure compare(numberOne, numberTwo  : integer) return integer
 {
     var ret : integer;
@@ -284,7 +284,7 @@ procedure Main() return integer {
 procedure test(t:integer; a:boolean) return  integer
 {
  
-/* ignore this */ 
+/% ignore this %/ 
         procedure inside()return  boolean{
                 if (5+5){
                  b=c();
@@ -297,11 +297,11 @@ procedure test(t:integer; a:boolean) return  integer
 
                var ID2 : integer;
         var ID3, ID4 : boolean;
-/****** ingore
+/%***** ingore
 this
-** / */
+** / %/
         return 0+9*(4+a);
-/* test */
+/% test %/
 
 }
 
@@ -312,18 +312,18 @@ procedure newtest() return  integer
         var d, c : string[100];
         a[4+2] = 0x99;
         b[3] = b[6]+b[19];
-	a = 5 + /*----!!!!!---*/ 4;
+	a = 5 + /%----!!!!!---%/ 4;
 	a[4] = |4 + 2|;
         afa = 076;
         xed = -5-4;
         a = 3 || 2;
-        /*b=!(3+2)/3;  */
+        /%b=!(3+2)/3;  %/
         h = |(5+5)|;
         d = |5|;
         h=|a|;
         c=true && false || false;
         g=!false;
-        /* same problem d = !5; */
+        /% same problem d = !5; %/
         g = -5 == 9;
         e = true;
         f = c[4] - -5;
@@ -331,8 +331,8 @@ procedure newtest() return  integer
                 a = (5*x);
 
         }
-        /*test2 = | |4| + |7| |;*/
-        test = hey( 5, 5+4 );  /*this broke my shit*/
+        /%test2 = | |4| + |7| |;%/
+        test = hey( 5, 5+4 );  /%this broke my shit%/
         a[6+7] = test();
 
 
@@ -379,8 +379,8 @@ procedure foo() return integer {
 	            }
 	            var total : integer; 
 	            
-	            total = 1; /* statements */
-	            return 0; /* return statement */
+	            total = 1; /% statements %/
+	            return 0; /% return statement %/
 	        }
 
 	procedure foo() return integer { 
@@ -422,7 +422,7 @@ procedure Hello(p:boolean;g:integer) return boolean{
 		var t:integer;
 
 		var fgg,h:integer;
-		var fgg,h:integer; /* This is a comment yo */
+		var fgg,h:integer; /% This is a comment yo %/
 		var fjdfidf, ogjfd:boolean;
 		{{{{{}}}}}{
 		if(4 == 2){
@@ -442,9 +442,9 @@ procedure Hello(p:boolean;g:integer) return boolean{
 }
 		if(7-1 > 6*g){
 		}else{
-			/* 348ru9oerigfjrt2635t96r84gfs86
+			/% 348ru9oerigfjrt2635t96r84gfs86
 			
-			g6w8346845686684243;rle;,;l,gdr,ltw*/
+			g6w8346845686684243;rle;,;l,gdr,ltw%/
 		}
 
 		h = 012347561;
