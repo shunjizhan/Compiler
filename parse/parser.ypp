@@ -205,11 +205,11 @@ unarys		:	unary unarys
 			;
 */
 
-unary 		:	NOT
+unary 		:	DEREF 
 			|	PLUS
 			|	MINUS
 			|	ADDRESS
-			|	DEREF
+			/*|	NOT*/
 			;
 
 operator 	:	OROR
