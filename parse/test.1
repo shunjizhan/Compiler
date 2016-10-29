@@ -217,3 +217,38 @@ this
 /* test */
 
 }
+
+procedure newtest() return  integer
+{
+        var a : integer;
+        var b : string[100];
+        var d, c : string[100];
+        a[4+2] = 0x99;
+        b[3] = b[6]+b[19];
+	a = 5 + /*----!!!!!---*/ 4;
+	a[4] = |4 + 2|;
+        afa = 076;
+        xed = -5-4;
+        a = 3 || 2;
+        b=!(3+2)/3;  
+        h = |(5+5)|;
+        d = |5|;
+        h=|a|;
+        c=true && false || false;
+        g=!false;
+        /* same problem d = !5; */
+        g = -5 == 9;
+        e = true;
+        f = c[4] - -5;
+        if ( x+5 ){
+                a = (5*x);
+
+        }
+        test2 = | |4| + |7| |;
+        test = hey( 5, 5+4 );  /*this broke my shit*/
+        a[6+7] = test();
+
+
+
+        return 19;
+}

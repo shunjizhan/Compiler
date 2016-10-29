@@ -84,9 +84,7 @@ false  { return FALSE; }
 
 [ \t\n]             ; /* skip whitespace */
 
-
-"/"\*([^*]|(\*+[^*/]))*\*+"/"   ;   /* comments */
-
+"/"\*([^*]|(\*+[^*/]))*\*+"/"   ;   /* skip comments */
 
 .                   yyerror((char *) "invalid character");
 

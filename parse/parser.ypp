@@ -121,16 +121,15 @@ p_nest		:	procedure p_nest
 			|	
 			;
 
-var_dec 	:	VAR ID id_more COLON var_type SEMI var_dec
+var_dec 	:	VAR ID id_more COLON dec_type SEMI var_dec
 			|
 			;
 
-var_type	:	STRING LBRAKET INT RBRAKET
-			|   INTPTR LBRAKET INT RBRAKET
-			|	BOOLEAN
-			|	CHAR
-			|	INTEGER
-			;
+dec_type	:  	INTEGER
+          |   BOOLEAN
+			    |	  CHAR
+	     		|	  STRING LBRAKET INT RBRAKET
+		    	;
 
  /*---------------------- statements -------------------------*/
 
@@ -175,6 +174,7 @@ expression 	: 	 expression_left expression_more
 expression_left   :   single
                   |   ABS expression ABS
                   |   LP expression RP
+                  |   NOT expression_left
                   ;
 
 expression_more	:	operator expression
