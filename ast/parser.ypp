@@ -1,6 +1,7 @@
 %{
     #include <cstdio>
     #include <cstdlib>
+    #include <stdio.h>
 
     #include "ast.hpp"
     #include "primitive.hpp"
@@ -84,7 +85,7 @@
 
 /*------------------------- START ----------------------------*/
 
-Start   	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); ast = new ProgramImpl($2.u_proc_list); printf("accepted!\n"); }
+Start   	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); ast = new ProgramImpl($2.u_proc_list); }
         	;
 
 p_more  	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
@@ -92,42 +93,41 @@ p_more  	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_
         	;
 
 procedure :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE 
-              {
-                  $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); 
-              }
+              { $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); }
         	;
 
 para_list : 	ID id_more COLON type para_more
-       		|
+       		|                                      { $$.u_decl_list = new std::list<Decl_ptr>(); } 
        		;
 
-id_more		:	COMMA ID id_more
-			|
-			;
+id_more		:	COMMA ID id_more   
+			    |                   
+			    ;
 
-para_more   : 	SEMI para_list
-            |
+para_more   : 	SEMI para_list    { $$.u_decl_list = $2.u_decl_list; }
+            |                     { $$.u_decl_list = new std::list<Decl_ptr>(); }
             ;
 
-type   		: 	BOOLEAN
-       		| 	CHAR
-      		| 	INTEGER
-       		| 	CHARPTR
-       		| 	INTPTR
+type   		: 	BOOLEAN    { $$.u_type = new TBoolean(); }
+       		| 	CHAR       { $$.u_type = new TCharacter(); }
+      		| 	INTEGER    { $$.u_type = new TInteger(); }
+       		| 	CHARPTR    { $$.u_type = new TCharPtr(); }
+       		| 	INTPTR     { $$.u_type = new TIntPtr(); }
       		;
 
 /*------------------ body of procedure ----------------------*/
 
-body_of_p	:	p_nest var_dec statements return
-			;
+body_of_p	:	p_nest var_dec statements return  
+              { $$.u_procedure_block = new Procedure_blockImpl( $1.u_proc_list, $2.u_decl_list, $3.u_stat_list, $4.u_return_stat); }
+			    ;
 
-p_nest		:	procedure p_nest
-			|	
-			;
+p_nest		:	procedure p_nest     { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
+			    |	                     { $$.u_proc_list = new std::list<Proc_ptr>(); }
+			    ;
 
 var_dec 	:	VAR ID id_more COLON dec_type SEMI var_dec
-			|
-			;
+			    |                                                   { $$.u_decl_list = new std::list<Decl_ptr>(); }
+			    ;
 
 dec_type	:  	INTEGER
           |   BOOLEAN
@@ -138,8 +138,8 @@ dec_type	:  	INTEGER
 
  /*---------------------- statements -------------------------*/
 
-statements	:	statement statements
-		      	|
+statements	:	statement statements     { $2.u_stat_list->push_front($1.u_stat); $$.u_stat_list=$2.u_stat_list; }
+		      	|                          { $$.u_stat_list = new std::list<Stat_ptr>(); }
 		      	;
 
 statement 	:	  assignment  SEMI 
@@ -148,7 +148,7 @@ statement 	:	  assignment  SEMI
 		      	|	  code_block
 		      	;
 
-return 		 : 	RETURN expression SEMI 
+return 		 : 	RETURN expression SEMI   { $$.u_return_stat = new Return($2.u_expr); }
 			     ;
 
 code_block	:	LBRACE var_dec statements  RBRACE
@@ -175,9 +175,14 @@ rhs 		: 	expression
 func_call 	: 	ID LP call_paras RP  
 			;
 
+/*
 expression 	: 	 expression_left expression_more
             |    unary expression
 			      ;
+*/
+
+expression: INT { $$.u_expr = new IntLit(new Primitive($1.u_base_int)); }
+          ;
 
 expression_left   :   single
                   |   ABS expression ABS
