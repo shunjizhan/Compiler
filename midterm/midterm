@@ -1,0 +1,189 @@
+------------------------------- Scanner ----------------------------------
+
+Tokens are terminal symbols for the parser
+
+Tokens can have Attributes ID -> <ID, i> or <ID, j>
+
+Regular Expressions (Finite Automata) -> tokens
+
+图7 图8
+
+•  All strings of 1s and 0s 
+( 0 | 1 )*
+•  All strings of 1s and 0s beginning with a 1 
+1 ( 0 | 1 )*
+•  All strings of 0s and 1s containing at least two consecutive 1s 
+(0|1)* 11(0|1)*
+•  All strings of alternating 0s and 1s 
+(ε|1)(01)* (ε|0)
+
+图9
+
+
+------------------------------- Parsing ---------------------------------
+
+The process or discovering a derivation is called parsing
+
+–  If there is more than one parse tree for a given sentence, our grammar is ambiguous
+–  To show a grammar G is ambiguous, find a sentence in G with two parse trees
+
+•  If a grammar has more than one leftmost derivation for some sentence, then the grammar is ambiguous
+•  If a grammar has more than one rightmost derivation for some sentence, then the grammar is ambiguous
+
+
+Stmt → if Expr then Stmt
+	 | if Expr then Stmt else Stmt
+
+图10
+
+Stmt → If Expr then Stmt 
+ 	 | If Expr then WithElse else Stmt  
+
+Withelse → If Expr then WithElse else WithElse 
+ 
+--------------------------- Precedence -----------------------------
+
+S  →  Expr
+Expr → Expr + Term
+	| Expr - Term
+	|Term
+Term → Term * Factor
+	| Term / Factor
+	| Factor 
+Factor → num
+	|id
+
+图11
+
+-------------------------------- LR(1) ----------------------------------
+
+
+A grammar is left recursive if there exists a non-terminal A such that
+there exists a derivation A ⇒+ Aα, for some string α ∈ (NT ∪ T )+
+
+A : Aα 
+  | β
+
+A : βR 
+R : αR
+  | ε
+
+图12
+
+Left Factoring:
+F 	: 	ID
+	|	ID[E]
+	|	ID(E)
+
+F 	: 	ID A
+A 	:	[E]
+	|	(E)
+	|
+
+--------------------------- First and Follow set --------------------------
+
+图13,14
+
+When no element in FIRST set matches, check the FOLLOW set
+–  if look-ahead symbol is in FOLLOW set and there is an epsilon
+production, return from procedure (i.e., take epsilon production)
+–  otherwise, terminate with a parsing error
+
+图15
+图16*
+--------------------------- Bottom Up Parsing -----------------------------
+
+Thus, LR(k) examines more context
+
+A left-sentential form occurs in a leftmost derivation
+A right-sentential form occurs in a rightmost derivation
+
+|parse tree nodes| = |words| + |reductions|
+
+The parser must find a substring βμδ of the tree’s fringe that matches
+some production α → βμδ that occurs as one step in the rightmost derivation.
+Informally, we call this substring βμδ a handle
+
+Because γ is a right-sentential form, the substring to the right of a handle
+contains only terminal symbols
+⇒ The parser doesn’t need to scan past the handle (needs only a look-ahead)
+If G is unambiguous, then every right-sentential form has a unique handle.
+
+------------------------------ Shift Reduce --------------------------------
+
+•  Shift-reduce parsing makes use of two data structures,
+a stack and an input buffer
+
+•  At each point in time, you have two main choices
+–  Shift(which eats input terminals and moves them on the stack)
+–  Reduce(which applies some production inreverse, replacing some
+right hand side (β) with the corresponding left hand side (α)
+
+•  Shift — next word is shifted onto the stack
+•  Reduce — right end of handle is at top of stack
+Locate left end of handle within the stack
+Pop handle off stack & push appropriate lhs
+
+Shift is just a push and a call to the scanner Reduce takes |rhs| pops & 1 push
+
+push $
+lookahead = get_ next_token( ) 
+repeat until (top of stack == start symbol and lookahead == $) {
+	if the top of the stack is a handle α→β {
+		/* reduce β to α */
+		pop |β| symbols off the stack
+		push α onto the stack 
+	}
+	else if (token ≠ $) {
+		/* shift */
+		push lookahead
+		lookahead = get_next_token( )
+	}
+}
+
+图1
+
+------------------------------ TABLE --------------------------------
+
+–  The ACTION table tells you if you should shift,reduce,accept,or throw and error.
+	•  It additionally tells you how to update the state on a shift
+–  The GOTO table tells you how to update the state on a reduce
+
+stack: always in pairs: 1 symbol and 1 state
+
+
+push($); // $ is the end-of-file symbol
+push(s0); // s0 is the start state of the DFA that recognizes handles lookahead = get_next_token();
+while(1) {
+	s = top_of_stack();
+	if ( ACTION[s,lookahead] == reduce α→β ) {
+		pop 2*|β| symbols; /* plus state number so times 2 */
+		s = top_of_stack(); 
+		push(α); 
+		push(GOTO[s,α]);
+	}
+	else if ( ACTION[s,lookahead] == shift si ) {
+		push(lookahead);
+		push(si);
+		lookahead = get_next_token();
+	}
+	else if ( ACTION[s,lookahead] == accept and lookahead == $ ) { 
+		return success;
+	}
+	else error();
+}
+
+图2 图3
+
+------------------ Handle Recognizing Machine LR(0) -------------------
+
+The big problem we are left with is that, we will never see a non-terminal (such as S) on
+the input stream. The solution to this is to make “subroutine” calls to the other state 
+machines that match the other non-terminals you need
+
+图4 图5 图6
+
+If TABLE construction succeeds, the grammar is LR
+
+
+
