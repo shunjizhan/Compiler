@@ -263,6 +263,119 @@ b_o_n_s 	:   statement   b_o_n_s
 
 
 
+/*
+
+
+P_L : IDENTIFIER COLON TYPE MORE_PARAMS { $2.u_symname_list=new list<SymName_ptr>(); $2.u_symname_list->push_back(new SymName($1.u_base_charptr)); $4.u_decl_list->push_front(new DeclImpl($3.u_type,$2.u_symname_list)); $$.u_decl_list=$4.u_decl_list; }
+      | {$$.u_decl_list=new list<Decl_ptr>();} 
+      ;
+
+MORE_PARAMS : COMMA P_L {$$.u_decl_list=$2.u_decl_list;}
+            | {$$.u_decl_list=new list<Decl_ptr>();}
+            ;
+
+TYPE :    INT   {$$.u_type=new TInteger();}
+        | BOOL  {$$.u_type=new TBoolean();}
+        ;
+
+TYPE_2 : TYPE {$$.u_type=$1.u_type;}
+        | INT_ARRAY {$$.u_type = $1.u_type;}
+        ;
+
+INT_ARRAY : INTARRAY LEFTBRACKET INTEGER RIGHTBRACKET {$$.u_type=new TIntArray(new Primitive($3.u_base_int));}
+          ;
+INT_ARRAY_EXP: IDENTIFIER LEFTBRACKET  {$$.u_symname=new SymName($1.u_base_charptr); 
+             ;
+ARRAY_EXP     : EXPR_ESSION RIGHTBRACKET    {$$.u_expr=$1.u_expr;}
+              ;
+
+
+
+
+
+VAR_DECLERATIONS : VAR_DEC VAR_DECLERATIONS   { $2.u_decl_list->push_front($1.u_decl); $$.u_decl_list=$2.u_decl_list;  }
+                 | {$$.u_decl_list=new list<Decl_ptr>();}
+                 ;
+
+VAR_DEC : VAR IDENTIFIER MULT_DEC COLON TYPE_2 SEMICOLON { $3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_decl=new DeclImpl($5.u_type,$3.u_symname_list); }
+         ;
+
+MULT_DEC :   COMMA IDENTIFIER MULT_DEC {$3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_symname_list=$3.u_symname_list; }
+            | {$$.u_symname_list=new list<SymName_ptr>();}
+            ;
+
+STATEMENTS_ : ASIGN_MENT SEMICOLON  {$$.u_stat=$1.u_stat;}
+             | FUNCTION_CALL SEMICOLON  {$$.u_stat=$1.u_stat;}
+             | IF_  {$$.u_stat=$1.u_stat;}
+             | IF_ELSE  {$$.u_stat=$1.u_stat;}
+             | FOR_ {$$.u_stat=$1.u_stat;}
+             ;
+
+
+IF_ :  IF_EXPR IF_BODY  {$$.u_stat=new IfNoElse($1.u_expr,$2.u_nested_block);}
+    ;
+
+IF_EXPR: IF LEFTPAREN EXPR_ESSION RIGHTPAREN {$$.u_expr= $3.u_expr;}
+        ;
+
+IF_BODY : LEFTBRACE BODY_STATEMENTS RIGHTBRACE   {$$.u_nested_block=new Nested_blockImpl($2.u_stat_list);}
+        ;
+
+IF_ELSE : IF_EXPR IF_BODY ELSE LEFTBRACE BODY_STATEMENTS RIGHTBRACE {$$.u_stat=new IfWithElse($1.u_expr,$2.u_nested_block,new Nested_blockImpl($5.u_stat_list));}
+        ;
+
+FOR_ : FOR LEFTPAREN FOR_ASIGN LEFTPAREN EXPR_ESSION RIGHTPAREN FOR_ASIGN RIGHTPAREN LEFTBRACE BODY_STATEMENTS RIGHTBRACE {$$.u_stat=new ForLoop($3.u_stat,$5.u_expr,$7.u_stat,new Nested_blockImpl($10.u_stat_list));}
+            ;
+
+FOR_ASIGN : ASIGN_MENT SEMICOLON {$$.u_stat=$1.u_stat;}
+             |  {$$.u_stat=new None();}
+             ;
+
+ASIGN_MENT : IDENTIFIER ASSIGNMENT EXPR_ESSION {$$.u_stat=new Assignment(new SymName($1.u_base_charptr),$3.u_expr);}
+            | INT_ARRAY_EXP ARRAY_EXP ASSIGNMENT EXPR_ESSION  {$$.u_stat=new ArrayAssignment($1.u_symname,$2.u_expr,$4.u_expr);}
+            ;
+
+EXPR_ESSION : LEFTPAREN EXPR_ESSION RIGHTPAREN  {$$.u_expr=$2.u_expr;}
+            | ABSOLUTEVALUE EXPR_ESSION ABSOLUTEVALUE {$$.u_expr=$2.u_expr;}
+            | MINUS EXPR_ESSION %prec NOT {$$.u_expr=new Uminus($2.u_expr);}
+            | NOT EXPR_ESSION   %prec NOT {$$.u_expr=new Not($2.u_expr);}
+            | EXPR_ESSION PLUS EXPR_ESSION {$$.u_expr=new Plus($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION MINUS EXPR_ESSION {$$.u_expr=new Minus($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION TIMES EXPR_ESSION {$$.u_expr=new Times($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION DIVIDE EXPR_ESSION {$$.u_expr=new Div($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION OROR EXPR_ESSION   {$$.u_expr=new Or($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION ANDAND EXPR_ESSION {$$.u_expr=new And($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION EQEQ EXPR_ESSION   {$$.u_expr=new Compare($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION GT EXPR_ESSION     {$$.u_expr=new Gt($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION GTE EXPR_ESSION    {$$.u_expr=new Gteq($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION LT EXPR_ESSION     {$$.u_expr=new Lt($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION LTE EXPR_ESSION    {$$.u_expr=new Lteq($1.u_expr,$3.u_expr);}
+            | EXPR_ESSION NE EXPR_ESSION     {$$.u_expr=new Noteq($1.u_expr,$3.u_expr);}
+            | SINGLE_EXPRESSION { $$.u_expr=$1.u_expr;}
+            ;
+
+SINGLE_EXPRESSION : INTEGER         {$$.u_expr=new IntLit(new Primitive($1.u_base_int)); }
+                  | TRUE            {$$.u_expr=new BoolLit(new Primitive($1.u_base_int));}
+                  | FALSE           {$$.u_expr=new BoolLit(new Primitive($1.u_base_int));}
+                  | IDENTIFIER      { $$.u_expr=new Ident(new SymName($1.u_base_charptr));}
+                  | INT_ARRAY_EXP ARRAY_EXP  {$$.u_expr=new ArrayAccess($1.u_symname,$2.u_expr);}
+                  ;
+
+
+FUNCTION_CALL : IDENTIFIER ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN {$$.u_stat=new Call(new SymName($1.u_base_charptr),new SymName($3.u_base_charptr), $5.u_expr_list);}
+                | INT_ARRAY_EXP ARRAY_EXP ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN {$$.u_stat=new ArrayCall($1.u_symname, $2.u_expr, new SymName($4.u_base_charptr), $6.u_expr_list);}
+                ;
+
+IN_PARAMS : EXPR_ESSION NEXT_PARAM  {$2.u_expr_list->push_front($1.u_expr);$$.u_expr_list=$2.u_expr_list;}
+          | {$$.u_expr_list=new list<Expr_ptr>();}
+          ;
+
+NEXT_PARAM : COMMA EXPR_ESSION NEXT_PARAM {$3.u_expr_list->push_front($2.u_expr); $$.u_expr_list=$3.u_expr_list;}
+            |   {$$.u_expr_list=new list<Expr_ptr>();}
+            ;
+
+
+*/
 
 
 

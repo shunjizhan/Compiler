@@ -3,3 +3,9 @@ procedure foo() return integer
     return 0;
 }
 
+procedure Main() return integer
+{
+    return 8;
+}
+
+
