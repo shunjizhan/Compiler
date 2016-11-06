@@ -1,0 +1,1 @@
+I first added all attributes of the tokens to the lexer.l, following the examples on the section. And then I read through ast class to get familiar with each class, then added first couple actions following my first two grammars.
