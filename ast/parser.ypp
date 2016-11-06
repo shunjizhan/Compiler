@@ -1,9 +1,15 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
+    #include <cstdio>
+    #include <cstdlib>
+
+    #include "ast.hpp"
+    #include "primitive.hpp"
+    #include "symtab.hpp"
+
     #define YYDEBUG 1
 
-    int yylex(void);     /* lexical analyzer */
+    extern Program_ptr ast;
+    int yylex(void);
     void yyerror(const char *);
 %}
 
@@ -75,19 +81,14 @@
 
 %%
 
-/*
-Start   :	C C STR STR BOOLEAN CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  VAR PROCEDURE RETURN ANDAND SLASH EQUAL EQEQ BIGER BIGERE LESS LESSE MINUS NOT NOTEQUAL OROR PLUS TIMES ADDRESS DEREF SEMI COLON COMMA OR LBRACE RBRACE LP RP LBRAKET RBRAKET   C C C C C TRUE FALSE INT  INT INT INT  INT  INT INT INT INT INT  INT INT INT INT  INT  INT INT INT INT INT  INT  INT INT INT INT ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID  ID ID ID ID ID ID ID{printf("accepted!\n")}
-        ;
-*/
-
 
 /*------------------------- START ----------------------------*/
 
-Start   	: 	procedure p_more {printf("accepted!\n");}
+Start   	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); ast = new ProgramImpl($2.u_proc_list); printf("accepted!\n"); }
         	;
 
-p_more  	: 	procedure p_more
-        	| 
+p_more  	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
+        	|    { $$.u_proc_list = new std::list<Proc_ptr>; }
         	;
 
 procedure   :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
@@ -135,20 +136,20 @@ dec_type	:  	INTEGER
  /*---------------------- statements -------------------------*/
 
 statements	:	statement statements
-			|
-			;
+		      	|
+		      	;
 
-statement 	:	/*{printf("assignment\n");}*/  assignment  SEMI 
-			|	/*{printf("if\n");}   */       if
-			|/*	{printf("while\n");}     */  while
-			|	/*{printf("code_block\n");}*/  code_block
-			;
+statement 	:	  assignment  SEMI 
+			      |	  if
+		      	|   while
+		      	|	  code_block
+		      	;
 
-return 		: 	RETURN expression SEMI 
-			;
+return 		 : 	RETURN expression SEMI 
+			     ;
 
 code_block	:	LBRACE var_dec statements  RBRACE
-			;
+		      	;
 
  /*---------------------- assignment -------------------------*/
 

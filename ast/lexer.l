@@ -4,6 +4,7 @@
 %{
     #include <stdlib.h>
     #include <string.h>
+    #include "ast.hpp"
     #include "parser.hpp"
 
     void yyerror(const char *);
@@ -67,16 +68,16 @@ return  { return RETURN; }
 "["  { return LBRAKET; }
 "]"  { return RBRAKET; }
 
-true  { return TRUE; }
-false  { return FALSE; }
+true  { yylval.u_base_int = 1; return TRUE; }
+false { yylval.u_base_int = 0; return FALSE; }
 
-[1-9][0-9]*  { return INT; }
-[0]  { return INT; } 			   /* 0 */
-[0][x|X][0-9A-F]+  { return INT; } /* hex */
-[0][0-7]+  { return INT; } 	       /* octal */
-[0-1]+[b]  { return INT; } 	   /* binary */
+[1-9][0-9]*  		{ yylval.u_base_int = atoi(yytext); 			return INT; }
+[0]  				{ yylval.u_base_int = atoi(yytext); 			return INT; }   /* 0 */
+[0][x|X][0-9A-F]+ 	{ yylval.u_base_int = strtol(yytext, NULL, 16); return INT; }   /* hex */
+[0][0-7]+ 			{ yylval.u_base_int = strtol(yytext, NULL, 8);  return INT; } 	/* octal */
+[0-1]+[b] 			{ yylval.u_base_int = strtol(yytext, NULL, 2);  return INT; } 	/* binary */
 
-[a-zA-Z][a-zA-Z0-9_]*  { return ID; } /* identifier */
+[a-zA-Z][a-zA-Z0-9_]*  { yylval.u_base_charptr = strdup(yytext);   return ID; } /* identifier */
 
 "\""[^\"]*"\""  { return STR; }		/* string */ 
 "'"[a-zA-Z]"'"  { return C; }		/* character */ 
