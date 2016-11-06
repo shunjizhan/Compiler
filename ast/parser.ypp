@@ -91,10 +91,13 @@ p_more  	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_
         	|    { $$.u_proc_list = new std::list<Proc_ptr>; }
         	;
 
-procedure   :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+procedure :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE 
+              {
+                  $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); 
+              }
         	;
 
-para_list   : 	ID id_more COLON type para_more
+para_list : 	ID id_more COLON type para_more
        		|
        		;
 

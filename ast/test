@@ -1,0 +1,5 @@
+procedure foo(x: integer) return integer
+{
+    return 0;
+}
+

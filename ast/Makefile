@@ -54,3 +54,6 @@ clean:
 
 test_grammar: csimple
 	./csimple < test.1
+
+test: csimple
+	./csimple< test > ast.out; dot -Tpdf ast.out -o ast.pdf
