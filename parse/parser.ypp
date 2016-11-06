@@ -127,7 +127,8 @@ var_dec 	:	VAR ID id_more COLON dec_type SEMI var_dec
 
 dec_type	:  	INTEGER
           |   BOOLEAN
-			    |	  CHAR
+			    |	  CHARPTR
+          |   INTPTR
 	     		|	  STRING LBRAKET int_literal RBRAKET
 		    	;
 

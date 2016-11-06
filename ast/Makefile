@@ -51,3 +51,6 @@ primitive.o: primitive.hpp primitive.cpp ast.hpp
 
 clean:
 	rm -f $(RMFILES)
+
+test_grammar: csimple
+	./csimple < test.1

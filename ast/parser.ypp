@@ -1,32 +1,261 @@
 %{
-    #include <cstdio>
-    #include <cstdlib>
-
-    #include "ast.hpp"
-    #include "primitive.hpp"
-    #include "symtab.hpp"
-
+    #include <stdio.h>
+    #include <stdlib.h>
     #define YYDEBUG 1
 
-    extern Program_ptr ast;
-    int yylex(void);
+    int yylex(void);     /* lexical analyzer */
     void yyerror(const char *);
 %}
 
 /* Enables verbose error messages */
 %error-verbose
 
-/** WRITE ME:
- *  - Put all your token definitions here
- *  - Put all your type definitions here
- *  - Put all your precedence/associativity rules here
- */
+%start Start
+%token BOOLEAN
+%token CHAR
+%token INTEGER
+%token STRING
+%token INTPTR
+%token CHARPTR
+%token IF
+%token ELSE
+%token WHILE
+%token VAR
+%token PROCEDURE
+%token RETURN
 
-%token USELESS
+%token ANDAND
+%token SLASH
+%token EQUAL
+%token EQEQ
+%token BIGER
+%token BIGERE
+%token LESS
+%token LESSE
+%token MINUS
+%token NOT
+%token NOTEQUAL
+%token OROR
+%token PLUS
+%token TIMES
+%token ADDRESS
+%token DEREF
+
+%token SEMI
+%token COLON
+%token COMMA
+%token ABS
+%token LBRACE
+%token RBRACE
+%token LP
+%token RP
+%token LBRAKET
+%token RBRAKET
+
+%token C
+%token STR
+%token TRUE
+%token FALSE
+%token INT
+%token ID
+
+%token CL
+%token CR
+
+%left  OROR
+%left  ANDAND
+%left  EQEQ NOTEQUAL
+%left  BIGER BIGERE LESS LESSE 
+%left  PLUS MINUS
+%left  TIMES DIVIDE
+
+%right EQUAL
+%right NOT
+
 
 %%
 
-all : USELESS;
+/*
+Start   :	C C STR STR BOOLEAN CHAR INTEGER STRING INTPTR CHARPTR IF ELSE WHILE  VAR PROCEDURE RETURN ANDAND SLASH EQUAL EQEQ BIGER BIGERE LESS LESSE MINUS NOT NOTEQUAL OROR PLUS TIMES ADDRESS DEREF SEMI COLON COMMA OR LBRACE RBRACE LP RP LBRAKET RBRAKET   C C C C C TRUE FALSE INT  INT INT INT  INT  INT INT INT INT INT  INT INT INT INT  INT  INT INT INT INT INT  INT  INT INT INT INT ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID ID  ID ID ID ID ID ID ID{printf("accepted!\n")}
+        ;
+*/
+
+
+/*------------------------- START ----------------------------*/
+
+Start   	: 	procedure p_more {printf("accepted!\n");}
+        	;
+
+p_more  	: 	procedure p_more
+        	| 
+        	;
+
+procedure   :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+        	;
+
+para_list   : 	ID id_more COLON type para_more
+       		|
+       		;
+
+id_more		:	COMMA ID id_more
+			|
+			;
+
+para_more   : 	SEMI para_list
+            |
+            ;
+
+type   		: 	BOOLEAN
+       		| 	CHAR
+      		| 	INTEGER
+       		| 	CHARPTR
+       		| 	INTPTR
+      		;
+
+/*------------------ body of procedure ----------------------*/
+
+body_of_p	:	p_nest var_dec statements return
+			;
+
+p_nest		:	procedure p_nest
+			|	
+			;
+
+var_dec 	:	VAR ID id_more COLON dec_type SEMI var_dec
+			|
+			;
+
+dec_type	:  	INTEGER
+          |   BOOLEAN
+			    |	  CHARPTR
+          |   INTPTR
+	     		|	  STRING LBRAKET int_literal RBRAKET
+		    	;
+
+ /*---------------------- statements -------------------------*/
+
+statements	:	statement statements
+			|
+			;
+
+statement 	:	/*{printf("assignment\n");}*/  assignment  SEMI 
+			|	/*{printf("if\n");}   */       if
+			|/*	{printf("while\n");}     */  while
+			|	/*{printf("code_block\n");}*/  code_block
+			;
+
+return 		: 	RETURN expression SEMI 
+			;
+
+code_block	:	LBRACE var_dec statements  RBRACE
+			;
+
+ /*---------------------- assignment -------------------------*/
+
+assignment 	: 	lhs EQUAL rhs;
+
+lhs 		:	ID lhs_more
+			|   DEREF LP expression RP
+      |   DEREF ID
+			;
+
+lhs_more 	:   LBRAKET expression RBRAKET
+			|	
+			;
+
+rhs 		: 	expression
+			|	func_call
+      | STR
+			;
+
+func_call 	: 	ID LP call_paras RP  
+			;
+
+expression 	: 	 expression_left expression_more
+            |    unary expression
+			      ;
+
+expression_left   :   single
+                  |   ABS expression ABS
+                  |   LP expression RP
+                  ;
+
+expression_more	:	operator expression
+                | compare expression
+			          |
+		          	;
+
+single 		  : 	ID
+            | 	TRUE
+            | 	FALSE
+            | 	INT
+            | 	strptr
+            /*|	  STR*/
+            |	  C
+            |   ADDRESS ID
+            |   ADDRESS strptr
+            ;
+
+call_paras  :   expression para_more
+            |
+            ;
+
+para_more   :   COMMA call_paras
+            ;
+
+unary 		:	DEREF 
+			|	PLUS
+			|	MINUS
+			|	NOT
+			;
+
+operator 	:	OROR
+      | ANDAND
+			|	PLUS
+			|	MINUS
+			|	TIMES
+			|	DIVIDE
+			;
+
+compare :   BIGER
+        |   BIGERE
+        |   LESS
+        |   LESSE
+        |   EQEQ
+        |   NOTEQUAL
+        ;
+
+strptr		:	ID LBRAKET expression RBRAKET			
+			   ;
+/*
+int_literal :   INT int_more
+            |   int_more
+            ;
+*/
+
+int_literal :   PLUS INT
+            |   MINUS INT
+            |   INT
+            ;
+
+ /*---------------------- if else while -----------------------*/
+
+if 			:	IF LP expression RP LBRACE b_o_n_s RBRACE
+			| 	IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+			;
+
+while 		:	WHILE LP expression RP LBRACE b_o_n_s RBRACE
+			;
+
+b_o_n_s 	:   statement   b_o_n_s
+            |
+            ;
+
+
+
+
+
+
 
 %%
 

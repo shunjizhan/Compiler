@@ -1,0 +1,2283 @@
+Terminals unused in grammar
+
+   SLASH
+   CL
+   CR
+
+
+Grammar
+
+    0 $accept: Start $end
+
+    1 Start: procedure p_more
+
+    2 p_more: procedure p_more
+    3       | %empty
+
+    4 procedure: PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+
+    5 para_list: ID id_more COLON type para_more
+    6          | %empty
+
+    7 id_more: COMMA ID id_more
+    8        | %empty
+
+    9 para_more: SEMI para_list
+   10          | %empty
+
+   11 type: BOOLEAN
+   12     | CHAR
+   13     | INTEGER
+   14     | CHARPTR
+   15     | INTPTR
+
+   16 body_of_p: p_nest var_dec statements return
+
+   17 p_nest: procedure p_nest
+   18       | %empty
+
+   19 var_dec: VAR ID id_more COLON dec_type SEMI var_dec
+   20        | %empty
+
+   21 dec_type: INTEGER
+   22         | BOOLEAN
+   23         | CHARPTR
+   24         | INTPTR
+   25         | STRING LBRAKET int_literal RBRAKET
+
+   26 statements: statement statements
+   27           | %empty
+
+   28 statement: assignment SEMI
+   29          | if
+   30          | while
+   31          | code_block
+
+   32 return: RETURN expression SEMI
+
+   33 code_block: LBRACE var_dec statements RBRACE
+
+   34 assignment: lhs EQUAL rhs
+
+   35 lhs: ID lhs_more
+   36    | DEREF LP expression RP
+   37    | DEREF ID
+
+   38 lhs_more: LBRAKET expression RBRAKET
+   39         | %empty
+
+   40 rhs: expression
+   41    | func_call
+   42    | STR
+
+   43 func_call: ID LP call_paras RP
+
+   44 expression: expression_left expression_more
+   45           | unary expression
+
+   46 expression_left: single
+   47                | ABS expression ABS
+   48                | LP expression RP
+
+   49 expression_more: operator expression
+   50                | compare expression
+   51                | %empty
+
+   52 single: ID
+   53       | TRUE
+   54       | FALSE
+   55       | INT
+   56       | strptr
+   57       | C
+   58       | ADDRESS ID
+   59       | ADDRESS strptr
+
+   60 call_paras: expression para_more
+   61           | %empty
+
+   62 para_more: COMMA call_paras
+
+   63 unary: DEREF
+   64      | PLUS
+   65      | MINUS
+   66      | NOT
+
+   67 operator: OROR
+   68         | ANDAND
+   69         | PLUS
+   70         | MINUS
+   71         | TIMES
+   72         | DIVIDE
+
+   73 compare: BIGER
+   74        | BIGERE
+   75        | LESS
+   76        | LESSE
+   77        | EQEQ
+   78        | NOTEQUAL
+
+   79 strptr: ID LBRAKET expression RBRAKET
+
+   80 int_literal: PLUS INT
+   81            | MINUS INT
+   82            | INT
+
+   83 if: IF LP expression RP LBRACE b_o_n_s RBRACE
+   84   | IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+
+   85 while: WHILE LP expression RP LBRACE b_o_n_s RBRACE
+
+   86 b_o_n_s: statement b_o_n_s
+   87        | %empty
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+BOOLEAN (258) 11 22
+CHAR (259) 12
+INTEGER (260) 13 21
+STRING (261) 25
+INTPTR (262) 15 24
+CHARPTR (263) 14 23
+IF (264) 83 84
+ELSE (265) 84
+WHILE (266) 85
+VAR (267) 19
+PROCEDURE (268) 4
+RETURN (269) 4 32
+ANDAND (270) 68
+SLASH (271)
+EQUAL (272) 34
+EQEQ (273) 77
+BIGER (274) 73
+BIGERE (275) 74
+LESS (276) 75
+LESSE (277) 76
+MINUS (278) 65 70 81
+NOT (279) 66
+NOTEQUAL (280) 78
+OROR (281) 67
+PLUS (282) 64 69 80
+TIMES (283) 71
+ADDRESS (284) 58 59
+DEREF (285) 36 37 63
+SEMI (286) 9 19 28 32
+COLON (287) 5 19
+COMMA (288) 7 62
+ABS (289) 47
+LBRACE (290) 4 33 83 84 85
+RBRACE (291) 4 33 83 84 85
+LP (292) 4 36 43 48 83 84 85
+RP (293) 4 36 43 48 83 84 85
+LBRAKET (294) 25 38 79
+RBRAKET (295) 25 38 79
+C (296) 57
+STR (297) 42
+TRUE (298) 53
+FALSE (299) 54
+INT (300) 55 80 81 82
+ID (301) 4 5 7 19 35 37 43 52 58 79
+CL (302)
+CR (303)
+DIVIDE (304) 72
+
+
+Nonterminals, with rules where they appear
+
+$accept (50)
+    on left: 0
+Start (51)
+    on left: 1, on right: 0
+p_more (52)
+    on left: 2 3, on right: 1 2
+procedure (53)
+    on left: 4, on right: 1 2 17
+para_list (54)
+    on left: 5 6, on right: 4 9
+id_more (55)
+    on left: 7 8, on right: 5 7 19
+para_more (56)
+    on left: 9 10 62, on right: 5 60
+type (57)
+    on left: 11 12 13 14 15, on right: 4 5
+body_of_p (58)
+    on left: 16, on right: 4
+p_nest (59)
+    on left: 17 18, on right: 16 17
+var_dec (60)
+    on left: 19 20, on right: 16 19 33
+dec_type (61)
+    on left: 21 22 23 24 25, on right: 19
+statements (62)
+    on left: 26 27, on right: 16 26 33
+statement (63)
+    on left: 28 29 30 31, on right: 26 86
+return (64)
+    on left: 32, on right: 16
+code_block (65)
+    on left: 33, on right: 31
+assignment (66)
+    on left: 34, on right: 28
+lhs (67)
+    on left: 35 36 37, on right: 34
+lhs_more (68)
+    on left: 38 39, on right: 35
+rhs (69)
+    on left: 40 41 42, on right: 34
+func_call (70)
+    on left: 43, on right: 41
+expression (71)
+    on left: 44 45, on right: 32 36 38 40 45 47 48 49 50 60 79 83 84
+    85
+expression_left (72)
+    on left: 46 47 48, on right: 44
+expression_more (73)
+    on left: 49 50 51, on right: 44
+single (74)
+    on left: 52 53 54 55 56 57 58 59, on right: 46
+call_paras (75)
+    on left: 60 61, on right: 43 62
+unary (76)
+    on left: 63 64 65 66, on right: 45
+operator (77)
+    on left: 67 68 69 70 71 72, on right: 49
+compare (78)
+    on left: 73 74 75 76 77 78, on right: 50
+strptr (79)
+    on left: 79, on right: 56 59
+int_literal (80)
+    on left: 80 81 82, on right: 25
+if (81)
+    on left: 83 84, on right: 29
+while (82)
+    on left: 85, on right: 30
+b_o_n_s (83)
+    on left: 86 87, on right: 83 84 85 86
+
+
+State 0
+
+    0 $accept: . Start $end
+    1 Start: . procedure p_more
+    4 procedure: . PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+
+    PROCEDURE  shift, and go to state 1
+
+    Start      go to state 2
+    procedure  go to state 3
+
+
+State 1
+
+    4 procedure: PROCEDURE . ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+
+    ID  shift, and go to state 4
+
+
+State 2
+
+    0 $accept: Start . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 Start: procedure . p_more
+    2 p_more: . procedure p_more
+    3       | . %empty  [$end]
+    4 procedure: . PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+
+    PROCEDURE  shift, and go to state 1
+
+    $default  reduce using rule 3 (p_more)
+
+    p_more     go to state 6
+    procedure  go to state 7
+
+
+State 4
+
+    4 procedure: PROCEDURE ID . LP para_list RP RETURN type LBRACE body_of_p RBRACE
+
+    LP  shift, and go to state 8
+
+
+State 5
+
+    0 $accept: Start $end .
+
+    $default  accept
+
+
+State 6
+
+    1 Start: procedure p_more .
+
+    $default  reduce using rule 1 (Start)
+
+
+State 7
+
+    2 p_more: . procedure p_more
+    2       | procedure . p_more
+    3       | . %empty  [$end]
+    4 procedure: . PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+
+    PROCEDURE  shift, and go to state 1
+
+    $default  reduce using rule 3 (p_more)
+
+    p_more     go to state 9
+    procedure  go to state 7
+
+
+State 8
+
+    4 procedure: PROCEDURE ID LP . para_list RP RETURN type LBRACE body_of_p RBRACE
+    5 para_list: . ID id_more COLON type para_more
+    6          | . %empty  [RP]
+
+    ID  shift, and go to state 10
+
+    $default  reduce using rule 6 (para_list)
+
+    para_list  go to state 11
+
+
+State 9
+
+    2 p_more: procedure p_more .
+
+    $default  reduce using rule 2 (p_more)
+
+
+State 10
+
+    5 para_list: ID . id_more COLON type para_more
+    7 id_more: . COMMA ID id_more
+    8        | . %empty  [COLON]
+
+    COMMA  shift, and go to state 12
+
+    $default  reduce using rule 8 (id_more)
+
+    id_more  go to state 13
+
+
+State 11
+
+    4 procedure: PROCEDURE ID LP para_list . RP RETURN type LBRACE body_of_p RBRACE
+
+    RP  shift, and go to state 14
+
+
+State 12
+
+    7 id_more: COMMA . ID id_more
+
+    ID  shift, and go to state 15
+
+
+State 13
+
+    5 para_list: ID id_more . COLON type para_more
+
+    COLON  shift, and go to state 16
+
+
+State 14
+
+    4 procedure: PROCEDURE ID LP para_list RP . RETURN type LBRACE body_of_p RBRACE
+
+    RETURN  shift, and go to state 17
+
+
+State 15
+
+    7 id_more: . COMMA ID id_more
+    7        | COMMA ID . id_more
+    8        | . %empty  [COLON]
+
+    COMMA  shift, and go to state 12
+
+    $default  reduce using rule 8 (id_more)
+
+    id_more  go to state 18
+
+
+State 16
+
+    5 para_list: ID id_more COLON . type para_more
+   11 type: . BOOLEAN
+   12     | . CHAR
+   13     | . INTEGER
+   14     | . CHARPTR
+   15     | . INTPTR
+
+    BOOLEAN  shift, and go to state 19
+    CHAR     shift, and go to state 20
+    INTEGER  shift, and go to state 21
+    INTPTR   shift, and go to state 22
+    CHARPTR  shift, and go to state 23
+
+    type  go to state 24
+
+
+State 17
+
+    4 procedure: PROCEDURE ID LP para_list RP RETURN . type LBRACE body_of_p RBRACE
+   11 type: . BOOLEAN
+   12     | . CHAR
+   13     | . INTEGER
+   14     | . CHARPTR
+   15     | . INTPTR
+
+    BOOLEAN  shift, and go to state 19
+    CHAR     shift, and go to state 20
+    INTEGER  shift, and go to state 21
+    INTPTR   shift, and go to state 22
+    CHARPTR  shift, and go to state 23
+
+    type  go to state 25
+
+
+State 18
+
+    7 id_more: COMMA ID id_more .
+
+    $default  reduce using rule 7 (id_more)
+
+
+State 19
+
+   11 type: BOOLEAN .
+
+    $default  reduce using rule 11 (type)
+
+
+State 20
+
+   12 type: CHAR .
+
+    $default  reduce using rule 12 (type)
+
+
+State 21
+
+   13 type: INTEGER .
+
+    $default  reduce using rule 13 (type)
+
+
+State 22
+
+   15 type: INTPTR .
+
+    $default  reduce using rule 15 (type)
+
+
+State 23
+
+   14 type: CHARPTR .
+
+    $default  reduce using rule 14 (type)
+
+
+State 24
+
+    5 para_list: ID id_more COLON type . para_more
+    9 para_more: . SEMI para_list
+   10          | . %empty  [RP]
+   62          | . COMMA call_paras
+
+    SEMI   shift, and go to state 26
+    COMMA  shift, and go to state 27
+
+    $default  reduce using rule 10 (para_more)
+
+    para_more  go to state 28
+
+
+State 25
+
+    4 procedure: PROCEDURE ID LP para_list RP RETURN type . LBRACE body_of_p RBRACE
+
+    LBRACE  shift, and go to state 29
+
+
+State 26
+
+    5 para_list: . ID id_more COLON type para_more
+    6          | . %empty  [RP]
+    9 para_more: SEMI . para_list
+
+    ID  shift, and go to state 10
+
+    $default  reduce using rule 6 (para_list)
+
+    para_list  go to state 30
+
+
+State 27
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   60 call_paras: . expression para_more
+   61           | . %empty  [RP]
+   62 para_more: COMMA . call_paras
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    $default  reduce using rule 61 (call_paras)
+
+    expression       go to state 43
+    expression_left  go to state 44
+    single           go to state 45
+    call_paras       go to state 46
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 28
+
+    5 para_list: ID id_more COLON type para_more .
+
+    $default  reduce using rule 5 (para_list)
+
+
+State 29
+
+    4 procedure: . PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+    4          | PROCEDURE ID LP para_list RP RETURN type LBRACE . body_of_p RBRACE
+   16 body_of_p: . p_nest var_dec statements return
+   17 p_nest: . procedure p_nest
+   18       | . %empty  [IF, WHILE, VAR, RETURN, DEREF, LBRACE, ID]
+
+    PROCEDURE  shift, and go to state 1
+
+    $default  reduce using rule 18 (p_nest)
+
+    procedure  go to state 49
+    body_of_p  go to state 50
+    p_nest     go to state 51
+
+
+State 30
+
+    9 para_more: SEMI para_list .
+
+    $default  reduce using rule 9 (para_more)
+
+
+State 31
+
+   65 unary: MINUS .
+
+    $default  reduce using rule 65 (unary)
+
+
+State 32
+
+   66 unary: NOT .
+
+    $default  reduce using rule 66 (unary)
+
+
+State 33
+
+   64 unary: PLUS .
+
+    $default  reduce using rule 64 (unary)
+
+
+State 34
+
+   58 single: ADDRESS . ID
+   59       | ADDRESS . strptr
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    ID  shift, and go to state 52
+
+    strptr  go to state 53
+
+
+State 35
+
+   63 unary: DEREF .
+
+    $default  reduce using rule 63 (unary)
+
+
+State 36
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   47                | ABS . expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 54
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 37
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   48                | LP . expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 55
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 38
+
+   57 single: C .
+
+    $default  reduce using rule 57 (single)
+
+
+State 39
+
+   53 single: TRUE .
+
+    $default  reduce using rule 53 (single)
+
+
+State 40
+
+   54 single: FALSE .
+
+    $default  reduce using rule 54 (single)
+
+
+State 41
+
+   55 single: INT .
+
+    $default  reduce using rule 55 (single)
+
+
+State 42
+
+   52 single: ID .  [ANDAND, EQEQ, BIGER, BIGERE, LESS, LESSE, MINUS, NOTEQUAL, OROR, PLUS, TIMES, SEMI, COMMA, ABS, RP, RBRAKET, DIVIDE]
+   79 strptr: ID . LBRAKET expression RBRAKET
+
+    LBRAKET  shift, and go to state 56
+
+    $default  reduce using rule 52 (single)
+
+
+State 43
+
+    9 para_more: . SEMI para_list
+   10          | . %empty  [RP]
+   60 call_paras: expression . para_more
+   62 para_more: . COMMA call_paras
+
+    SEMI   shift, and go to state 26
+    COMMA  shift, and go to state 27
+
+    $default  reduce using rule 10 (para_more)
+
+    para_more  go to state 57
+
+
+State 44
+
+   44 expression: expression_left . expression_more
+   49 expression_more: . operator expression
+   50                | . compare expression
+   51                | . %empty  [SEMI, COMMA, ABS, RP, RBRAKET]
+   67 operator: . OROR
+   68         | . ANDAND
+   69         | . PLUS
+   70         | . MINUS
+   71         | . TIMES
+   72         | . DIVIDE
+   73 compare: . BIGER
+   74        | . BIGERE
+   75        | . LESS
+   76        | . LESSE
+   77        | . EQEQ
+   78        | . NOTEQUAL
+
+    ANDAND    shift, and go to state 58
+    EQEQ      shift, and go to state 59
+    BIGER     shift, and go to state 60
+    BIGERE    shift, and go to state 61
+    LESS      shift, and go to state 62
+    LESSE     shift, and go to state 63
+    MINUS     shift, and go to state 64
+    NOTEQUAL  shift, and go to state 65
+    OROR      shift, and go to state 66
+    PLUS      shift, and go to state 67
+    TIMES     shift, and go to state 68
+    DIVIDE    shift, and go to state 69
+
+    $default  reduce using rule 51 (expression_more)
+
+    expression_more  go to state 70
+    operator         go to state 71
+    compare          go to state 72
+
+
+State 45
+
+   46 expression_left: single .
+
+    $default  reduce using rule 46 (expression_left)
+
+
+State 46
+
+   62 para_more: COMMA call_paras .
+
+    $default  reduce using rule 62 (para_more)
+
+
+State 47
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   45           | unary . expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 73
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 48
+
+   56 single: strptr .
+
+    $default  reduce using rule 56 (single)
+
+
+State 49
+
+    4 procedure: . PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE
+   17 p_nest: . procedure p_nest
+   17       | procedure . p_nest
+   18       | . %empty  [IF, WHILE, VAR, RETURN, DEREF, LBRACE, ID]
+
+    PROCEDURE  shift, and go to state 1
+
+    $default  reduce using rule 18 (p_nest)
+
+    procedure  go to state 49
+    p_nest     go to state 74
+
+
+State 50
+
+    4 procedure: PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p . RBRACE
+
+    RBRACE  shift, and go to state 75
+
+
+State 51
+
+   16 body_of_p: p_nest . var_dec statements return
+   19 var_dec: . VAR ID id_more COLON dec_type SEMI var_dec
+   20        | . %empty  [IF, WHILE, RETURN, DEREF, LBRACE, ID]
+
+    VAR  shift, and go to state 76
+
+    $default  reduce using rule 20 (var_dec)
+
+    var_dec  go to state 77
+
+
+State 52
+
+   58 single: ADDRESS ID .  [ANDAND, EQEQ, BIGER, BIGERE, LESS, LESSE, MINUS, NOTEQUAL, OROR, PLUS, TIMES, SEMI, COMMA, ABS, RP, RBRAKET, DIVIDE]
+   79 strptr: ID . LBRAKET expression RBRAKET
+
+    LBRAKET  shift, and go to state 56
+
+    $default  reduce using rule 58 (single)
+
+
+State 53
+
+   59 single: ADDRESS strptr .
+
+    $default  reduce using rule 59 (single)
+
+
+State 54
+
+   47 expression_left: ABS expression . ABS
+
+    ABS  shift, and go to state 78
+
+
+State 55
+
+   48 expression_left: LP expression . RP
+
+    RP  shift, and go to state 79
+
+
+State 56
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+   79       | ID LBRAKET . expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 80
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 57
+
+   60 call_paras: expression para_more .
+
+    $default  reduce using rule 60 (call_paras)
+
+
+State 58
+
+   68 operator: ANDAND .
+
+    $default  reduce using rule 68 (operator)
+
+
+State 59
+
+   77 compare: EQEQ .
+
+    $default  reduce using rule 77 (compare)
+
+
+State 60
+
+   73 compare: BIGER .
+
+    $default  reduce using rule 73 (compare)
+
+
+State 61
+
+   74 compare: BIGERE .
+
+    $default  reduce using rule 74 (compare)
+
+
+State 62
+
+   75 compare: LESS .
+
+    $default  reduce using rule 75 (compare)
+
+
+State 63
+
+   76 compare: LESSE .
+
+    $default  reduce using rule 76 (compare)
+
+
+State 64
+
+   70 operator: MINUS .
+
+    $default  reduce using rule 70 (operator)
+
+
+State 65
+
+   78 compare: NOTEQUAL .
+
+    $default  reduce using rule 78 (compare)
+
+
+State 66
+
+   67 operator: OROR .
+
+    $default  reduce using rule 67 (operator)
+
+
+State 67
+
+   69 operator: PLUS .
+
+    $default  reduce using rule 69 (operator)
+
+
+State 68
+
+   71 operator: TIMES .
+
+    $default  reduce using rule 71 (operator)
+
+
+State 69
+
+   72 operator: DIVIDE .
+
+    $default  reduce using rule 72 (operator)
+
+
+State 70
+
+   44 expression: expression_left expression_more .
+
+    $default  reduce using rule 44 (expression)
+
+
+State 71
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   49 expression_more: operator . expression
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 81
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 72
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   50 expression_more: compare . expression
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 82
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 73
+
+   45 expression: unary expression .
+
+    $default  reduce using rule 45 (expression)
+
+
+State 74
+
+   17 p_nest: procedure p_nest .
+
+    $default  reduce using rule 17 (p_nest)
+
+
+State 75
+
+    4 procedure: PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE .
+
+    $default  reduce using rule 4 (procedure)
+
+
+State 76
+
+   19 var_dec: VAR . ID id_more COLON dec_type SEMI var_dec
+
+    ID  shift, and go to state 83
+
+
+State 77
+
+   16 body_of_p: p_nest var_dec . statements return
+   26 statements: . statement statements
+   27           | . %empty  [RETURN]
+   28 statement: . assignment SEMI
+   29          | . if
+   30          | . while
+   31          | . code_block
+   33 code_block: . LBRACE var_dec statements RBRACE
+   34 assignment: . lhs EQUAL rhs
+   35 lhs: . ID lhs_more
+   36    | . DEREF LP expression RP
+   37    | . DEREF ID
+   83 if: . IF LP expression RP LBRACE b_o_n_s RBRACE
+   84   | . IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   85 while: . WHILE LP expression RP LBRACE b_o_n_s RBRACE
+
+    IF      shift, and go to state 84
+    WHILE   shift, and go to state 85
+    DEREF   shift, and go to state 86
+    LBRACE  shift, and go to state 87
+    ID      shift, and go to state 88
+
+    $default  reduce using rule 27 (statements)
+
+    statements  go to state 89
+    statement   go to state 90
+    code_block  go to state 91
+    assignment  go to state 92
+    lhs         go to state 93
+    if          go to state 94
+    while       go to state 95
+
+
+State 78
+
+   47 expression_left: ABS expression ABS .
+
+    $default  reduce using rule 47 (expression_left)
+
+
+State 79
+
+   48 expression_left: LP expression RP .
+
+    $default  reduce using rule 48 (expression_left)
+
+
+State 80
+
+   79 strptr: ID LBRAKET expression . RBRAKET
+
+    RBRAKET  shift, and go to state 96
+
+
+State 81
+
+   49 expression_more: operator expression .
+
+    $default  reduce using rule 49 (expression_more)
+
+
+State 82
+
+   50 expression_more: compare expression .
+
+    $default  reduce using rule 50 (expression_more)
+
+
+State 83
+
+    7 id_more: . COMMA ID id_more
+    8        | . %empty  [COLON]
+   19 var_dec: VAR ID . id_more COLON dec_type SEMI var_dec
+
+    COMMA  shift, and go to state 12
+
+    $default  reduce using rule 8 (id_more)
+
+    id_more  go to state 97
+
+
+State 84
+
+   83 if: IF . LP expression RP LBRACE b_o_n_s RBRACE
+   84   | IF . LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+
+    LP  shift, and go to state 98
+
+
+State 85
+
+   85 while: WHILE . LP expression RP LBRACE b_o_n_s RBRACE
+
+    LP  shift, and go to state 99
+
+
+State 86
+
+   36 lhs: DEREF . LP expression RP
+   37    | DEREF . ID
+
+    LP  shift, and go to state 100
+    ID  shift, and go to state 101
+
+
+State 87
+
+   19 var_dec: . VAR ID id_more COLON dec_type SEMI var_dec
+   20        | . %empty  [IF, WHILE, DEREF, LBRACE, RBRACE, ID]
+   33 code_block: LBRACE . var_dec statements RBRACE
+
+    VAR  shift, and go to state 76
+
+    $default  reduce using rule 20 (var_dec)
+
+    var_dec  go to state 102
+
+
+State 88
+
+   35 lhs: ID . lhs_more
+   38 lhs_more: . LBRAKET expression RBRAKET
+   39         | . %empty  [EQUAL]
+
+    LBRAKET  shift, and go to state 103
+
+    $default  reduce using rule 39 (lhs_more)
+
+    lhs_more  go to state 104
+
+
+State 89
+
+   16 body_of_p: p_nest var_dec statements . return
+   32 return: . RETURN expression SEMI
+
+    RETURN  shift, and go to state 105
+
+    return  go to state 106
+
+
+State 90
+
+   26 statements: . statement statements
+   26           | statement . statements
+   27           | . %empty  [RETURN, RBRACE]
+   28 statement: . assignment SEMI
+   29          | . if
+   30          | . while
+   31          | . code_block
+   33 code_block: . LBRACE var_dec statements RBRACE
+   34 assignment: . lhs EQUAL rhs
+   35 lhs: . ID lhs_more
+   36    | . DEREF LP expression RP
+   37    | . DEREF ID
+   83 if: . IF LP expression RP LBRACE b_o_n_s RBRACE
+   84   | . IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   85 while: . WHILE LP expression RP LBRACE b_o_n_s RBRACE
+
+    IF      shift, and go to state 84
+    WHILE   shift, and go to state 85
+    DEREF   shift, and go to state 86
+    LBRACE  shift, and go to state 87
+    ID      shift, and go to state 88
+
+    $default  reduce using rule 27 (statements)
+
+    statements  go to state 107
+    statement   go to state 90
+    code_block  go to state 91
+    assignment  go to state 92
+    lhs         go to state 93
+    if          go to state 94
+    while       go to state 95
+
+
+State 91
+
+   31 statement: code_block .
+
+    $default  reduce using rule 31 (statement)
+
+
+State 92
+
+   28 statement: assignment . SEMI
+
+    SEMI  shift, and go to state 108
+
+
+State 93
+
+   34 assignment: lhs . EQUAL rhs
+
+    EQUAL  shift, and go to state 109
+
+
+State 94
+
+   29 statement: if .
+
+    $default  reduce using rule 29 (statement)
+
+
+State 95
+
+   30 statement: while .
+
+    $default  reduce using rule 30 (statement)
+
+
+State 96
+
+   79 strptr: ID LBRAKET expression RBRAKET .
+
+    $default  reduce using rule 79 (strptr)
+
+
+State 97
+
+   19 var_dec: VAR ID id_more . COLON dec_type SEMI var_dec
+
+    COLON  shift, and go to state 110
+
+
+State 98
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+   83 if: IF LP . expression RP LBRACE b_o_n_s RBRACE
+   84   | IF LP . expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 111
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 99
+
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+   85 while: WHILE LP . expression RP LBRACE b_o_n_s RBRACE
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 112
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 100
+
+   36 lhs: DEREF LP . expression RP
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 113
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 101
+
+   37 lhs: DEREF ID .
+
+    $default  reduce using rule 37 (lhs)
+
+
+State 102
+
+   26 statements: . statement statements
+   27           | . %empty  [RBRACE]
+   28 statement: . assignment SEMI
+   29          | . if
+   30          | . while
+   31          | . code_block
+   33 code_block: . LBRACE var_dec statements RBRACE
+   33           | LBRACE var_dec . statements RBRACE
+   34 assignment: . lhs EQUAL rhs
+   35 lhs: . ID lhs_more
+   36    | . DEREF LP expression RP
+   37    | . DEREF ID
+   83 if: . IF LP expression RP LBRACE b_o_n_s RBRACE
+   84   | . IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   85 while: . WHILE LP expression RP LBRACE b_o_n_s RBRACE
+
+    IF      shift, and go to state 84
+    WHILE   shift, and go to state 85
+    DEREF   shift, and go to state 86
+    LBRACE  shift, and go to state 87
+    ID      shift, and go to state 88
+
+    $default  reduce using rule 27 (statements)
+
+    statements  go to state 114
+    statement   go to state 90
+    code_block  go to state 91
+    assignment  go to state 92
+    lhs         go to state 93
+    if          go to state 94
+    while       go to state 95
+
+
+State 103
+
+   38 lhs_more: LBRAKET . expression RBRAKET
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 115
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 104
+
+   35 lhs: ID lhs_more .
+
+    $default  reduce using rule 35 (lhs)
+
+
+State 105
+
+   32 return: RETURN . expression SEMI
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    expression       go to state 116
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 106
+
+   16 body_of_p: p_nest var_dec statements return .
+
+    $default  reduce using rule 16 (body_of_p)
+
+
+State 107
+
+   26 statements: statement statements .
+
+    $default  reduce using rule 26 (statements)
+
+
+State 108
+
+   28 statement: assignment SEMI .
+
+    $default  reduce using rule 28 (statement)
+
+
+State 109
+
+   34 assignment: lhs EQUAL . rhs
+   40 rhs: . expression
+   41    | . func_call
+   42    | . STR
+   43 func_call: . ID LP call_paras RP
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    STR      shift, and go to state 117
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 118
+
+    rhs              go to state 119
+    func_call        go to state 120
+    expression       go to state 121
+    expression_left  go to state 44
+    single           go to state 45
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 110
+
+   19 var_dec: VAR ID id_more COLON . dec_type SEMI var_dec
+   21 dec_type: . INTEGER
+   22         | . BOOLEAN
+   23         | . CHARPTR
+   24         | . INTPTR
+   25         | . STRING LBRAKET int_literal RBRAKET
+
+    BOOLEAN  shift, and go to state 122
+    INTEGER  shift, and go to state 123
+    STRING   shift, and go to state 124
+    INTPTR   shift, and go to state 125
+    CHARPTR  shift, and go to state 126
+
+    dec_type  go to state 127
+
+
+State 111
+
+   83 if: IF LP expression . RP LBRACE b_o_n_s RBRACE
+   84   | IF LP expression . RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+
+    RP  shift, and go to state 128
+
+
+State 112
+
+   85 while: WHILE LP expression . RP LBRACE b_o_n_s RBRACE
+
+    RP  shift, and go to state 129
+
+
+State 113
+
+   36 lhs: DEREF LP expression . RP
+
+    RP  shift, and go to state 130
+
+
+State 114
+
+   33 code_block: LBRACE var_dec statements . RBRACE
+
+    RBRACE  shift, and go to state 131
+
+
+State 115
+
+   38 lhs_more: LBRAKET expression . RBRAKET
+
+    RBRAKET  shift, and go to state 132
+
+
+State 116
+
+   32 return: RETURN expression . SEMI
+
+    SEMI  shift, and go to state 133
+
+
+State 117
+
+   42 rhs: STR .
+
+    $default  reduce using rule 42 (rhs)
+
+
+State 118
+
+   43 func_call: ID . LP call_paras RP
+   52 single: ID .  [ANDAND, EQEQ, BIGER, BIGERE, LESS, LESSE, MINUS, NOTEQUAL, OROR, PLUS, TIMES, SEMI, DIVIDE]
+   79 strptr: ID . LBRAKET expression RBRAKET
+
+    LP       shift, and go to state 134
+    LBRAKET  shift, and go to state 56
+
+    $default  reduce using rule 52 (single)
+
+
+State 119
+
+   34 assignment: lhs EQUAL rhs .
+
+    $default  reduce using rule 34 (assignment)
+
+
+State 120
+
+   41 rhs: func_call .
+
+    $default  reduce using rule 41 (rhs)
+
+
+State 121
+
+   40 rhs: expression .
+
+    $default  reduce using rule 40 (rhs)
+
+
+State 122
+
+   22 dec_type: BOOLEAN .
+
+    $default  reduce using rule 22 (dec_type)
+
+
+State 123
+
+   21 dec_type: INTEGER .
+
+    $default  reduce using rule 21 (dec_type)
+
+
+State 124
+
+   25 dec_type: STRING . LBRAKET int_literal RBRAKET
+
+    LBRAKET  shift, and go to state 135
+
+
+State 125
+
+   24 dec_type: INTPTR .
+
+    $default  reduce using rule 24 (dec_type)
+
+
+State 126
+
+   23 dec_type: CHARPTR .
+
+    $default  reduce using rule 23 (dec_type)
+
+
+State 127
+
+   19 var_dec: VAR ID id_more COLON dec_type . SEMI var_dec
+
+    SEMI  shift, and go to state 136
+
+
+State 128
+
+   83 if: IF LP expression RP . LBRACE b_o_n_s RBRACE
+   84   | IF LP expression RP . LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+
+    LBRACE  shift, and go to state 137
+
+
+State 129
+
+   85 while: WHILE LP expression RP . LBRACE b_o_n_s RBRACE
+
+    LBRACE  shift, and go to state 138
+
+
+State 130
+
+   36 lhs: DEREF LP expression RP .
+
+    $default  reduce using rule 36 (lhs)
+
+
+State 131
+
+   33 code_block: LBRACE var_dec statements RBRACE .
+
+    $default  reduce using rule 33 (code_block)
+
+
+State 132
+
+   38 lhs_more: LBRAKET expression RBRAKET .
+
+    $default  reduce using rule 38 (lhs_more)
+
+
+State 133
+
+   32 return: RETURN expression SEMI .
+
+    $default  reduce using rule 32 (return)
+
+
+State 134
+
+   43 func_call: ID LP . call_paras RP
+   44 expression: . expression_left expression_more
+   45           | . unary expression
+   46 expression_left: . single
+   47                | . ABS expression ABS
+   48                | . LP expression RP
+   52 single: . ID
+   53       | . TRUE
+   54       | . FALSE
+   55       | . INT
+   56       | . strptr
+   57       | . C
+   58       | . ADDRESS ID
+   59       | . ADDRESS strptr
+   60 call_paras: . expression para_more
+   61           | . %empty  [RP]
+   63 unary: . DEREF
+   64      | . PLUS
+   65      | . MINUS
+   66      | . NOT
+   79 strptr: . ID LBRAKET expression RBRAKET
+
+    MINUS    shift, and go to state 31
+    NOT      shift, and go to state 32
+    PLUS     shift, and go to state 33
+    ADDRESS  shift, and go to state 34
+    DEREF    shift, and go to state 35
+    ABS      shift, and go to state 36
+    LP       shift, and go to state 37
+    C        shift, and go to state 38
+    TRUE     shift, and go to state 39
+    FALSE    shift, and go to state 40
+    INT      shift, and go to state 41
+    ID       shift, and go to state 42
+
+    $default  reduce using rule 61 (call_paras)
+
+    expression       go to state 43
+    expression_left  go to state 44
+    single           go to state 45
+    call_paras       go to state 139
+    unary            go to state 47
+    strptr           go to state 48
+
+
+State 135
+
+   25 dec_type: STRING LBRAKET . int_literal RBRAKET
+   80 int_literal: . PLUS INT
+   81            | . MINUS INT
+   82            | . INT
+
+    MINUS  shift, and go to state 140
+    PLUS   shift, and go to state 141
+    INT    shift, and go to state 142
+
+    int_literal  go to state 143
+
+
+State 136
+
+   19 var_dec: . VAR ID id_more COLON dec_type SEMI var_dec
+   19        | VAR ID id_more COLON dec_type SEMI . var_dec
+   20        | . %empty  [IF, WHILE, RETURN, DEREF, LBRACE, RBRACE, ID]
+
+    VAR  shift, and go to state 76
+
+    $default  reduce using rule 20 (var_dec)
+
+    var_dec  go to state 144
+
+
+State 137
+
+   28 statement: . assignment SEMI
+   29          | . if
+   30          | . while
+   31          | . code_block
+   33 code_block: . LBRACE var_dec statements RBRACE
+   34 assignment: . lhs EQUAL rhs
+   35 lhs: . ID lhs_more
+   36    | . DEREF LP expression RP
+   37    | . DEREF ID
+   83 if: . IF LP expression RP LBRACE b_o_n_s RBRACE
+   83   | IF LP expression RP LBRACE . b_o_n_s RBRACE
+   84   | . IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   84   | IF LP expression RP LBRACE . b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   85 while: . WHILE LP expression RP LBRACE b_o_n_s RBRACE
+   86 b_o_n_s: . statement b_o_n_s
+   87        | . %empty  [RBRACE]
+
+    IF      shift, and go to state 84
+    WHILE   shift, and go to state 85
+    DEREF   shift, and go to state 86
+    LBRACE  shift, and go to state 87
+    ID      shift, and go to state 88
+
+    $default  reduce using rule 87 (b_o_n_s)
+
+    statement   go to state 145
+    code_block  go to state 91
+    assignment  go to state 92
+    lhs         go to state 93
+    if          go to state 94
+    while       go to state 95
+    b_o_n_s     go to state 146
+
+
+State 138
+
+   28 statement: . assignment SEMI
+   29          | . if
+   30          | . while
+   31          | . code_block
+   33 code_block: . LBRACE var_dec statements RBRACE
+   34 assignment: . lhs EQUAL rhs
+   35 lhs: . ID lhs_more
+   36    | . DEREF LP expression RP
+   37    | . DEREF ID
+   83 if: . IF LP expression RP LBRACE b_o_n_s RBRACE
+   84   | . IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   85 while: . WHILE LP expression RP LBRACE b_o_n_s RBRACE
+   85      | WHILE LP expression RP LBRACE . b_o_n_s RBRACE
+   86 b_o_n_s: . statement b_o_n_s
+   87        | . %empty  [RBRACE]
+
+    IF      shift, and go to state 84
+    WHILE   shift, and go to state 85
+    DEREF   shift, and go to state 86
+    LBRACE  shift, and go to state 87
+    ID      shift, and go to state 88
+
+    $default  reduce using rule 87 (b_o_n_s)
+
+    statement   go to state 145
+    code_block  go to state 91
+    assignment  go to state 92
+    lhs         go to state 93
+    if          go to state 94
+    while       go to state 95
+    b_o_n_s     go to state 147
+
+
+State 139
+
+   43 func_call: ID LP call_paras . RP
+
+    RP  shift, and go to state 148
+
+
+State 140
+
+   81 int_literal: MINUS . INT
+
+    INT  shift, and go to state 149
+
+
+State 141
+
+   80 int_literal: PLUS . INT
+
+    INT  shift, and go to state 150
+
+
+State 142
+
+   82 int_literal: INT .
+
+    $default  reduce using rule 82 (int_literal)
+
+
+State 143
+
+   25 dec_type: STRING LBRAKET int_literal . RBRAKET
+
+    RBRAKET  shift, and go to state 151
+
+
+State 144
+
+   19 var_dec: VAR ID id_more COLON dec_type SEMI var_dec .
+
+    $default  reduce using rule 19 (var_dec)
+
+
+State 145
+
+   28 statement: . assignment SEMI
+   29          | . if
+   30          | . while
+   31          | . code_block
+   33 code_block: . LBRACE var_dec statements RBRACE
+   34 assignment: . lhs EQUAL rhs
+   35 lhs: . ID lhs_more
+   36    | . DEREF LP expression RP
+   37    | . DEREF ID
+   83 if: . IF LP expression RP LBRACE b_o_n_s RBRACE
+   84   | . IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   85 while: . WHILE LP expression RP LBRACE b_o_n_s RBRACE
+   86 b_o_n_s: . statement b_o_n_s
+   86        | statement . b_o_n_s
+   87        | . %empty  [RBRACE]
+
+    IF      shift, and go to state 84
+    WHILE   shift, and go to state 85
+    DEREF   shift, and go to state 86
+    LBRACE  shift, and go to state 87
+    ID      shift, and go to state 88
+
+    $default  reduce using rule 87 (b_o_n_s)
+
+    statement   go to state 145
+    code_block  go to state 91
+    assignment  go to state 92
+    lhs         go to state 93
+    if          go to state 94
+    while       go to state 95
+    b_o_n_s     go to state 152
+
+
+State 146
+
+   83 if: IF LP expression RP LBRACE b_o_n_s . RBRACE
+   84   | IF LP expression RP LBRACE b_o_n_s . RBRACE ELSE LBRACE b_o_n_s RBRACE
+
+    RBRACE  shift, and go to state 153
+
+
+State 147
+
+   85 while: WHILE LP expression RP LBRACE b_o_n_s . RBRACE
+
+    RBRACE  shift, and go to state 154
+
+
+State 148
+
+   43 func_call: ID LP call_paras RP .
+
+    $default  reduce using rule 43 (func_call)
+
+
+State 149
+
+   81 int_literal: MINUS INT .
+
+    $default  reduce using rule 81 (int_literal)
+
+
+State 150
+
+   80 int_literal: PLUS INT .
+
+    $default  reduce using rule 80 (int_literal)
+
+
+State 151
+
+   25 dec_type: STRING LBRAKET int_literal RBRAKET .
+
+    $default  reduce using rule 25 (dec_type)
+
+
+State 152
+
+   86 b_o_n_s: statement b_o_n_s .
+
+    $default  reduce using rule 86 (b_o_n_s)
+
+
+State 153
+
+   83 if: IF LP expression RP LBRACE b_o_n_s RBRACE .  [IF, WHILE, RETURN, DEREF, LBRACE, RBRACE, ID]
+   84   | IF LP expression RP LBRACE b_o_n_s RBRACE . ELSE LBRACE b_o_n_s RBRACE
+
+    ELSE  shift, and go to state 155
+
+    $default  reduce using rule 83 (if)
+
+
+State 154
+
+   85 while: WHILE LP expression RP LBRACE b_o_n_s RBRACE .
+
+    $default  reduce using rule 85 (while)
+
+
+State 155
+
+   84 if: IF LP expression RP LBRACE b_o_n_s RBRACE ELSE . LBRACE b_o_n_s RBRACE
+
+    LBRACE  shift, and go to state 156
+
+
+State 156
+
+   28 statement: . assignment SEMI
+   29          | . if
+   30          | . while
+   31          | . code_block
+   33 code_block: . LBRACE var_dec statements RBRACE
+   34 assignment: . lhs EQUAL rhs
+   35 lhs: . ID lhs_more
+   36    | . DEREF LP expression RP
+   37    | . DEREF ID
+   83 if: . IF LP expression RP LBRACE b_o_n_s RBRACE
+   84   | . IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE
+   84   | IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE . b_o_n_s RBRACE
+   85 while: . WHILE LP expression RP LBRACE b_o_n_s RBRACE
+   86 b_o_n_s: . statement b_o_n_s
+   87        | . %empty  [RBRACE]
+
+    IF      shift, and go to state 84
+    WHILE   shift, and go to state 85
+    DEREF   shift, and go to state 86
+    LBRACE  shift, and go to state 87
+    ID      shift, and go to state 88
+
+    $default  reduce using rule 87 (b_o_n_s)
+
+    statement   go to state 145
+    code_block  go to state 91
+    assignment  go to state 92
+    lhs         go to state 93
+    if          go to state 94
+    while       go to state 95
+    b_o_n_s     go to state 157
+
+
+State 157
+
+   84 if: IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s . RBRACE
+
+    RBRACE  shift, and go to state 158
+
+
+State 158
+
+   84 if: IF LP expression RP LBRACE b_o_n_s RBRACE ELSE LBRACE b_o_n_s RBRACE .
+
+    $default  reduce using rule 84 (if)

@@ -5,7 +5,7 @@ Program ==> *Proc
 Proc ==>  SymName *Decl Type Procedure_block
 
 
-Procedure_block ==> *Decl *Proc *Stat Return_stat
+Procedure_block ==> *Proc *Decl *Stat Return_stat
 Nested_block ==> *Decl *Stat
 
 Decl ==> *SymName Type
