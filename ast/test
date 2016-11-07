@@ -1,14 +1,25 @@
 procedure Main(x : integer; y : char) return boolean
 {
-    var a: string[12];
-    var b: string[12];
-    var x: integer;
-    var z: boolean;
-    var x: integer;
-    var k, j: integer;
-    var t: boolean;
-
     return 0;
 }
 
-
+procedure Main(x : integer; y : char) return boolean
+{
+    return 'K';
+}
+procedure Main(x : integer; y : char) return boolean
+{
+    return true;
+}
+procedure Main(x : integer; y : char) return boolean
+{
+    return false;
+}
+procedure Main(x : integer; y : char) return boolean
+{
+    return value;
+}
+procedure Main(x : integer; y : char) return boolean
+{
+    return aaaaaaa;
+}

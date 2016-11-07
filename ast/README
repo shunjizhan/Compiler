@@ -1,11 +1,15 @@
 I first added all attributes of the tokens to the lexer.l, following the examples on the section. And then I read through ast class to get familiar with each class, then added first couple actions following my first two grammars. 
 
+-----------------------------------------------------------------------------------------------------------------
+
 I try to test the most basic situation first, to make sure my understanding of the whole picture is correct. So use "make test" to input test file to ./csimple, first the test file contains only:
 
 	procedure foo() return integer
 	{
 	    return 0;
 	}
+
+-----------------------------------------------------------------------------------------------------------------
 
 And I changed my grammar accordingly, so that my grammar only accept simple language like the one above (for example I changed it so return only return INT rather than expression). I only have to implement the most basic parts of my grammar, so that it accept the above test procedure, and it print the corresponding AST out correctly.
 
@@ -15,6 +19,8 @@ Next I added implementation to procedure declaration, so that it can accept func
 	{
 	    return 0;
 	}
+
+-----------------------------------------------------------------------------------------------------------------
 
 Next I added implementation for variable declarations, and tested it by:
 
@@ -31,4 +37,6 @@ Next I added implementation for variable declarations, and tested it by:
 	    return 0;
 	}
 
+-----------------------------------------------------------------------------------------------------------------
 
+Then I modified the expression so expression can accept some simple values. I tested it by testing return multiple times with different values.

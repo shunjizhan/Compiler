@@ -80,8 +80,8 @@ false { yylval.u_base_int = 0; return FALSE; }
 
 [a-zA-Z][a-zA-Z0-9_]*  { yylval.u_base_charptr = strdup(yytext);   return ID; } /* identifier */
 
-"\""[^\"]*"\""  { return STR; }		/* string */ 
-"'"[a-zA-Z]"'"  { return C; }		/* character */ 
+"\""[^\"]*"\""  { yylval.u_base_charptr = strdup(yytext); return STR; }		/* string */ 
+"'"[a-zA-Z]"'"  { yylval.u_base_int = int(yytext[1]); return C; }		/* character */ 
 
 
 [ \t\n]             ; /* skip whitespace */

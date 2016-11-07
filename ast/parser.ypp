@@ -156,10 +156,10 @@ statements	:	statement statements     { $2.u_stat_list->push_front($1.u_stat); $
 		      	|                          { $$.u_stat_list = new std::list<Stat_ptr>(); }
 		      	;
 
-statement 	:	  assignment  SEMI 
-			      |	  if
-		      	|   while
-		      	|	  code_block
+statement 	:	  assignment SEMI        { $$.u_stat = $1.u_stat; }
+			      |	  if                     { $$.u_stat = $1.u_stat; }
+		      	|   while                  { $$.u_stat = $1.u_stat; }
+		      	|	  code_block             { $$.u_stat = $1.u_stat; }
 		      	;
 
 return 		 : 	RETURN expression SEMI   { $$.u_return_stat = new Return($2.u_expr); }
@@ -189,14 +189,10 @@ rhs 		: 	expression
 func_call 	: 	ID LP call_paras RP  
 			;
 
-/*
+
 expression 	: 	 expression_left expression_more
             |    unary expression
 			      ;
-*/
-
-expression: INT { $$.u_expr = new IntLit(new Primitive($1.u_base_int)); }
-          ;
 
 expression_left   :   single
                   |   ABS expression ABS
@@ -208,16 +204,19 @@ expression_more	:	operator expression
 			          |
 		          	;
 
-single 		  : 	ID
-            | 	TRUE
-            | 	FALSE
-            | 	INT
-            | 	strptr
-            /*|	  STR*/
-            |	  C
+
+
+single 		  : 	ID                { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); }
+            | 	TRUE              { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            | 	FALSE             { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            | 	INT               { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
+            | 	strptr            
+            |	  C                 { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
             |   ADDRESS ID
             |   ADDRESS strptr
             ;
+
+
 
 call_paras  :   expression para_more
             |
@@ -299,26 +298,6 @@ ARRAY_EXP     : EXPR_ESSION RIGHTBRACKET    {$$.u_expr=$1.u_expr;}
 
 
 
-VAR_DECLERATIONS : VAR_DEC VAR_DECLERATIONS   { $2.u_decl_list->push_front($1.u_decl); $$.u_decl_list=$2.u_decl_list;  }
-                 | {$$.u_decl_list=new list<Decl_ptr>();}
-                 ;
-
-VAR_DEC : VAR IDENTIFIER MULT_DEC COLON TYPE_2 SEMICOLON { $3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_decl=new DeclImpl($5.u_type,$3.u_symname_list); }
-         ;
-
-MULT_DEC :   COMMA IDENTIFIER MULT_DEC {$3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_symname_list=$3.u_symname_list; }
-            | {$$.u_symname_list=new list<SymName_ptr>();}
-            ;
-
-
-
-STATEMENTS_ : ASIGN_MENT SEMICOLON  {$$.u_stat=$1.u_stat;}
-             | FUNCTION_CALL SEMICOLON  {$$.u_stat=$1.u_stat;}
-             | IF_  {$$.u_stat=$1.u_stat;}
-             | IF_ELSE  {$$.u_stat=$1.u_stat;}
-             | FOR_ {$$.u_stat=$1.u_stat;}
-             ;
-
 
 IF_ :  IF_EXPR IF_BODY  {$$.u_stat=new IfNoElse($1.u_expr,$2.u_nested_block);}
     ;
@@ -332,12 +311,6 @@ IF_BODY : LEFTBRACE BODY_STATEMENTS RIGHTBRACE   {$$.u_nested_block=new Nested_b
 IF_ELSE : IF_EXPR IF_BODY ELSE LEFTBRACE BODY_STATEMENTS RIGHTBRACE {$$.u_stat=new IfWithElse($1.u_expr,$2.u_nested_block,new Nested_blockImpl($5.u_stat_list));}
         ;
 
-FOR_ : FOR LEFTPAREN FOR_ASIGN LEFTPAREN EXPR_ESSION RIGHTPAREN FOR_ASIGN RIGHTPAREN LEFTBRACE BODY_STATEMENTS RIGHTBRACE {$$.u_stat=new ForLoop($3.u_stat,$5.u_expr,$7.u_stat,new Nested_blockImpl($10.u_stat_list));}
-            ;
-
-FOR_ASIGN : ASIGN_MENT SEMICOLON {$$.u_stat=$1.u_stat;}
-             |  {$$.u_stat=new None();}
-             ;
 
 ASIGN_MENT : IDENTIFIER ASSIGNMENT EXPR_ESSION {$$.u_stat=new Assignment(new SymName($1.u_base_charptr),$3.u_expr);}
             | INT_ARRAY_EXP ARRAY_EXP ASSIGNMENT EXPR_ESSION  {$$.u_stat=new ArrayAssignment($1.u_symname,$2.u_expr,$4.u_expr);}
