@@ -1,11 +1,6 @@
-procedure foo() return integer
+procedure Main(x : integer; y : char) return boolean
 {
     return 0;
-}
-
-procedure Main() return integer
-{
-    return 8;
 }
 
 

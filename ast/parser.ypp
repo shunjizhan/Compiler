@@ -85,23 +85,30 @@
 
 /*------------------------- START ----------------------------*/
 
-Start   	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); ast = new ProgramImpl($2.u_proc_list); }
+Start   	: 	procedure p_more  { $2.u_proc_list->push_front($1.u_proc); ast = new ProgramImpl($2.u_proc_list); }
         	;
 
-p_more  	: 	procedure p_more { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
-        	|    { $$.u_proc_list = new std::list<Proc_ptr>; }
+p_more  	: 	procedure p_more  { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
+        	|                     { $$.u_proc_list = new std::list<Proc_ptr>; }
         	;
 
 procedure :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE 
-              { $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); }
+                { $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); }
         	;
 
-para_list : 	ID id_more COLON type para_more
+para_list : 	ID id_more COLON type para_more 
+              { 
+                $3.u_symname_list = new std::list<SymName_ptr>(); 
+                $3.u_symname_list->push_back(new SymName($1.u_base_charptr)); 
+                $3.u_symname_list->insert($3.u_symname_list->begin(), $2.u_symname_list->begin(), $2.u_symname_list->end()); 
+                $5.u_decl_list->push_front(new DeclImpl($3.u_symname_list, $4.u_type)); 
+                $$.u_decl_list = $5.u_decl_list; 
+              }
        		|                                      { $$.u_decl_list = new std::list<Decl_ptr>(); } 
        		;
 
-id_more		:	COMMA ID id_more   
-			    |                   
+id_more		:	COMMA ID id_more   { $3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_symname_list = $3.u_symname_list; }
+			    |                    { $$.u_symname_list = new std::list<SymName_ptr>(); }
 			    ;
 
 para_more   : 	SEMI para_list    { $$.u_decl_list = $2.u_decl_list; }
@@ -270,9 +277,7 @@ P_L : IDENTIFIER COLON TYPE MORE_PARAMS { $2.u_symname_list=new list<SymName_ptr
       | {$$.u_decl_list=new list<Decl_ptr>();} 
       ;
 
-MORE_PARAMS : COMMA P_L {$$.u_decl_list=$2.u_decl_list;}
-            | {$$.u_decl_list=new list<Decl_ptr>();}
-            ;
+
 
 TYPE :    INT   {$$.u_type=new TInteger();}
         | BOOL  {$$.u_type=new TBoolean();}
