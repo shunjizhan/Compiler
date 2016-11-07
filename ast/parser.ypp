@@ -93,7 +93,7 @@ p_more  	: 	procedure p_more  { $2.u_proc_list->push_front($1.u_proc); $$.u_proc
         	;
 
 procedure :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE 
-                { $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); }
+              { $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); }
         	;
 
 para_list : 	ID id_more COLON type para_more 
@@ -104,7 +104,7 @@ para_list : 	ID id_more COLON type para_more
                 $5.u_decl_list->push_front(new DeclImpl($3.u_symname_list, $4.u_type)); 
                 $$.u_decl_list = $5.u_decl_list; 
               }
-       		|                                      { $$.u_decl_list = new std::list<Decl_ptr>(); } 
+       		|   { $$.u_decl_list = new std::list<Decl_ptr>(); } 
        		;
 
 id_more		:	COMMA ID id_more   { $3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_symname_list = $3.u_symname_list; }
@@ -124,23 +124,30 @@ type   		: 	BOOLEAN    { $$.u_type = new TBoolean(); }
 
 /*------------------ body of procedure ----------------------*/
 
-body_of_p	:	p_nest var_dec statements return  
+body_of_p	:	  p_nest var_dec statements return  
               { $$.u_procedure_block = new Procedure_blockImpl( $1.u_proc_list, $2.u_decl_list, $3.u_stat_list, $4.u_return_stat); }
 			    ;
 
-p_nest		:	procedure p_nest     { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
-			    |	                     { $$.u_proc_list = new std::list<Proc_ptr>(); }
+p_nest		:	  procedure p_nest    { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
+			    |	                      { $$.u_proc_list = new std::list<Proc_ptr>(); }
 			    ;
 
-var_dec 	:	VAR ID id_more COLON dec_type SEMI var_dec
-			    |                                                   { $$.u_decl_list = new std::list<Decl_ptr>(); }
+var_dec 	:	  VAR ID id_more COLON dec_type SEMI var_dec
+              {
+                $3.u_symname_list->push_front(new SymName($2.u_base_charptr));
+                $6.u_decl=new DeclImpl($3.u_symname_list, $5.u_type); 
+                $7.u_decl_list->push_front($6.u_decl);
+                $$.u_decl_list = $7.u_decl_list;
+              }
+			    |   { $$.u_decl_list = new std::list<Decl_ptr>(); }
 			    ;
 
-dec_type	:  	INTEGER
-          |   BOOLEAN
-			    |	  CHARPTR
-          |   INTPTR
-	     		|	  STRING LBRAKET int_literal RBRAKET
+dec_type	:  	INTEGER                                  { $$.u_type = new TInteger(); }
+          |   BOOLEAN                                  { $$.u_type = new TBoolean(); }
+			    |	  CHARPTR                                  { $$.u_type = new TCharPtr(); }
+          |   INTPTR                                   { $$.u_type = new TIntPtr(); }
+          |   CHAR                                     { $$.u_type = new TCharacter(); }
+	     		|	  STRING LBRAKET int_literal RBRAKET       { $$.u_type = new TString($3.u_primitive); }
 		    	;
 
  /*---------------------- statements -------------------------*/
@@ -243,15 +250,11 @@ compare :   BIGER
 
 strptr		:	ID LBRAKET expression RBRAKET			
 			   ;
-/*
-int_literal :   INT int_more
-            |   int_more
-            ;
-*/
 
-int_literal :   PLUS INT
-            |   MINUS INT
-            |   INT
+
+int_literal :   PLUS INT    { $$.u_primitive = new Primitive($2.u_base_int); }
+            |   MINUS INT   { $$.u_primitive = new Primitive((-1) * $2.u_base_int); }
+            |   INT         { $$.u_primitive = new Primitive($1.u_base_int); }
             ;
 
  /*---------------------- if else while -----------------------*/
@@ -270,12 +273,10 @@ b_o_n_s 	:   statement   b_o_n_s
 
 
 
-/*
+/***********************************************************************************************************
 
 
-P_L : IDENTIFIER COLON TYPE MORE_PARAMS { $2.u_symname_list=new list<SymName_ptr>(); $2.u_symname_list->push_back(new SymName($1.u_base_charptr)); $4.u_decl_list->push_front(new DeclImpl($3.u_type,$2.u_symname_list)); $$.u_decl_list=$4.u_decl_list; }
-      | {$$.u_decl_list=new list<Decl_ptr>();} 
-      ;
+
 
 
 
@@ -308,6 +309,8 @@ VAR_DEC : VAR IDENTIFIER MULT_DEC COLON TYPE_2 SEMICOLON { $3.u_symname_list->pu
 MULT_DEC :   COMMA IDENTIFIER MULT_DEC {$3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_symname_list=$3.u_symname_list; }
             | {$$.u_symname_list=new list<SymName_ptr>();}
             ;
+
+
 
 STATEMENTS_ : ASIGN_MENT SEMICOLON  {$$.u_stat=$1.u_stat;}
              | FUNCTION_CALL SEMICOLON  {$$.u_stat=$1.u_stat;}
@@ -380,7 +383,7 @@ NEXT_PARAM : COMMA EXPR_ESSION NEXT_PARAM {$3.u_expr_list->push_front($2.u_expr)
             ;
 
 
-*/
+***************************************************/
 
 
 

@@ -16,3 +16,19 @@ Next I added implementation to procedure declaration, so that it can accept func
 	    return 0;
 	}
 
+Next I added implementation for variable declarations, and tested it by:
+
+	procedure Main(x : integer; y : char) return boolean
+	{
+	    var a: string[12];
+	    var b: string[12];
+	    var x: integer;
+	    var z: boolean;
+	    var x: integer;
+	    var k, j: integer;
+	    var t: boolean;
+
+	    return 0;
+	}
+
+
