@@ -190,13 +190,16 @@ func_call 	: 	ID LP call_paras RP
 			;
 
 
-expression 	: 	 expression_left expression_more
-            |    unary expression
-			      ;
+expression 	: 	 expression_left expression_more     { $$.u_expr = $1.u_expr; }
+            |    DEREF expression                    { $$.u_expr = new Deref($2.u_expr); }
+            |    MINUS expression                    { $$.u_expr = new Uminus($2.u_expr); }
+            |    NOT expression                      { $$.u_expr = new Not($2.u_expr); }
+			      |    PLUS expression                     { $$.u_expr = $2.u_expr; }
+            ;
 
-expression_left   :   single
-                  |   ABS expression ABS
-                  |   LP expression RP
+expression_left   :   single               { $$.u_expr = $1.u_expr; }
+                  |   ABS expression ABS   { $$.u_expr = new AbsoluteValue($2.u_expr); }
+                  |   LP expression RP     { $$.u_expr = $2.u_expr; }
                   ;
 
 expression_more	:	operator expression
@@ -210,13 +213,19 @@ single      : 	TRUE                        { $$.u_expr = new BoolLit(new Primiti
             | 	FALSE                       { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
             | 	INT                         { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
             |	  C                           { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
-            |   ADDRESS single_deref        { $$.u_expr = new Deref($2.u_expr); }
+            |   ADDRESS single_deref        { $$.u_expr = new AddressOf($2.u_lhs); }
             |   single_deref                { $$.u_expr = $1.u_expr; } 
             ;
 
-single_deref:   ID                              { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); }
-            |   ID LBRAKET expression RBRAKET   { $$.u_expr = new ArrayAccess(new SymName($1.u_base_charptr), $3.u_expr);  }  
+single_deref:   ID                              { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); 
+                                                  $$.u_lhs = new Variable(new SymName($1.u_base_charptr)); 
+                                                }
+            |   ID LBRAKET expression RBRAKET   { $$.u_expr = new ArrayAccess(new SymName($1.u_base_charptr), $3.u_expr); 
+                                                  $$.u_lhs = new ArrayElement(new SymName($1.u_base_charptr), $3.u_expr);
+                                                }  
             ;
+
+
 
 call_paras  :   expression para_more
             |
@@ -224,12 +233,6 @@ call_paras  :   expression para_more
 
 para_more   :   COMMA call_paras
             ;
-
-unary 		:	DEREF 
-			|	PLUS
-			|	MINUS
-			|	NOT
-			;
 
 operator 	:	OROR
       | ANDAND
@@ -246,10 +249,7 @@ compare :   BIGER
         |   EQEQ
         |   NOTEQUAL
         ;
-/*
-strptr		:	ID LBRAKET expression RBRAKET			
-			   ;
-*/
+
 
 int_literal :   PLUS INT    { $$.u_primitive = new Primitive($2.u_base_int); }
             |   MINUS INT   { $$.u_primitive = new Primitive((-1) * $2.u_base_int); }
@@ -335,12 +335,7 @@ EXPR_ESSION : LEFTPAREN EXPR_ESSION RIGHTPAREN  {$$.u_expr=$2.u_expr;}
             | SINGLE_EXPRESSION { $$.u_expr=$1.u_expr;}
             ;
 
-SINGLE_EXPRESSION : INTEGER         {$$.u_expr=new IntLit(new Primitive($1.u_base_int)); }
-                  | TRUE            {$$.u_expr=new BoolLit(new Primitive($1.u_base_int));}
-                  | FALSE           {$$.u_expr=new BoolLit(new Primitive($1.u_base_int));}
-                  | IDENTIFIER      { $$.u_expr=new Ident(new SymName($1.u_base_charptr));}
-                  | INT_ARRAY_EXP ARRAY_EXP  {$$.u_expr=new ArrayAccess($1.u_symname,$2.u_expr);}
-                  ;
+
 
 
 FUNCTION_CALL : IDENTIFIER ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN {$$.u_stat=new Call(new SymName($1.u_base_charptr),new SymName($3.u_base_charptr), $5.u_expr_list);}
