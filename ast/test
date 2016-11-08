@@ -1,22 +1,6 @@
 procedure Main(x : integer; y : char) return boolean
 {
-    return --&a[4];
+    return a+5*5-c;
 }
 
-procedure Main(x : integer; y : char) return boolean
-{
-    return ++&kkk[true];
-}
-procedure Main(x : integer; y : char) return boolean
-{
-    return ^^&Ccc[53];
-}
-procedure Main(x : integer; y : char) return boolean
-{
-    return !!&asd[e];
-}
-procedure Main(x : integer; y : char) return boolean
-{
-    return &a;
-}
 

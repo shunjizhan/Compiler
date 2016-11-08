@@ -39,6 +39,7 @@ Next I added implementation for variable declarations, and tested it by:
 
 -----------------------------------------------------------------------------------------------------------------
 
-Then I modified the expression so expression can accept some simple values. I tested it by testing return multiple times with different values.
+Then I modified the expression so expression can accept some simple values. I tested it by testing return multiple times with different values. Then I gradually finished all implementation of expression. I had to modified my grammar so that it is possible to build the AST.
 
 
+TODO: edit the precedence of + and *

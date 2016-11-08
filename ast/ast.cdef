@@ -30,18 +30,18 @@ Stat:CodeBlock ==>  Nested_block
 
 	Expr:AbsoluteValue ==> Expr
 	Expr:AddressOf ==> Lhs
-Expr:And ==> Expr Expr
-Expr:Div ==> Expr Expr
-Expr:Compare ==> Expr Expr
-Expr:Gt ==> Expr Expr
-Expr:Gteq ==> Expr Expr
-Expr:Lt ==> Expr Expr
-Expr:Lteq ==> Expr Expr
-Expr:Minus ==> Expr Expr
-Expr:Noteq ==> Expr Expr
-Expr:Or ==> Expr Expr
-Expr:Plus ==> Expr Expr
-Expr:Times ==> Expr Expr
+	Expr:And ==> Expr Expr
+	Expr:Div ==> Expr Expr
+	Expr:Compare ==> Expr Expr
+	Expr:Gt ==> Expr Expr
+	Expr:Gteq ==> Expr Expr
+	Expr:Lt ==> Expr Expr
+	Expr:Lteq ==> Expr Expr
+	Expr:Minus ==> Expr Expr
+	Expr:Noteq ==> Expr Expr
+	Expr:Or ==> Expr Expr
+	Expr:Plus ==> Expr Expr
+	Expr:Times ==> Expr Expr
 	Expr:Not ==> Expr
 	Expr:Uminus ==> Expr
 
