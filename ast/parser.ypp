@@ -206,17 +206,17 @@ expression_more	:	operator expression
 
 
 
-single 		  : 	ID                              { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); }
-            | 	TRUE                            { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
-            | 	FALSE                           { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
-            | 	INT                             { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
-            | 	ID LBRAKET expression RBRAKET   { $$.u_expr = new ArrayAccess(new SymName($1.u_base_charptr), $3.u_expr);  }         
-            |	  C                               { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
-            |   ADDRESS ID
-            |   ADDRESS ID LBRAKET expression RBRAKET
+single      : 	TRUE                        { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            | 	FALSE                       { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            | 	INT                         { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
+            |	  C                           { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
+            |   ADDRESS single_deref        { $$.u_expr = new Deref($2.u_expr); }
+            |   single_deref                { $$.u_expr = $1.u_expr; } 
             ;
 
-
+single_deref:   ID                              { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); }
+            |   ID LBRAKET expression RBRAKET   { $$.u_expr = new ArrayAccess(new SymName($1.u_base_charptr), $3.u_expr);  }  
+            ;
 
 call_paras  :   expression para_more
             |
