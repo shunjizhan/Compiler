@@ -1,6 +1,18 @@
-procedure Main(x : integer; y : char) return boolean
+procedure Main() return integer
 {
-    return a+5*5-c;
+if (a>b) {
+    var x : charptr;
+    var x : integer;
+    var y : intptr;
+}
+else {
+	var x : charptr;
+    var x : integer;
+    var y : intptr;
+	
+}
+ 
+    return !false;
 }
 
 

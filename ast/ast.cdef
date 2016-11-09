@@ -1,14 +1,14 @@
 # CDEF file for lang
 
-Program ==> *Proc
+	Program ==> *Proc
 
-Proc ==>  SymName *Decl Type Procedure_block
+	Proc ==>  SymName *Decl Type Procedure_block
 
 
-Procedure_block ==> *Proc *Decl *Stat Return_stat
-Nested_block ==> *Decl *Stat
+	Procedure_block ==> *Proc *Decl *Stat Return_stat
+	Nested_block ==> *Decl *Stat
 
-Decl ==> *SymName Type
+	Decl ==> *SymName Type
 
 Stat:Assignment ==> Lhs Expr
 Stat:StringAssignment ==> Lhs StringPrimitive
