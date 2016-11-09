@@ -80,6 +80,8 @@
 %right NOT
 
 
+
+
 %%
 
 
@@ -162,32 +164,24 @@ statement 	:	  assignment SEMI        { $$.u_stat = $1.u_stat; }
 		      	|	  code_block             { $$.u_stat = $1.u_stat; }
 		      	;
 
-return 		 : 	RETURN expression SEMI   { $$.u_return_stat = new Return($2.u_expr); }
-			     ;
+return 		  : 	RETURN expression SEMI   { $$.u_return_stat = new Return($2.u_expr); }
+			      ;
 
-code_block	:	LBRACE var_dec statements RBRACE { $$.u_nested_block = new Nested_blockImpl($2.u_decl_list, $3.u_stat_list); }
+code_block	:	LBRACE var_dec statements RBRACE { $$.u_stat = new CodeBlock(new Nested_blockImpl($2.u_decl_list, $3.u_stat_list)); }
 		      	;
 
  /*---------------------- assignment -------------------------*/
 
-assignment 	: 	lhs EQUAL rhs;
+assignment 	: 	lhs EQUAL expression { $$.u_stat = new Assignment($1.u_lhs, $3.u_expr); }
+            |   lhs EQUAL STR        { $$.u_stat = new StringAssignment($1.u_lhs, new StringPrimitive($3.u_base_charptr)); }
+            |   lhs EQUAL ID LP call_paras RP  
+                { $$.u_stat = new Call($1.u_lhs, new SymName($3.u_base_charptr), $5.u_expr_list); }
+            ;
 
-lhs 		:	ID lhs_more
-			|   DEREF LP expression RP
-      |   DEREF ID
-			;
-
-lhs_more 	:   LBRAKET expression RBRAKET
-			|	
-			;
-
-rhs 		: 	expression
-			|	func_call
-      | STR
-			;
-
-func_call 	: 	ID LP call_paras RP  
-			;
+lhs 		    :	  ID                             { $$.u_lhs = new Variable(new SymName($1.u_base_charptr)); }
+            |   ID LBRAKET expression RBRAKET  { $$.u_lhs = new ArrayElement(new SymName($1.u_base_charptr), $3.u_expr);}
+            |   DEREF ID                       { $$.u_lhs = new DerefVariable(new SymName($2.u_base_charptr)); }
+			      ;
 
 expression 	: 	 expression_left OROR   expression   { $$.u_expr = new Or($1.u_expr,$3.u_expr);}   
             |    expression_left ANDAND expression   { $$.u_expr = new And($1.u_expr,$3.u_expr);}
@@ -230,15 +224,13 @@ single_deref:   ID                              { $$.u_expr = new Ident(new SymN
                                                 }  
             ;
 
-
-
-call_paras  :   expression para_more
-            |
+call_paras  :   expression more    { $2.u_expr_list->push_front($1.u_expr); $$.u_expr_list = $2.u_expr_list; }
+            |                      { $$.u_expr_list = new std::list<Expr_ptr>(); }
             ;
 
-para_more   :   COMMA call_paras
+more        :   COMMA expression more   { $3.u_expr_list->push_front($2.u_expr); $$.u_expr_list=$3.u_expr_list; }
+            |                           { $$.u_expr_list = new std::list<Expr_ptr>(); }
             ;
-
 
 int_literal :   PLUS INT    { $$.u_primitive = new Primitive($2.u_base_int); }
             |   MINUS INT   { $$.u_primitive = new Primitive((-1) * $2.u_base_int); }
@@ -247,22 +239,15 @@ int_literal :   PLUS INT    { $$.u_primitive = new Primitive($2.u_base_int); }
 
  /*---------------------- if else while -----------------------*/
 
-if 			:	IF LP expression RP code_block  { $$.u_stat = new IfNoElse($3.u_expr, $5.u_nested_block); }
-			  | IF LP expression RP code_block ELSE code_block { $$.u_stat = new IfWithElse($3.u_expr, $5.u_nested_block, $7.u_nested_block); }
+if 			:	IF LP expression RP b_o_n_s  { $$.u_stat = new IfNoElse($3.u_expr, $5.u_nested_block); }
+			  | IF LP expression RP b_o_n_s ELSE b_o_n_s { $$.u_stat = new IfWithElse($3.u_expr, $5.u_nested_block, $7.u_nested_block); }
 		  	;
 
-while 	:	WHILE LP expression RP code_block  { $$.u_stat = new WhileLoop($3.u_expr, $5.u_nested_block); }
+while 	:	WHILE LP expression RP b_o_n_s  { $$.u_stat = new WhileLoop($3.u_expr, $5.u_nested_block); }
 			  ;
 
-/*
-b_o_n_s : statement b_o_n_s  { 
-                              $2.u_stat_list->push_front($1.u_stat);
-                              $$.u_nested_block = new Nested_blockImpl($2.u_stat_list);                 
-                             }
-        |                    { $$.u_nested_block = new Nested_blockImpl(, new std::list<Stat_ptr>()); }
-        ;
-*/
-
+b_o_n_s  : LBRACE var_dec statements RBRACE { $$.u_nested_block = new Nested_blockImpl($2.u_decl_list, $3.u_stat_list); }
+            ;
 
 
 /***********************************************************************************************************
@@ -292,17 +277,6 @@ ARRAY_EXP     : EXPR_ESSION RIGHTBRACKET    {$$.u_expr=$1.u_expr;}
 
 
 
-IF_ :  IF_EXPR IF_BODY  {$$.u_stat=new IfNoElse($1.u_expr,$2.u_nested_block);}
-    ;
-
-IF_EXPR: IF LEFTPAREN EXPR_ESSION RIGHTPAREN {$$.u_expr= $3.u_expr;}
-        ;
-
-IF_BODY : LEFTBRACE BODY_STATEMENTS RIGHTBRACE   {$$.u_nested_block=new Nested_blockImpl($2.u_stat_list);}
-        ;
-
-IF_ELSE : IF_EXPR IF_BODY ELSE LEFTBRACE BODY_STATEMENTS RIGHTBRACE {$$.u_stat=new IfWithElse($1.u_expr,$2.u_nested_block,new Nested_blockImpl($5.u_stat_list));}
-        ;
 
 
 ASIGN_MENT : IDENTIFIER ASSIGNMENT EXPR_ESSION {$$.u_stat=new Assignment(new SymName($1.u_base_charptr),$3.u_expr);}
@@ -318,13 +292,6 @@ FUNCTION_CALL : IDENTIFIER ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN 
                 | INT_ARRAY_EXP ARRAY_EXP ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN {$$.u_stat=new ArrayCall($1.u_symname, $2.u_expr, new SymName($4.u_base_charptr), $6.u_expr_list);}
                 ;
 
-IN_PARAMS : EXPR_ESSION NEXT_PARAM  {$2.u_expr_list->push_front($1.u_expr);$$.u_expr_list=$2.u_expr_list;}
-          | {$$.u_expr_list=new list<Expr_ptr>();}
-          ;
-
-NEXT_PARAM : COMMA EXPR_ESSION NEXT_PARAM {$3.u_expr_list->push_front($2.u_expr); $$.u_expr_list=$3.u_expr_list;}
-            |   {$$.u_expr_list=new list<Expr_ptr>();}
-            ;
 
 
 ***************************************************/
