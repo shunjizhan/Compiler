@@ -183,29 +183,28 @@ lhs 		    :	  ID                             { $$.u_lhs = new Variable(new SymNa
             |   DEREF ID                       { $$.u_lhs = new DerefVariable(new SymName($2.u_base_charptr)); }
 			      ;
 
-expression 	: 	 expression_left OROR   expression   { $$.u_expr = new Or($1.u_expr,$3.u_expr);}   
-            |    expression_left ANDAND expression   { $$.u_expr = new And($1.u_expr,$3.u_expr);}
-            |    expression_left PLUS   expression   { $$.u_expr = new Plus($1.u_expr,$3.u_expr);}
-            |    expression_left MINUS  expression   { $$.u_expr = new Minus($1.u_expr,$3.u_expr);}
-            |    expression_left TIMES  expression   { $$.u_expr = new Times($1.u_expr,$3.u_expr);}
-            |    expression_left DIVIDE expression   { $$.u_expr = new Div($1.u_expr,$3.u_expr);}
-            |    expression_left BIGER  expression   { $$.u_expr = new Gt($1.u_expr,$3.u_expr);}
-            |    expression_left BIGERE expression   { $$.u_expr = new Gteq($1.u_expr,$3.u_expr);}
-            |    expression_left LESS   expression   { $$.u_expr = new Lt($1.u_expr,$3.u_expr);}
-            |    expression_left LESSE  expression   { $$.u_expr = new Lteq($1.u_expr,$3.u_expr);}
-            |    expression_left EQEQ   expression   { $$.u_expr = new Compare($1.u_expr,$3.u_expr);}
-            |    expression_left NOTEQUAL expression { $$.u_expr = new Noteq($1.u_expr,$3.u_expr);}
-            |    expression_left                     { $$.u_expr = $1.u_expr; }
-            |    DEREF expression                    { $$.u_expr = new Deref($2.u_expr); }
-            |    MINUS expression                    { $$.u_expr = new Uminus($2.u_expr); }
-            |    NOT expression                      { $$.u_expr = new Not($2.u_expr); }
-			      |    PLUS expression                     { $$.u_expr = $2.u_expr; }
-            ;
+expression 	: 	 expression OROR   expression   { $$.u_expr = new Or($1.u_expr,$3.u_expr);}   
+            |    expression ANDAND expression   { $$.u_expr = new And($1.u_expr,$3.u_expr);}
+            |    expression PLUS   expression   { $$.u_expr = new Plus($1.u_expr,$3.u_expr);}
+            |    expression MINUS  expression   { $$.u_expr = new Minus($1.u_expr,$3.u_expr);}
+            |    expression TIMES  expression   { $$.u_expr = new Times($1.u_expr,$3.u_expr);}
+            |    expression DIVIDE expression   { $$.u_expr = new Div($1.u_expr,$3.u_expr);}
+            |    expression BIGER  expression   { $$.u_expr = new Gt($1.u_expr,$3.u_expr);}
+            |    expression BIGERE expression   { $$.u_expr = new Gteq($1.u_expr,$3.u_expr);}
+            |    expression LESS   expression   { $$.u_expr = new Lt($1.u_expr,$3.u_expr);}
+            |    expression LESSE  expression   { $$.u_expr = new Lteq($1.u_expr,$3.u_expr);}
+            |    expression EQEQ   expression   { $$.u_expr = new Compare($1.u_expr,$3.u_expr);}
+            |    expression NOTEQUAL expression { $$.u_expr = new Noteq($1.u_expr,$3.u_expr);}
+            |    DEREF expression  %prec NOT    { $$.u_expr = new Deref($2.u_expr); }
+            |    MINUS expression  %prec NOT    { $$.u_expr = new Uminus($2.u_expr); }
+            |    NOT expression    %prec NOT    { $$.u_expr = new Not($2.u_expr); }
+			      |    PLUS expression   %prec NOT    { $$.u_expr = $2.u_expr; }
+            |    single                         { $$.u_expr = $1.u_expr; }
+            |    ABS expression ABS             { $$.u_expr = new AbsoluteValue($2.u_expr); }
+            |    LP expression RP               { $$.u_expr = $2.u_expr; }
+            ; 
 
-expression_left   :   single               { $$.u_expr = $1.u_expr; }
-                  |   ABS expression ABS   { $$.u_expr = new AbsoluteValue($2.u_expr); }
-                  |   LP expression RP     { $$.u_expr = $2.u_expr; }
-                  ;
+
 
 
 single      : 	TRUE                        { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }

@@ -41,8 +41,7 @@ Next I added implementation for variable declarations, and tested it by:
 
 Then I modified the expression so expression can accept some simple values. I tested it by testing return multiple times with different values. Then I gradually finished all implementation of expression. I had to modified my grammar so that it is possible to build the AST. 
 
-Next I just gradually finished all the rest, and test my implemention with the three official examples, I found now I have two problems, the precedence problem, and StringPrimative problem. 
+Next I just gradually finished all the rest, and test my implemention with the three official examples, I found now I have two problems, the precedence problem, and StringPrimative problem. I then found I need to add '\0' to the string, which solved the String Primative problem. Now the only problem I have is the precedence problem. Finally I figured it out using %prec NOT 
 
 
-TODO: 
-- edit the precedence of + and *
+

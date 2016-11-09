@@ -1,11 +1,17 @@
-procedure Main(x : integer; y : char) return boolean
+procedure foo(x: integer) return integer
 {
-	var z,tr: string[7];
-	var c: char;
+    return 2*x;
+}
 
-	c = 'x';
-	z = "hello world";
-	tr = "";
-	z[3-2] = c;	
-	return 'd' != 'c';
+procedure Main() return integer
+{
+    var a : integer;
+    {
+    }
+    a = foo(3); 
+    {
+	var b: integer;
+	b = 3*a+2;
+    }
+    return 0;
 }
