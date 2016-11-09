@@ -78,9 +78,16 @@ false { yylval.u_base_int = 0; return FALSE; }
 [0][0-7]+ 			{ yylval.u_base_int = strtol(yytext, NULL, 8);  return INT; } 	/* octal */
 [0-1]+[b] 			{ yylval.u_base_int = strtol(yytext, NULL, 2);  return INT; } 	/* binary */
 
-[a-zA-Z][a-zA-Z0-9_]*  { yylval.u_base_charptr = strdup(yytext);   return ID; } /* identifier */
+[a-zA-Z][a-zA-Z0-9_]*  { yylval.u_base_charptr = strdup(yytext); return ID;} /* identifier */
 
-"\""[^\"]*"\""  { yylval.u_base_charptr = strdup(yytext); return STR; }		/* string */ 
+[\"].*[\"]  { 
+	char* cha = strdup(yytext);
+	cha += 1;
+	cha[strlen(cha)-1] = '\0';
+	yylval.u_base_charptr = cha;  
+	return STR; 
+}		/* string */ 
+
 "'"[a-zA-Z]"'"  { yylval.u_base_int = int(yytext[1]); return C; }		/* character */ 
 
 

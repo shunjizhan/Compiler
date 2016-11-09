@@ -250,51 +250,8 @@ b_o_n_s  : LBRACE var_dec statements RBRACE { $$.u_nested_block = new Nested_blo
             ;
 
 
-/***********************************************************************************************************
 
 
-
-
-
-
-TYPE :    INT   {$$.u_type=new TInteger();}
-        | BOOL  {$$.u_type=new TBoolean();}
-        ;
-
-TYPE_2 : TYPE {$$.u_type=$1.u_type;}
-        | INT_ARRAY {$$.u_type = $1.u_type;}
-        ;
-
-INT_ARRAY : INTARRAY LEFTBRACKET INTEGER RIGHTBRACKET {$$.u_type=new TIntArray(new Primitive($3.u_base_int));}
-          ;
-INT_ARRAY_EXP: IDENTIFIER LEFTBRACKET  {$$.u_symname=new SymName($1.u_base_charptr); 
-             ;
-ARRAY_EXP     : EXPR_ESSION RIGHTBRACKET    {$$.u_expr=$1.u_expr;}
-              ;
-
-
-
-
-
-
-
-
-ASIGN_MENT : IDENTIFIER ASSIGNMENT EXPR_ESSION {$$.u_stat=new Assignment(new SymName($1.u_base_charptr),$3.u_expr);}
-            | INT_ARRAY_EXP ARRAY_EXP ASSIGNMENT EXPR_ESSION  {$$.u_stat=new ArrayAssignment($1.u_symname,$2.u_expr,$4.u_expr);}
-            ;
-
-
-
-
-
-
-FUNCTION_CALL : IDENTIFIER ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN {$$.u_stat=new Call(new SymName($1.u_base_charptr),new SymName($3.u_base_charptr), $5.u_expr_list);}
-                | INT_ARRAY_EXP ARRAY_EXP ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN {$$.u_stat=new ArrayCall($1.u_symname, $2.u_expr, new SymName($4.u_base_charptr), $6.u_expr_list);}
-                ;
-
-
-
-***************************************************/
 
 
 
