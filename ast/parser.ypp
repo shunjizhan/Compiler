@@ -207,20 +207,17 @@ expression 	: 	 expression OROR   expression   { $$.u_expr = new Or($1.u_expr,$3
 
 
 
-single      : 	TRUE                        { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
-            | 	FALSE                       { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
-            | 	INT                         { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
-            |	  C                           { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
-            |   ADDRESS single_deref        { $$.u_expr = new AddressOf($2.u_lhs); }
-            |   single_deref                { $$.u_expr = $1.u_expr; } 
+single      : 	TRUE                          { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            | 	FALSE                         { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            | 	INT                           { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
+            |	  C                             { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
+            |   ADDRESS deref                 { $$.u_expr = new AddressOf($2.u_lhs); }
+            |   ID                            { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); }
+            |   ID LBRAKET expression RBRAKET {$$.u_expr = new ArrayAccess(new SymName($1.u_base_charptr), $3.u_expr); }
             ;
 
-single_deref:   ID                              { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); 
-                                                  $$.u_lhs = new Variable(new SymName($1.u_base_charptr)); 
-                                                }
-            |   ID LBRAKET expression RBRAKET   { $$.u_expr = new ArrayAccess(new SymName($1.u_base_charptr), $3.u_expr); 
-                                                  $$.u_lhs = new ArrayElement(new SymName($1.u_base_charptr), $3.u_expr);
-                                                }  
+deref       :   ID                            { $$.u_lhs = new Variable(new SymName($1.u_base_charptr)); }
+            |   ID LBRAKET expression RBRAKET { $$.u_lhs = new ArrayElement(new SymName($1.u_base_charptr), $3.u_expr); }  
             ;
 
 call_paras  :   expression more    { $2.u_expr_list->push_front($1.u_expr); $$.u_expr_list = $2.u_expr_list; }
