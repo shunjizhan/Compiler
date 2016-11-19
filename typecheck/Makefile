@@ -1,5 +1,5 @@
 #
-# Makefile for Project 1, Part 2
+# Makefile for Project 1, Part 4
 #
 
 YACC       = bison -d -v
@@ -10,8 +10,8 @@ GAWK       = gawk
 ASTBUILDER = astbuilder.gawk
 TARGET     = csimple
 
-OBJS += lexer.o parser.o main.o ast.o primitive.o  ast2dot.o symtab.o
-RMFILES = core.* lexer.cpp parser.cpp parser.hpp parser.output ast.hpp ast.cpp $(TARGET) $(OBJS)
+OBJS += lexer.o parser.o main.o ast.o primitive.o ast2dot.o symtab.o typecheck.o
+RMFILES = core.* *.dot *.pdf lexer.cpp parser.cpp parser.hpp parser.output ast.hpp ast.cpp $(TARGET) $(OBJS)
 
 # dependencies
 $(TARGET): parser.cpp lexer.cpp parser.hpp $(OBJS)
@@ -19,7 +19,7 @@ $(TARGET): parser.cpp lexer.cpp parser.hpp $(OBJS)
 
 # rules
 %.cpp: %.ypp
-	$(YACC) -o $(@:%.o=%.d) $< --report=all
+	$(YACC) -o $(@:%.o=%.d) $<
 
 %.o: %.cpp
 	$(CPP) -o $@ -c $<
@@ -52,13 +52,15 @@ primitive.o: primitive.hpp primitive.cpp ast.hpp
 clean:
 	rm -f $(RMFILES)
 
+
 test_grammar: csimple
 	./csimple < test.1
 
-test: csimple
+test_ast: csimple
 	./csimple< test > ast.out
 	dot -Tpdf ast.out -o ast.pdf
 	open ast.pdf
+
 
 
 

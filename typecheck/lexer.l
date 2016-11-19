@@ -2,13 +2,12 @@
 %pointer
 
 %{
-    #include <stdlib.h>
-    #include <string.h>
-    
+    #include <cstdlib>
+    #include <cstring>
     #include "ast.hpp"
     #include "parser.hpp"
 
-    void yyerror(const char *);
+     void yyerror(const char *); 
 %}
 
 
@@ -82,7 +81,6 @@ false { yylval.u_base_int = 0; return FALSE; }
 "/"\%([^%]|(\%+[^%/]))*\%+"/"   ;   /* skip comments */
 
 .                   yyerror((char *) "invalid character");
-
 
 
 %%

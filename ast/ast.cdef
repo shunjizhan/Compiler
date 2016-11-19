@@ -1,23 +1,23 @@
 # CDEF file for lang
 
-Program ==> *Proc
+	Program ==> *Proc
 
-Proc ==>  SymName *Decl Type Procedure_block
+	Proc ==>  SymName *Decl Type Procedure_block
 
 
-Procedure_block ==> *Proc *Decl *Stat Return_stat
-Nested_block ==> *Decl *Stat
+	Procedure_block ==> *Proc *Decl *Stat Return_stat
+	Nested_block ==> *Decl *Stat
 
-Decl ==> *SymName Type
+	Decl ==> *SymName Type
 
-Stat:Assignment ==> Lhs Expr
-Stat:StringAssignment ==> Lhs StringPrimitive
+	Stat:Assignment ==> Lhs Expr
+	Stat:StringAssignment ==> Lhs StringPrimitive
 
-Stat:Call ==> Lhs SymName *Expr
-Stat:IfNoElse ==> Expr Nested_block
-Stat:IfWithElse ==> Expr Nested_block Nested_block
-Stat:WhileLoop ==>  Expr Nested_block
-Stat:CodeBlock ==>  Nested_block
+	Stat:Call ==> Lhs SymName *Expr
+	Stat:IfNoElse ==> Expr Nested_block
+	Stat:IfWithElse ==> Expr Nested_block Nested_block
+	Stat:WhileLoop ==>  Expr Nested_block
+	Stat:CodeBlock ==>  Nested_block
 
 	Return_stat:Return ==> Expr
 
@@ -55,7 +55,7 @@ Stat:CodeBlock ==>  Nested_block
 	Expr:Deref ==> Expr
 
 	Lhs:Variable ==> SymName
-Lhs:DerefVariable ==> SymName
+	Lhs:DerefVariable ==> SymName
 	Lhs:ArrayElement ==> SymName Expr
 
 # these classes should not be generated automagically

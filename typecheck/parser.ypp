@@ -1,7 +1,6 @@
 %{
     #include <cstdio>
     #include <cstdlib>
-    #include <stdio.h>
 
     #include "ast.hpp"
     #include "primitive.hpp"
@@ -79,26 +78,22 @@
 %right EQUAL
 %right NOT
 
-
-
-
 %%
-
 
 /*------------------------- START ----------------------------*/
 
-Start   	: 	procedure p_more  { $2.u_proc_list->push_front($1.u_proc); ast = new ProgramImpl($2.u_proc_list); }
-        	;
+Start       :   procedure p_more  { $2.u_proc_list->push_front($1.u_proc); ast = new ProgramImpl($2.u_proc_list); }
+            ;
 
-p_more  	: 	procedure p_more  { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
-        	|                     { $$.u_proc_list = new std::list<Proc_ptr>; }
-        	;
+p_more      :   procedure p_more  { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
+            |                     { $$.u_proc_list = new std::list<Proc_ptr>; }
+            ;
 
 procedure :   PROCEDURE ID LP para_list RP RETURN type LBRACE body_of_p RBRACE 
               { $$.u_proc=new ProcImpl(new SymName($2.u_base_charptr), $4.u_decl_list, $7.u_type, $9.u_procedure_block); }
-        	;
+            ;
 
-para_list : 	ID id_more COLON type para_more 
+para_list :     ID id_more COLON type para_more 
               { 
                 $3.u_symname_list = new std::list<SymName_ptr>(); 
                 $3.u_symname_list->push_back(new SymName($1.u_base_charptr)); 
@@ -106,84 +101,84 @@ para_list : 	ID id_more COLON type para_more
                 $5.u_decl_list->push_front(new DeclImpl($3.u_symname_list, $4.u_type)); 
                 $$.u_decl_list = $5.u_decl_list; 
               }
-       		|   { $$.u_decl_list = new std::list<Decl_ptr>(); } 
-       		;
+            |   { $$.u_decl_list = new std::list<Decl_ptr>(); } 
+            ;
 
-id_more		:	COMMA ID id_more   { $3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_symname_list = $3.u_symname_list; }
-			    |                    { $$.u_symname_list = new std::list<SymName_ptr>(); }
-			    ;
+id_more     :   COMMA ID id_more   { $3.u_symname_list->push_front(new SymName($2.u_base_charptr)); $$.u_symname_list = $3.u_symname_list; }
+                |                    { $$.u_symname_list = new std::list<SymName_ptr>(); }
+                ;
 
-para_more   : 	SEMI para_list    { $$.u_decl_list = $2.u_decl_list; }
+para_more   :   SEMI para_list    { $$.u_decl_list = $2.u_decl_list; }
             |                     { $$.u_decl_list = new std::list<Decl_ptr>(); }
             ;
 
-type   		: 	BOOLEAN    { $$.u_type = new TBoolean(); }
-       		| 	CHAR       { $$.u_type = new TCharacter(); }
-      		| 	INTEGER    { $$.u_type = new TInteger(); }
-       		| 	CHARPTR    { $$.u_type = new TCharPtr(); }
-       		| 	INTPTR     { $$.u_type = new TIntPtr(); }
-      		;
+type        :   BOOLEAN    { $$.u_type = new TBoolean(); }
+            |   CHAR       { $$.u_type = new TCharacter(); }
+            |   INTEGER    { $$.u_type = new TInteger(); }
+            |   CHARPTR    { $$.u_type = new TCharPtr(); }
+            |   INTPTR     { $$.u_type = new TIntPtr(); }
+            ;
 
 /*------------------ body of procedure ----------------------*/
 
-body_of_p	:	  p_nest var_dec statements return  
+body_of_p   :     p_nest var_dec statements return  
               { $$.u_procedure_block = new Procedure_blockImpl( $1.u_proc_list, $2.u_decl_list, $3.u_stat_list, $4.u_return_stat); }
-			    ;
+                ;
 
-p_nest		:	  procedure p_nest    { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
-			    |	                      { $$.u_proc_list = new std::list<Proc_ptr>(); }
-			    ;
+p_nest      :     procedure p_nest    { $2.u_proc_list->push_front($1.u_proc); $$.u_proc_list = $2.u_proc_list; }
+                |                         { $$.u_proc_list = new std::list<Proc_ptr>(); }
+                ;
 
-var_dec 	:	  VAR ID id_more COLON dec_type SEMI var_dec
+var_dec     :     VAR ID id_more COLON dec_type SEMI var_dec
               {
                 $3.u_symname_list->push_front(new SymName($2.u_base_charptr));
                 $6.u_decl=new DeclImpl($3.u_symname_list, $5.u_type); 
                 $7.u_decl_list->push_front($6.u_decl);
                 $$.u_decl_list = $7.u_decl_list;
               }
-			    |   { $$.u_decl_list = new std::list<Decl_ptr>(); }
-			    ;
+                |   { $$.u_decl_list = new std::list<Decl_ptr>(); }
+                ;
 
-dec_type	:  	INTEGER                                  { $$.u_type = new TInteger(); }
+dec_type    :   INTEGER                                  { $$.u_type = new TInteger(); }
           |   BOOLEAN                                  { $$.u_type = new TBoolean(); }
-			    |	  CHARPTR                                  { $$.u_type = new TCharPtr(); }
+                |     CHARPTR                                  { $$.u_type = new TCharPtr(); }
           |   INTPTR                                   { $$.u_type = new TIntPtr(); }
           |   CHAR                                     { $$.u_type = new TCharacter(); }
-	     		|	  STRING LBRAKET int_literal RBRAKET       { $$.u_type = new TString($3.u_primitive); }
-		    	;
+                |     STRING LBRAKET int_literal RBRAKET       { $$.u_type = new TString($3.u_primitive); }
+                ;
 
  /*---------------------- statements -------------------------*/
 
-statements	:	statement statements     { $2.u_stat_list->push_front($1.u_stat); $$.u_stat_list=$2.u_stat_list; }
-		      	|                          { $$.u_stat_list = new std::list<Stat_ptr>(); }
-		      	;
+statements  :   statement statements     { $2.u_stat_list->push_front($1.u_stat); $$.u_stat_list=$2.u_stat_list; }
+                |                          { $$.u_stat_list = new std::list<Stat_ptr>(); }
+                ;
 
-statement 	:	  assignment SEMI        { $$.u_stat = $1.u_stat; }
-			      |	  if                     { $$.u_stat = $1.u_stat; }
-		      	|   while                  { $$.u_stat = $1.u_stat; }
-		      	|	  code_block             { $$.u_stat = $1.u_stat; }
-		      	;
+statement   :     assignment SEMI        { $$.u_stat = $1.u_stat; }
+                  |   if                     { $$.u_stat = $1.u_stat; }
+                |   while                  { $$.u_stat = $1.u_stat; }
+                |     code_block             { $$.u_stat = $1.u_stat; }
+                ;
 
-return 		  : 	RETURN expression SEMI   { $$.u_return_stat = new Return($2.u_expr); }
-			      ;
+return        :     RETURN expression SEMI   { $$.u_return_stat = new Return($2.u_expr); }
+                  ;
 
-code_block	:	LBRACE var_dec statements RBRACE { $$.u_stat = new CodeBlock(new Nested_blockImpl($2.u_decl_list, $3.u_stat_list)); }
-		      	;
+code_block  :   LBRACE var_dec statements RBRACE { $$.u_stat = new CodeBlock(new Nested_blockImpl($2.u_decl_list, $3.u_stat_list)); }
+                ;
 
  /*---------------------- assignment -------------------------*/
 
-assignment 	: 	lhs EQUAL expression { $$.u_stat = new Assignment($1.u_lhs, $3.u_expr); }
+assignment  :   lhs EQUAL expression { $$.u_stat = new Assignment($1.u_lhs, $3.u_expr); }
             |   lhs EQUAL STR        { $$.u_stat = new StringAssignment($1.u_lhs, new StringPrimitive($3.u_base_charptr)); }
             |   lhs EQUAL ID LP call_paras RP  
                 { $$.u_stat = new Call($1.u_lhs, new SymName($3.u_base_charptr), $5.u_expr_list); }
             ;
 
-lhs 		    :	  ID                             { $$.u_lhs = new Variable(new SymName($1.u_base_charptr)); }
+lhs             :     ID                             { $$.u_lhs = new Variable(new SymName($1.u_base_charptr)); }
             |   ID LBRAKET expression RBRAKET  { $$.u_lhs = new ArrayElement(new SymName($1.u_base_charptr), $3.u_expr);}
             |   DEREF ID                       { $$.u_lhs = new DerefVariable(new SymName($2.u_base_charptr)); }
-			      ;
+                  ;
 
-expression 	: 	 expression OROR   expression   { $$.u_expr = new Or($1.u_expr,$3.u_expr);}   
+expression  :    expression OROR   expression   { $$.u_expr = new Or($1.u_expr,$3.u_expr);}   
             |    expression ANDAND expression   { $$.u_expr = new And($1.u_expr,$3.u_expr);}
             |    expression PLUS   expression   { $$.u_expr = new Plus($1.u_expr,$3.u_expr);}
             |    expression MINUS  expression   { $$.u_expr = new Minus($1.u_expr,$3.u_expr);}
@@ -198,7 +193,7 @@ expression 	: 	 expression OROR   expression   { $$.u_expr = new Or($1.u_expr,$3
             |    DEREF expression  %prec NOT    { $$.u_expr = new Deref($2.u_expr); }
             |    MINUS expression  %prec NOT    { $$.u_expr = new Uminus($2.u_expr); }
             |    NOT expression    %prec NOT    { $$.u_expr = new Not($2.u_expr); }
-			      |    PLUS expression   %prec NOT    { $$.u_expr = $2.u_expr; }
+                  |    PLUS expression   %prec NOT    { $$.u_expr = $2.u_expr; }
             |    single                         { $$.u_expr = $1.u_expr; }
             |    ABS expression ABS             { $$.u_expr = new AbsoluteValue($2.u_expr); }
             |    LP expression RP               { $$.u_expr = $2.u_expr; }
@@ -207,10 +202,10 @@ expression 	: 	 expression OROR   expression   { $$.u_expr = new Or($1.u_expr,$3
 
 
 
-single      : 	TRUE                          { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
-            | 	FALSE                         { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
-            | 	INT                           { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
-            |	  C                             { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
+single      :   TRUE                          { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            |   FALSE                         { $$.u_expr = new BoolLit(new Primitive($1.u_base_int)); }
+            |   INT                           { $$.u_expr = new IntLit(new Primitive($1.u_base_int));  }
+            |     C                             { $$.u_expr = new CharLit(new Primitive($1.u_base_int)); }
             |   ADDRESS deref                 { $$.u_expr = new AddressOf($2.u_lhs); }
             |   ID                            { $$.u_expr = new Ident(new SymName($1.u_base_charptr)); }
             |   ID LBRAKET expression RBRAKET {$$.u_expr = new ArrayAccess(new SymName($1.u_base_charptr), $3.u_expr); }
@@ -235,21 +230,15 @@ int_literal :   PLUS INT    { $$.u_primitive = new Primitive($2.u_base_int); }
 
  /*---------------------- if else while -----------------------*/
 
-if 			:	IF LP expression RP b_o_n_s  { $$.u_stat = new IfNoElse($3.u_expr, $5.u_nested_block); }
-			  | IF LP expression RP b_o_n_s ELSE b_o_n_s { $$.u_stat = new IfWithElse($3.u_expr, $5.u_nested_block, $7.u_nested_block); }
-		  	;
+if          :   IF LP expression RP b_o_n_s  { $$.u_stat = new IfNoElse($3.u_expr, $5.u_nested_block); }
+              | IF LP expression RP b_o_n_s ELSE b_o_n_s { $$.u_stat = new IfWithElse($3.u_expr, $5.u_nested_block, $7.u_nested_block); }
+            ;
 
-while 	:	WHILE LP expression RP b_o_n_s  { $$.u_stat = new WhileLoop($3.u_expr, $5.u_nested_block); }
-			  ;
+while   :   WHILE LP expression RP b_o_n_s  { $$.u_stat = new WhileLoop($3.u_expr, $5.u_nested_block); }
+              ;
 
 b_o_n_s  : LBRACE var_dec statements RBRACE { $$.u_nested_block = new Nested_blockImpl($2.u_decl_list, $3.u_stat_list); }
             ;
-
-
-
-
-
-
 
 %%
 
@@ -262,5 +251,5 @@ extern int yylineno;
 void yyerror(const char *s)
 {
     fprintf(stderr, "%s at line %d\n", s, yylineno);
-    return;
+    exit(1);
 }
