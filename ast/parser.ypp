@@ -305,26 +305,6 @@ ASIGN_MENT : IDENTIFIER ASSIGNMENT EXPR_ESSION {$$.u_stat=new Assignment(new Sym
             | INT_ARRAY_EXP ARRAY_EXP ASSIGNMENT EXPR_ESSION  {$$.u_stat=new ArrayAssignment($1.u_symname,$2.u_expr,$4.u_expr);}
             ;
 
-EXPR_ESSION : LEFTPAREN EXPR_ESSION RIGHTPAREN  {$$.u_expr=$2.u_expr;}
-            | ABSOLUTEVALUE EXPR_ESSION ABSOLUTEVALUE {$$.u_expr=$2.u_expr;}
-            | MINUS EXPR_ESSION %prec NOT {$$.u_expr=new Uminus($2.u_expr);}
-            | NOT EXPR_ESSION   %prec NOT {$$.u_expr=new Not($2.u_expr);}
-            | EXPR_ESSION PLUS EXPR_ESSION {$$.u_expr=new Plus($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION MINUS EXPR_ESSION {$$.u_expr=new Minus($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION TIMES EXPR_ESSION {$$.u_expr=new Times($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION DIVIDE EXPR_ESSION {$$.u_expr=new Div($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION OROR EXPR_ESSION   {$$.u_expr=new Or($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION ANDAND EXPR_ESSION {$$.u_expr=new And($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION EQEQ EXPR_ESSION   {$$.u_expr=new Compare($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION GT EXPR_ESSION     {$$.u_expr=new Gt($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION GTE EXPR_ESSION    {$$.u_expr=new Gteq($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION LT EXPR_ESSION     {$$.u_expr=new Lt($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION LTE EXPR_ESSION    {$$.u_expr=new Lteq($1.u_expr,$3.u_expr);}
-            | EXPR_ESSION NE EXPR_ESSION     {$$.u_expr=new Noteq($1.u_expr,$3.u_expr);}
-            | SINGLE_EXPRESSION { $$.u_expr=$1.u_expr;}
-            ;
-
-
 
 
 FUNCTION_CALL : IDENTIFIER ASSIGNMENT IDENTIFIER LEFTPAREN IN_PARAMS RIGHTPAREN {$$.u_stat=new Call(new SymName($1.u_base_charptr),new SymName($3.u_base_charptr), $5.u_expr_list);}
