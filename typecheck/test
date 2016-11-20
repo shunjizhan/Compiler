@@ -1,9 +1,16 @@
 procedure Main() return boolean
-{
+{	
+	var x : boolean;
+    var z : integer;
+    var y : intptr;
+
+    x = true;
+    z = 3;
+
 	return true;
 }
 
-procedure kkk() return boolean
+procedure kkk() return integer
 {
 	return 0;
 }
