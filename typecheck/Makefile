@@ -56,10 +56,10 @@ clean:
 test_grammar: csimple
 	./csimple < test.1
 
-test_ast: csimple
+test_check: csimple
 	./csimple< test > ast.out
-	dot -Tpdf ast.out -o ast.pdf
-	open ast.pdf
+
+
 
 
 

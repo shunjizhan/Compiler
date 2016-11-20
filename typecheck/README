@@ -1,0 +1,30 @@
+I first download all the files and copyt my code from last project to it, and read through symtab.cpp and symtab.hpp to understand how they work.
+
+Then I started to implement check_for_one_main(), and it made me understand deeper about the whole picture. I then implement everything in :
+
+    enum errortype
+    {
+        no_main,           // OK
+        nonvoid_main,
+        dup_proc_name,
+        dup_var_name,
+        proc_undef,
+        call_type_mismatch,
+        narg_mismatch,
+        expr_type_err,
+        var_undef,
+        ifpred_err,
+        whilepred_err,
+        incompat_assign,
+        who_knows,
+        ret_type_mismatch,
+        array_index_error,
+        no_array_var,
+        arg_type_mismatch,
+        expr_pointer_arithmetic_err,
+        expr_abs_error,
+        expr_addressof_error,
+        invalid_deref
+    };
+
+one by one, and test the implementation by "make test_check". I will only go to the next error type only after the previous one are fully tested.
