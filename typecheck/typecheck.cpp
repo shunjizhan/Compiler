@@ -134,10 +134,18 @@ class Typecheck : public Visitor
 
         name = strdup(p->m_symname->spelling());
         s = new Symbol();
-        s->m_basetype = bt_procedure;
+        s->m_basetype = bt_procedure;   
+        s->m_return_type = p -> m_type -> m_attribute.m_basetype;
 
-        if(!m_st->insert(name, s)) {
-            this->t_error(no_main, p->m_attribute);        
+        // add arguments to args list
+        list<Decl_ptr>::iterator iter;
+        iterate(iter, p->m_decl_list) {
+            Basetype bt = (*iter)->m_attribute.m_basetype; 
+            s->m_arg_type.push_back(bt);
+        }
+
+        if(!m_st->insert_in_parent_scope(name, s)) {
+            this->t_error(dup_proc_name, p->m_attribute);        
         }
     }
 
@@ -160,22 +168,22 @@ class Typecheck : public Visitor
 
     // Check that there is one and only one main
     void check_for_one_main(ProgramImpl* p) {
-        Symbol *s = m_st -> lookup("Main");
+        Symbol *s = m_st->lookup("Main");
         if(s == NULL)  // check one Main
             this->t_error(no_main, p->m_attribute);
 
-        if(s -> m_arg_type.size() > 0) // check no arguments
+        if(s->m_arg_type.size() > 0) // check no arguments
             this->t_error(nonvoid_main, p->m_attribute);
     }
 
     // Check that the return statement of a procedure has the appropriate type
-    void check_proc(ProcImpl *p)
-    {
-    }
-
     // Check that the declared return type is not an array
-    void check_return(Return *p)
-    {
+    void check_return(ProcImpl *p) {
+         // cout << p->m_type->m_attribute.basetype() << endl;
+         // cout << p->m_procedure_block->m_attribute.basetype() << endl;
+        if(p->m_type->m_attribute.m_basetype != p->m_procedure_block->m_attribute.m_basetype) {
+            this->t_error(ret_type_mismatch, p -> m_attribute);    
+        }
     }
 
     // Create a symbol for the procedure and check there is none already
@@ -281,19 +289,25 @@ class Typecheck : public Visitor
     }
 
     void visitProcImpl(ProcImpl* p) {
+        m_st->open_scope();
+
         default_rule(p);
-        add_proc_symbol(p);       
+        add_proc_symbol(p);   // add precedure to sym_table
+        check_return(p);    // check return type
+
+        m_st->close_scope();
     }
 
-    void visitCall(Call* p)
-    {
+    void visitNested_blockImpl(Nested_blockImpl* p) {
+        default_rule(p);
     }
 
-    void visitNested_blockImpl(Nested_blockImpl* p)
-    {
+    void visitProcedure_blockImpl(Procedure_blockImpl* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = p->m_return_stat->m_attribute.m_basetype;
     }
 
-    void visitProcedure_blockImpl(Procedure_blockImpl* p)
+        void visitCall(Call* p)
     {
     }
 
@@ -313,8 +327,10 @@ class Typecheck : public Visitor
     {
     }
 
-    void visitReturn(Return* p)
-    {
+    void visitReturn(Return* p) {
+        default_rule(p);
+        // cout << "!!!!" << p->m_expr->m_attribute.basetype() << endl;
+        p->m_attribute.m_basetype = p->m_expr->m_attribute.m_basetype;
     }
 
     void visitIfNoElse(IfNoElse* p)
@@ -333,29 +349,35 @@ class Typecheck : public Visitor
     {
     }
 
+
     void visitTInteger(TInteger* p) {
         default_rule(p);
         p->m_attribute.m_basetype = bt_integer;
     }
 
-    void visitTBoolean(TBoolean* p)
-    {
+    void visitTBoolean(TBoolean* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitTCharacter(TCharacter* p)
-    {
+    void visitTCharacter(TCharacter* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_char;
     }
 
-    void visitTString(TString* p)
-    {
+    void visitTString(TString* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_string;
     }
 
-    void visitTCharPtr(TCharPtr* p)
-    {
+    void visitTCharPtr(TCharPtr* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_charptr;
     }
 
-    void visitTIntPtr(TIntPtr* p)
-    {
+    void visitTIntPtr(TIntPtr* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_intptr;
     }
 
     void visitAnd(And* p)
@@ -418,20 +440,24 @@ class Typecheck : public Visitor
     {
     }
 
-    void visitIntLit(IntLit* p)
-    {
+    void visitIntLit(IntLit* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_integer;
     }
 
-    void visitCharLit(CharLit* p)
-    {
+    void visitCharLit(CharLit* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_char;
     }
 
-    void visitBoolLit(BoolLit* p)
-    {
+    void visitBoolLit(BoolLit* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitNullLit(NullLit* p)
-    {
+    void visitNullLit(NullLit* p) {
+        p->m_attribute.m_basetype = bt_ptr;
+        default_rule(p);
     }
 
     void visitAbsoluteValue(AbsoluteValue* p)

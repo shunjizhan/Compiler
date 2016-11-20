@@ -1,19 +1,9 @@
-procedure Main(num:integer) return integer
+procedure Main() return boolean
 {
-	return 0;
+	return true;
 }
 
-procedure dain() return integer
-{
-	return 0;
-}
-
-procedure oain() return integer
-{
-	return 0;
-}
-
-procedure d2323in() return integer
+procedure kkk() return boolean
 {
 	return 0;
 }

@@ -27,4 +27,6 @@ Then I started to implement check_for_one_main(), and it made me understand deep
         invalid_deref
     };
 
-one by one, and test the implementation by "make test_check". I will only go to the next error type only after the previous one are fully tested.
+one by one, and test the implementation by "make test_check". I will only go to the next error type only after the previous one are fully tested. 
+
+In order to debug, I added a function in attribute.hpp that can print out the basetype
