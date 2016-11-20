@@ -124,8 +124,17 @@ class Typecheck : public Visitor
     // WRITEME: You need to implement type-checking for this project
 
     // Check that there is one and only one main
-    void check_for_one_main(ProgramImpl* p)
-    {
+    void check_for_one_main(ProgramImpl* p) {
+        set_scope_and_descend_into_children(p);
+
+        // ASSERT There's a single main
+        Symbol *s = m_st -> lookup("Main");
+        if(s == NULL) 
+            this -> t_error(no_main, p -> m_attribute);
+
+        // ASSERT There are no args for it
+        if(s -> m_arg_type.size() > 0)
+            this -> t_error(main_args_err,  p -> m_attribute);
     }
 
     // Create a symbol for the procedure and check there is none already
