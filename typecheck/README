@@ -29,4 +29,8 @@ Then I started to implement check_for_one_main(), and it made me understand deep
 
 one by one, and test the implementation by "make test_check". I will only go to the next error type only after the previous one are fully tested. 
 
-In order to debug, I added a function in attribute.hpp that can print out the basetype
+In order to debug, since there are a lot of issues regarding Basetype, I added a function in attribute.hpp that can print out the basetype. So I can do things like 
+
+	cout << p->m_expr->m_attribute.basetype() << endl;
+
+to check where the problem is.

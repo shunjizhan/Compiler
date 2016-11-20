@@ -6,11 +6,14 @@
 #include <unordered_map>
 #include <vector>
 #include <ext/hash_map>
+#include <iostream>
 
 #include <cassert>
 
 #include "ast.hpp"
 #include "attribute.hpp"
+
+using namespace std;
 
 class Symbol;
 
@@ -65,7 +68,23 @@ class Symbol
     std::vector<Basetype> m_arg_type;
     Basetype m_return_type;
 
-    //WRITEME: add string size information
+    void print_args() {
+        for (int i=0; i<m_arg_type.size(); i++) {
+            Basetype bt = m_arg_type[i];
+            switch(bt) {
+                case bt_integer: cout << "bt_integer" << " ";
+              case bt_intptr: cout << "bt_intptr" << " ";
+              case bt_boolean: cout << "bt_boolean" << " ";
+              case bt_char: cout << "bt_char" << " ";
+              case bt_charptr: cout << "bt_charptr" << " ";
+              case bt_procedure: cout << "bt_procedure" << " ";
+              case bt_ptr: cout << "bt_ptr" << " ";             // Used by nullptr
+              case bt_string: cout << "bt_string" << " ";
+              default:   cout << "undefined" << " ";
+          }
+        }
+        cout << endl;
+    }
 
     Symbol()
     {

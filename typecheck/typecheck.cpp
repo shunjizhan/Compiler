@@ -47,7 +47,7 @@ class Typecheck : public Visitor
         expr_pointer_arithmetic_err,
         expr_abs_error,
         expr_addressof_error,
-        invalid_deref
+        invalid_deref       // OK
     };
 
     // Print the error to file and exit
@@ -135,13 +135,13 @@ class Typecheck : public Visitor
         name = strdup(p->m_symname->spelling());
         s = new Symbol();
         s->m_basetype = bt_procedure;   
-        s->m_return_type = p -> m_type -> m_attribute.m_basetype;
+        s->m_return_type = p->m_type->m_attribute.m_basetype;
 
         // add arguments to args list
         list<Decl_ptr>::iterator iter;
         iterate(iter, p->m_decl_list) {
-            Basetype bt = (*iter)->m_attribute.m_basetype; 
-            s->m_arg_type.push_back(bt);
+            cout << (*iter)->m_attribute.basetype() << endl;
+            s->m_arg_type.push_back((*iter)->m_attribute.m_basetype);
         }
 
         if(!m_st->insert_in_parent_scope(name, s)) {
@@ -164,6 +164,7 @@ class Typecheck : public Visitor
                 this->t_error(dup_var_name, p->m_attribute);        
             }
         }
+
     }
 
     // Check that there is one and only one main
@@ -177,12 +178,9 @@ class Typecheck : public Visitor
     }
 
     // Check that the return statement of a procedure has the appropriate type
-    // Check that the declared return type is not an array
     void check_return(ProcImpl *p) {
-         // cout << p->m_type->m_attribute.basetype() << endl;
-         // cout << p->m_procedure_block->m_attribute.basetype() << endl;
         if(p->m_type->m_attribute.m_basetype != p->m_procedure_block->m_attribute.m_basetype) {
-            this->t_error(ret_type_mismatch, p -> m_attribute);    
+            this->t_error(ret_type_mismatch, p->m_attribute);    
         }
     }
 
@@ -192,34 +190,23 @@ class Typecheck : public Visitor
     {
     }
 
-    // For checking that this expressions type is boolean used in if/else
-    void check_pred_if(Expr* p)
-    {
-    }
-
-    // For checking that this expressions type is boolean used in while
-    void check_pred_while(Expr* p)
-    {
-    }
 
     void check_assignment(Assignment* p) {
-       //  ASSERT left hand side var exists, and is an int/bool
-        // Symbol* lhs = m_st->lookup(p->m_symname->spelling());
-        // if (lhs == NULL) {
-        //     this -> t_error(var_undef, p -> m_attribute);
-        // }
-        // if (lhs -> m_basetype != bt_integer && lhs -> m_basetype != bt_boolean) {
-        //     this -> t_error(sym_type_mismatch, p -> m_attribute);
-        // }
+        Symbol* lhs = m_st->lookup(lhs_to_id(p->m_lhs));
+        if (lhs == NULL) {
+            this -> t_error(var_undef, p -> m_attribute);
+        }
 
-        // ASSERT right hand side matches that type
+        // cout << p->m_expr->m_attribute.basetype() << endl;
+        // cout << p->m_lhs->m_attribute.basetype() << endl; 
+
+        // check type match of two sides
         if( p->m_expr->m_attribute.m_basetype != p->m_lhs->m_attribute.m_basetype) {
             this-> t_error(incompat_assign, p->m_attribute);
         }
     }
 
     void checkset_Ident(Ident* p) {     
-        // ASSERT symbol under varname exists and is either an integer or a boolean or a char
         Symbol* s = m_st->lookup(p->m_symname->spelling());
         if (s == NULL) {
             this -> t_error(var_undef, p -> m_attribute);
@@ -232,8 +219,21 @@ class Typecheck : public Visitor
     {
     }
 
-    void check_array_access(ArrayAccess* p)
-    {
+    void check_array_access(ArrayAccess* p) {
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        if (s == NULL) {
+            this->t_error(var_undef, p -> m_attribute);
+        }
+        Basetype bt = s->m_basetype;
+        if(bt != bt_intptr && bt != bt_charptr) {
+            this->t_error(incompat_assign, p->m_attribute);
+        }
+        if(p->m_expr->m_attribute.m_basetype != bt_integer) {
+            this->t_error(array_index_error, p->m_attribute);
+        }
+        
+        if(bt == bt_intptr) { p->m_attribute.m_basetype = bt_integer; }
+        else { p->m_attribute.m_basetype = bt_char;}
     }
 
     void check_array_element(ArrayElement* p)
@@ -294,6 +294,7 @@ class Typecheck : public Visitor
     }
 
     void checkset_variable(Variable* p) {
+        cout << p->m_symname->spelling() << endl;
         Symbol* s = m_st->lookup(p->m_symname->spelling());
         if (s == NULL) {
             this->t_error(var_undef, p -> m_attribute);
@@ -346,15 +347,55 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = p->m_expr->m_attribute.m_basetype;
     }
 
-    void visitCall(Call* p)
-    {
+    void visitCall(Call* p) {
+        default_rule(p); 
+        Symbol* s = m_st->lookup(lhs_to_id(p->m_lhs));
+        if (s == NULL) {
+            this -> t_error(var_undef, p -> m_attribute);
+        }
+
+        // check the call name is indeed a call
+        Symbol* f = m_st -> lookup(p->m_symname->spelling());
+        if (f == NULL) {
+            this->t_error(var_undef, p->m_attribute);
+        }
+        if (f->m_basetype != bt_procedure) {
+            this->t_error(call_type_mismatch, p->m_attribute);
+        }
+
+        // check procedure arguments
+        f->print_args();
+
+        list<Expr_ptr>::iterator iter;
+        int count = 0;
+        iterate(iter, p->m_expr_list) {
+            if (count >= f->m_arg_type.size()) {
+                this->t_error(narg_mismatch, p->m_attribute);
+            }
+
+            cout << (*iter)->m_attribute.basetype() << endl;
+            // cout << f->m_arg_type[count++] << endl;
+            if ((*iter)->m_attribute.m_basetype != f->m_arg_type[count++]) {
+                this->t_error(arg_type_mismatch, p->m_attribute);
+            }
+        }
+        if (count != f -> m_arg_type.size())
+            this->t_error(narg_mismatch, p->m_attribute);
+
+        // check precedure return type
+        if (f->m_return_type != s->m_basetype)
+            this->t_error(incompat_assign, p->m_attribute);
+        
+        p->m_attribute.m_basetype = s->m_basetype;
     }
+
 
     void visitStringAssignment(StringAssignment *p)
     {
     }
 
     void visitIdent(Ident* p) {
+        // cout << "Ident ";
         default_rule(p);    
         checkset_Ident(p);     
     }
@@ -563,59 +604,81 @@ class Typecheck : public Visitor
 
     void visitArrayAccess(ArrayAccess* p) {
         default_rule(p);
-
-        Symbol* s = m_st->lookup(p->m_symname->spelling());
-        if (s == NULL) {
-            this->t_error(var_undef, p -> m_attribute);
-        }
-        Basetype bt = s->m_basetype;
-        if(bt != bt_intptr && bt != bt_charptr) {
-            this->t_error(incompat_assign, p->m_attribute);
-        }
-        if(p->m_expr->m_attribute.m_basetype != bt_integer) {
-            this->t_error(array_index_error, p->m_attribute);
-        }
-        
-        if(bt == bt_intptr) { p->m_attribute.m_basetype = bt_integer; }
-        else { p->m_attribute.m_basetype = bt_char;}
+        check_array_access(p);
     }
 
     void visitVariable(Variable* p) {
+        cout << "variable ";
         default_rule(p);
         checkset_variable(p);
     }
 
     void visitAddressOf(AddressOf* p) {
         default_rule(p);
+        // Symbol* s = m_st->lookup(p->m_symname->spelling());
+        // if (s == NULL) {
+        //     this->t_error(var_undef, p -> m_attribute);
+        // }
+        // Basetype bt = s->m_basetype;
+        // if(bt != bt_char && bt != bt_integer && bt != bt_charptr) {
+        //     this->t_error(expr_addressof_error, p->m_attribute);
+        // }
+        // p->m_attribute.m_basetype = s->m_basetype;
     }
 
     void visitDeref(Deref* p) {
         default_rule(p);
 
-        // Basetype bt = s->m_basetype;
-        // if(bt != bt_intptr && bt != bt_charptr) {
-        //     this->t_error(incompat_assign, p->m_attribute);
-        // }
-        // if(p->m_expr->m_attribute.m_basetype != bt_integer) {
-        //     this->t_error(array_index_error, p->m_attribute);
-        // }
-        
-        // if(bt == bt_intptr) { p->m_attribute.m_basetype = bt_integer; }
-        // else { p->m_attribute.m_basetype = bt_char;}
     }
 
     void visitDerefVariable(DerefVariable* p) {
         default_rule(p);
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        if (s == NULL) {
+            this->t_error(var_undef, p -> m_attribute);
+        }
+        Basetype bt = s->m_basetype;
+        if(bt != bt_intptr && bt != bt_charptr) {
+            this->t_error(invalid_deref, p->m_attribute);
+        }
+        p->m_attribute.m_basetype = s->m_basetype;
     }
 
     void visitArrayElement(ArrayElement* p) {
         default_rule(p);
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        if (s == NULL) {
+            this->t_error(var_undef, p -> m_attribute);
+        }
+        if(p->m_expr->m_attribute.m_basetype != bt_integer) {
+            this->t_error(array_index_error, p->m_attribute);
+        }
+        p->m_attribute.m_basetype = s->m_basetype;
     }
 
     // Special cases
     void visitPrimitive(Primitive* p) {}
     void visitSymName(SymName* p) {}
     void visitStringPrimitive(StringPrimitive* p) {}
+
+    const char* lhs_to_id(Lhs* lhs) {
+        Variable* v = dynamic_cast<Variable*>(lhs);
+        if(v) {
+            return v->m_symname->spelling();
+        }
+
+        DerefVariable* dv = dynamic_cast<DerefVariable*>(lhs);
+        if(dv) {
+            return dv->m_symname->spelling();
+        }
+
+        ArrayElement* ae = dynamic_cast<ArrayElement*>(lhs);
+        if(ae) {
+            return ae->m_symname->spelling();
+        }
+
+        return nullptr;
+      }
 };
 
 
