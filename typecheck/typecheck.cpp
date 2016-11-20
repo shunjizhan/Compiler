@@ -7,8 +7,14 @@
 #include "primitive.hpp"
 #include "assert.h"
 
-// WRITEME: The default attribute propagation rule
-#define default_rule(X) X
+using namespace std;
+
+#define default_rule(X) \
+    (X)->m_attribute.m_scope = m_st->get_scope(); \
+    (X)->visit_children(this); \
+
+#define iterate(iter, list) \
+    for(iter = list->begin(); iter != list->end(); iter++) \
 
 #include <typeinfo>
 
@@ -21,7 +27,7 @@ class Typecheck : public Visitor
     // The set of recognized errors
     enum errortype
     {
-        no_main,
+        no_main,           // OK
         nonvoid_main,
         dup_proc_name,
         dup_var_name,
@@ -117,26 +123,49 @@ class Typecheck : public Visitor
         }
     }
 
-    // Helpers
-    // WRITEME: You might want write some hepler functions.
 
-    // Type Checking
-    // WRITEME: You need to implement type-checking for this project
 
-    // Check that there is one and only one main
-    void check_for_one_main(ProgramImpl* p)
-    {
-    }
 
     // Create a symbol for the procedure and check there is none already
     // existing
-    void add_proc_symbol(ProcImpl* p)
-    {
+    void add_proc_symbol(ProcImpl* p) {
+        char* name;
+        Symbol* s;
+
+        name = strdup(p->m_symname->spelling());
+        s = new Symbol();
+        s->m_basetype = bt_procedure;
+
+        if(!m_st->insert(name, s)) {
+            this->t_error(no_main, p->m_attribute);        
+        }
     }
 
     // Add symbol table information for all the declarations following
-    void add_decl_symbol(DeclImpl* p)
-    {
+    void add_decl_symbol(DeclImpl* p) {
+        list<SymName_ptr>::iterator iter;
+        char* name;
+        Symbol* s;
+
+        iterate(iter, p->m_symname_list) {
+            name = strdup((*iter)->spelling());
+            s = new Symbol();
+            s->m_basetype = p->m_type->m_attribute.m_basetype;
+
+            if(!m_st->insert(name, s)) {
+                this->t_error(dup_var_name, p->m_attribute);        
+            }
+        }
+    }
+
+    // Check that there is one and only one main
+    void check_for_one_main(ProgramImpl* p) {
+        Symbol *s = m_st -> lookup("Main");
+        if(s == NULL)  // check one Main
+            this->t_error(no_main, p->m_attribute);
+
+        if(s -> m_arg_type.size() > 0) // check no arguments
+            this->t_error(nonvoid_main, p->m_attribute);
     }
 
     // Check that the return statement of a procedure has the appropriate type
@@ -246,12 +275,14 @@ class Typecheck : public Visitor
         m_st = st;
     }
 
-    void visitProgramImpl(ProgramImpl* p)
-    {
+    void visitProgramImpl(ProgramImpl* p) {
+        default_rule(p);
+        check_for_one_main(p);
     }
 
-    void visitProcImpl(ProcImpl* p)
-    {
+    void visitProcImpl(ProcImpl* p) {
+        default_rule(p);
+        add_proc_symbol(p);       
     }
 
     void visitCall(Call* p)
@@ -302,8 +333,9 @@ class Typecheck : public Visitor
     {
     }
 
-    void visitTInteger(TInteger* p)
-    {
+    void visitTInteger(TInteger* p) {
+        default_rule(p);
+        p->m_attribute.m_basetype = bt_integer;
     }
 
     void visitTBoolean(TBoolean* p)

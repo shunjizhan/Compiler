@@ -1,11 +1,19 @@
-procedure Main(x : integer; y : char) return boolean
+procedure Main(num:integer) return integer
 {
-	var z,tr: string[7];
-	var c: char;
+	return 0;
+}
 
-	c = 'x';
-	z = "hello world";
-	tr = "";
-	z[3-2] = c;	
-	return 'd' != 'c';
+procedure dain() return integer
+{
+	return 0;
+}
+
+procedure oain() return integer
+{
+	return 0;
+}
+
+procedure d2323in() return integer
+{
+	return 0;
 }
