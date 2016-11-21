@@ -142,8 +142,8 @@ class Typecheck : public Visitor
         // DeclImpl_ptr* dec = dynamic_cast<DeclImpl_ptr*>(Decl_ptr);
         list<Decl_ptr>::iterator iter;
         iterate(iter, p->m_decl_list) {
-             cout << dynamic_cast<DeclImpl*>(*iter)->m_attribute.basetype() << endl;
-            s->m_arg_type.push_back(dynamic_cast<DeclImpl*>(*iter)->m_attribute.m_basetype);
+            cout << dynamic_cast<DeclImpl*>(*iter)->m_type->m_attribute.basetype() << endl;
+            s->m_arg_type.push_back(dynamic_cast<DeclImpl*>(*iter)->m_type->m_attribute.m_basetype);
         }
 
         if(!m_st->insert_in_parent_scope(name, s)) {
@@ -207,9 +207,9 @@ class Typecheck : public Visitor
          cout << p->m_lhs->m_attribute.basetype() << endl; 
 
         // check type match of two sides
-        // if( p->m_expr->m_attribute.m_basetype != p->m_lhs->m_attribute.m_basetype) {
-        //     this-> t_error(incompat_assign, p->m_attribute);
-        // }
+        if( p->m_expr->m_attribute.m_basetype != p->m_lhs->m_attribute.m_basetype) {
+            this-> t_error(incompat_assign, p->m_attribute);
+        }
     }
 
     void check_string_assignment(StringAssignment* p)
@@ -224,15 +224,14 @@ class Typecheck : public Visitor
         cout << "check_array_access -- " << s->basetype() << endl;
 
         Basetype bt = s->m_basetype;
-        if(bt != bt_intptr && bt != bt_string) {
-            this->t_error(incompat_assign, p->m_attribute);
+        if(bt != bt_string) {
+            this->t_error(no_array_var, p->m_attribute);
         }
         if(p->m_expr->m_attribute.m_basetype != bt_integer) {
             this->t_error(array_index_error, p->m_attribute);
         }
         
-        if(bt == bt_intptr) { p->m_attribute.m_basetype = bt_integer; }
-        else { p->m_attribute.m_basetype = bt_char;}
+        p->m_attribute.m_basetype = bt_char;
     }
 
     void check_array_element(ArrayElement* p)
@@ -459,7 +458,7 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_intptr;
     }
 
-    void visitAnd(And* p) {
+    void visitAnd(And* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_boolean || p->m_expr_2->m_attribute.m_basetype != bt_boolean) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -467,7 +466,7 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitOr(Or* p) {
+    void visitOr(Or* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_boolean || p->m_expr_2->m_attribute.m_basetype != bt_boolean) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -475,33 +474,33 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitDiv(Div* p) {
-        default_rule(p);
-        if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
-            this->t_error(expr_type_err, p->m_attribute);
-        }
-        p->m_attribute.m_basetype = bt_integer;
-    }
-
-    void visitCompare(Compare* p) {
+    void visitCompare(Compare* p) { //OK
         default_rule(p);
         if(!( (p->m_expr_1->m_attribute.m_basetype==bt_integer && p->m_expr_2->m_attribute.m_basetype==bt_integer) ||
-              (p->m_expr_1->m_attribute.m_basetype==bt_boolean && p->m_expr_2->m_attribute.m_basetype==bt_boolean) ) ) {
+              (p->m_expr_1->m_attribute.m_basetype==bt_boolean && p->m_expr_2->m_attribute.m_basetype==bt_boolean) ||
+              (p->m_expr_1->m_attribute.m_basetype==bt_char && p->m_expr_2->m_attribute.m_basetype==bt_char) ||
+              (p->m_expr_1->m_attribute.m_basetype==bt_charptr && p->m_expr_2->m_attribute.m_basetype==bt_charptr) ||
+              (p->m_expr_1->m_attribute.m_basetype==bt_intptr && p->m_expr_2->m_attribute.m_basetype==bt_intptr) ) ) 
+              {
                   this->t_error(expr_type_err, p->m_attribute);
               }
         p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitNoteq(Noteq* p) {
+    void visitNoteq(Noteq* p) { //OK
         default_rule(p);
         if(!( (p->m_expr_1->m_attribute.m_basetype==bt_integer && p->m_expr_2->m_attribute.m_basetype==bt_integer) ||
-              (p->m_expr_1->m_attribute.m_basetype==bt_boolean && p->m_expr_2->m_attribute.m_basetype==bt_boolean) ) ) {
+              (p->m_expr_1->m_attribute.m_basetype==bt_boolean && p->m_expr_2->m_attribute.m_basetype==bt_boolean) ||
+              (p->m_expr_1->m_attribute.m_basetype==bt_char && p->m_expr_2->m_attribute.m_basetype==bt_char) ||
+              (p->m_expr_1->m_attribute.m_basetype==bt_charptr && p->m_expr_2->m_attribute.m_basetype==bt_charptr) ||
+              (p->m_expr_1->m_attribute.m_basetype==bt_intptr && p->m_expr_2->m_attribute.m_basetype==bt_intptr) ) ) 
+              {
                   this->t_error(expr_type_err, p->m_attribute);
               }
         p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitGt(Gt* p) {
+    void visitGt(Gt* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -509,7 +508,7 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitGteq(Gteq* p) {
+    void visitGteq(Gteq* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -517,7 +516,7 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitLt(Lt* p) {
+    void visitLt(Lt* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -525,7 +524,7 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_boolean;
     }
 
-    void visitLteq(Lteq* p) {
+    void visitLteq(Lteq* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -533,7 +532,29 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_boolean;     
     }
 
-    void visitMinus(Minus* p) {
+    void visitMinus(Minus* p) { //OK
+        default_rule(p);
+        if(!((p->m_expr_1->m_attribute.m_basetype == bt_integer && p->m_expr_2->m_attribute.m_basetype == bt_integer)
+            || (p->m_expr_1->m_attribute.m_basetype == bt_intptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)
+            || (p->m_expr_1->m_attribute.m_basetype == bt_charptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)) ) 
+        {
+            this->t_error(expr_type_err, p->m_attribute);
+        }
+        p->m_attribute.m_basetype = bt_integer;
+    }
+
+    void visitPlus(Plus* p) { //OK
+        default_rule(p);
+        if(!((p->m_expr_1->m_attribute.m_basetype == bt_integer && p->m_expr_2->m_attribute.m_basetype == bt_integer)
+            || (p->m_expr_1->m_attribute.m_basetype == bt_intptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)
+            || (p->m_expr_1->m_attribute.m_basetype == bt_charptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)) ) 
+        {
+            this->t_error(expr_type_err, p->m_attribute);
+        }
+        p->m_attribute.m_basetype = bt_integer;
+    }
+
+    void visitTimes(Times* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -541,7 +562,7 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_integer;
     }
 
-    void visitPlus(Plus* p) {
+    void visitDiv(Div* p) { //OK
         default_rule(p);
         if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
             this->t_error(expr_type_err, p->m_attribute);
@@ -549,15 +570,7 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_integer;
     }
 
-    void visitTimes(Times* p) {
-        default_rule(p);
-        if(p->m_expr_1->m_attribute.m_basetype != bt_integer || p->m_expr_2->m_attribute.m_basetype != bt_integer) {
-            this->t_error(expr_type_err, p->m_attribute);
-        }
-        p->m_attribute.m_basetype = bt_integer;
-    }
-
-    void visitNot(Not* p) {
+    void visitNot(Not* p) { //OK
         default_rule(p);
         if(p->m_expr->m_attribute.m_basetype != bt_boolean) {
            this->t_error(expr_type_err, p->m_attribute);
@@ -592,9 +605,10 @@ class Typecheck : public Visitor
         p->m_attribute.m_basetype = bt_ptr;
     }
 
-    void visitAbsoluteValue(AbsoluteValue* p) {
+    void visitAbsoluteValue(AbsoluteValue* p) { //OK
         default_rule(p);
-        if(p->m_expr->m_attribute.m_basetype != bt_integer) {
+        if(p->m_expr->m_attribute.m_basetype != bt_integer &&
+           p->m_expr->m_attribute.m_basetype != bt_string    ) {
            this->t_error(expr_type_err, p->m_attribute);
         }
         p->m_attribute.m_basetype = bt_integer;
@@ -628,7 +642,7 @@ class Typecheck : public Visitor
         if(bt != bt_char && bt != bt_integer && bt != bt_string) {
             this->t_error(expr_addressof_error, p->m_attribute);
         }
-        p->m_attribute.m_basetype = s->m_basetype;
+        p->m_attribute.m_basetype = bt_integer;
     }
 
     void visitDeref(Deref* p) {                     // right side
@@ -638,6 +652,12 @@ class Typecheck : public Visitor
         Basetype bt = p->m_expr->m_attribute.m_basetype;
         if(bt != bt_intptr && bt != bt_charptr) {
             this->t_error(invalid_deref, p->m_attribute);
+        }
+
+        if(bt == bt_intptr) {     
+            p->m_attribute.m_basetype = bt_integer;
+        } else {
+            p->m_attribute.m_basetype = bt_char;
         }
     }
 
@@ -653,12 +673,18 @@ class Typecheck : public Visitor
         if(bt != bt_intptr && bt != bt_charptr) {
             this->t_error(invalid_deref, p->m_attribute);
         }
-        p->m_attribute.m_basetype = s->m_basetype;
+
+        if(bt == bt_intptr) {     
+            p->m_attribute.m_basetype = bt_integer;
+        } else {
+            p->m_attribute.m_basetype = bt_char;
+        }
     }
 
     void visitArrayElement(ArrayElement* p) {
         default_rule(p);
         Symbol* s = m_st->lookup(p->m_symname->spelling());
+        cout << "visitArrayElement -- " << p->m_symname->spelling() << "[" << p->m_expr->m_attribute.basetype() << "]" << endl;
         if (s == NULL) {
             this->t_error(var_undef, p -> m_attribute);
         }

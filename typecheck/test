@@ -1,5 +1,6 @@
 procedure call(x:boolean; y:integer; a:integer) return integer
 {	
+/%
     var z : integer;
     var k : boolean;
     var c : char;
@@ -14,8 +15,29 @@ procedure call(x:boolean; y:integer; a:integer) return integer
     z = 3;
     k = x;
     y = 144;
-
+%/
 	return 5;
+}
+
+procedure call2() return boolean
+{	
+/%
+    var z : integer;
+    var k : boolean;
+    var c : char;
+    var b : string[5];
+
+    c = b[3];
+
+
+
+
+
+    z = 3;
+    k = x;
+    y = 144;
+%/
+	return true;
 }
 
 
@@ -26,14 +48,32 @@ procedure Main() return integer
     var f : charptr;
     var b : string[5];
     var z : integer;
+    var k : char;
+    var t : boolean;
 
+/%
     z = ^e;
     z = ^f;
 
 
     ^e = z;
-
-	/% a = call(true, 3, 5); %/
+    ^f = z;
+%/
+	b = "h";
+	k = b[3];
+/%
+	z = true ;
+	z = ^e 	;
+	z = f - 5;
+	^f = f + 5;
+	^e = 	3;
+	z = ^e - 5;
+	z = f + 5;
+	z = e + 3;
+	z = f - 5;
+	%/
+	 b = call( true, 3, 5); 
+	 t = call2(true);
 
 	return a;
 }
