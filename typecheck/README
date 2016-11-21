@@ -1,36 +1,14 @@
 I first download all the files and copyt my code from last project to it, and read through symtab.cpp and symtab.hpp to understand how they work.
 
-Then I started to implement check_for_one_main(), and it made me understand deeper about the whole picture. I then implement everything in :
+Then I started to implement check_for_one_main(), and it made me understand deeper about the whole picture. 
 
-    enum errortype
-    {
-        no_main,           // OK
-        nonvoid_main,
-        dup_proc_name,
-        dup_var_name,
-        proc_undef,
-        call_type_mismatch,
-        narg_mismatch,
-        expr_type_err,
-        var_undef,
-        ifpred_err,
-        whilepred_err,
-        incompat_assign,
-        who_knows,
-        ret_type_mismatch,
-        array_index_error,
-        no_array_var,
-        arg_type_mismatch,
-        expr_pointer_arithmetic_err,
-        expr_abs_error,
-        expr_addressof_error,
-        invalid_deref
-    };
+Next I just went over the typecheck.cpp to implement functions one by one, since some are hard, I skipped them and do the easier ones first. I had difficulty with the function call, and left it to the last implementation.
 
-one by one, and test the implementation by "make test_check". I will only go to the next error type only after the previous one are fully tested. 
-
-In order to debug, since there are a lot of issues regarding Basetype, I added a function in attribute.hpp that can print out the basetype. So I can do things like 
+In order to debug, since there are a lot of issues regarding Basetype, I added functions that can print out the basetype. So I can do things like 
 
 	cout << p->m_expr->m_attribute.basetype() << endl;
 
-to check where the problem is.
+to check where the problem is. I used this method to debug for a long time and fixed all my issues.
+
+I also went over the instrtuction's error type one by one to see if there is any missing in the implementation. After that I checked issues about scope, and there didn't seem to have a problem.
+
