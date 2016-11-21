@@ -1,19 +1,106 @@
-procedure Main(num:integer) return integer
-{
-	return 0;
+procedure call(x:boolean; y:integer; a:integer) return integer
+{	
+/%
+    var z : integer;
+    var k : boolean;
+    var c : char;
+    var b : string[5];
+
+    c = b[3];
+
+
+
+
+
+    z = 3;
+    k = x;
+    y = 144;
+%/
+	return 5;
 }
 
-procedure dain() return integer
-{
-	return 0;
+procedure call2() return boolean
+{	
+    procedure foo(a:integer; c:boolean) return integer {
+    	var cc : integer;
+
+    	return 4;
+    }
+    procedure bar() return integer {
+    	var cc : integer;
+    	cc = foo( 3, true);
+    	return cc;
+    }
+
+
+    var z : integer;
+    var k : boolean;
+    var c : char;
+    var b : string[5];
+
+
+    {
+		var e : integer;   
+		    var z : integer;
+    var k : boolean;
+    var c : char;
+    var b : string[5]; {		var e : integer;   
+		    var z : integer;
+    var k : boolean;
+    var c : char;
+    var b : string[5]; }
+    }
+
+
+    c = b[3];
+
+
+
+
+
+    z = 3;
+
+	return true;
 }
 
-procedure oain() return integer
-{
-	return 0;
+
+procedure Main() return integer
+{	
+	var a : integer;
+	var e : intptr;
+    var f : charptr;
+    var b : string[5];
+    var z : integer;
+    var k : char;
+    var t : boolean;
+
+
+/%
+    z = ^e;
+    z = ^f;
+
+
+    ^e = z;
+    ^f = z;
+%/
+	b = "h";
+	k = b[3];
+/%
+	z = true ;
+	z = ^e 	;
+	z = f - 5;
+	^f = f + 5;
+	^e = 	3;
+	z = ^e - 5;
+	z = f + 5;
+	z = e + 3;
+	z = f - 5;
+	%/
+	 z = call(true, 3,3); 
+	 t = call2();
+
+	 a = e -3;
+
+	return a;
 }
 
-procedure d2323in() return integer
-{
-	return 0;
-}

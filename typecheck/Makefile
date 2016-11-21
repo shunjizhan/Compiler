@@ -57,7 +57,7 @@ test_grammar: csimple
 	./csimple < test.1
 
 test_check: csimple
-	./csimple< test > ast.out
+	./csimple< test 
 
 
 
