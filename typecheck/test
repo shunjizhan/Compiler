@@ -72,8 +72,10 @@ procedure Main() return integer
 	z = e + 3;
 	z = f - 5;
 	%/
-	 b = call( true, 3, 5); 
-	 t = call2(true);
+	 z = call(true, 3,3); 
+	 t = call2();
+
+	 a = e -3;
 
 	return a;
 }

@@ -358,25 +358,24 @@ class Typecheck : public Visitor
         // check procedure arguments
         f->print_args();
 
+        if(p->m_expr_list->size() != f->m_arg_type.size()) { // chekc number of args
+            this->t_error(narg_mismatch, p->m_attribute);
+        }
+
         list<Expr_ptr>::iterator iter;
         int count = 0;
-        iterate(iter, p->m_expr_list) {
-            if (count >= f->m_arg_type.size()) {
-                this->t_error(narg_mismatch, p->m_attribute);
-            }
 
+        iterate(iter, p->m_expr_list) {
             cout << (*iter)->m_attribute.basetype() << endl;
             // cout << f->m_arg_type[count++] << endl;
             if ((*iter)->m_attribute.m_basetype != f->m_arg_type[count++]) {
                 this->t_error(arg_type_mismatch, p->m_attribute);
             }
         }
-        if (count != f -> m_arg_type.size())
-            this->t_error(narg_mismatch, p->m_attribute);
 
         // check precedure return type
         if (f->m_return_type != s->m_basetype)
-            this->t_error(incompat_assign, p->m_attribute);
+            this->t_error(call_type_mismatch, p->m_attribute);
         
         p->m_attribute.m_basetype = s->m_basetype;
     }
@@ -538,7 +537,11 @@ class Typecheck : public Visitor
             || (p->m_expr_1->m_attribute.m_basetype == bt_intptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)
             || (p->m_expr_1->m_attribute.m_basetype == bt_charptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)) ) 
         {
-            this->t_error(expr_type_err, p->m_attribute);
+            if(p->m_expr_1->m_attribute.m_basetype == bt_intptr || p->m_expr_2->m_attribute.m_basetype == bt_charptr) {
+                this->t_error(expr_pointer_arithmetic_err, p->m_attribute);
+            } else {
+               this->t_error(expr_type_err, p->m_attribute);
+            }
         }
         p->m_attribute.m_basetype = bt_integer;
     }
@@ -549,7 +552,11 @@ class Typecheck : public Visitor
             || (p->m_expr_1->m_attribute.m_basetype == bt_intptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)
             || (p->m_expr_1->m_attribute.m_basetype == bt_charptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)) ) 
         {
-            this->t_error(expr_type_err, p->m_attribute);
+            if(p->m_expr_1->m_attribute.m_basetype == bt_intptr || p->m_expr_2->m_attribute.m_basetype == bt_charptr) {
+                this->t_error(expr_pointer_arithmetic_err, p->m_attribute);
+            } else {
+               this->t_error(expr_type_err, p->m_attribute);
+            }
         }
         p->m_attribute.m_basetype = bt_integer;
     }
