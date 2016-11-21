@@ -86,6 +86,20 @@ class Symbol
         cout << endl;
     }
 
+      std::string basetype() {
+    switch(m_basetype) {
+      case bt_integer: return "bt_integer";
+      case bt_intptr: return "bt_intptr";
+      case bt_boolean: return "bt_boolean";
+      case bt_char: return "bt_char";
+      case bt_charptr: return "bt_charptr";
+      case bt_procedure: return "bt_procedure";
+      case bt_ptr: return "bt_ptr";             // Used by nullptr
+      case bt_string: return "bt_string";
+      default:   return "undefined";
+    }
+  }
+
     Symbol()
     {
         m_offset = -1;

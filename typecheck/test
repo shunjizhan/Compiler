@@ -1,20 +1,39 @@
-procedure call(x:boolean; y:integer; a:integer) return boolean
+procedure call(x:boolean; y:integer; a:integer) return integer
 {	
     var z : integer;
     var k : boolean;
+    var c : char;
+    var b : string[5];
+
+    c = b[3];
+
+
+
+
 
     z = 3;
     k = x;
     y = 144;
 
-	return true;
+	return 5;
 }
 
-procedure Main() return boolean
-{	
-	var a : boolean;
 
-	a = call(true, 3);
+procedure Main() return integer
+{	
+	var a : integer;
+	var e : intptr;
+    var f : charptr;
+    var b : string[5];
+    var z : integer;
+
+    z = ^e;
+    z = ^f;
+
+
+    ^e = z;
+
+	/% a = call(true, 3, 5); %/
 
 	return a;
 }

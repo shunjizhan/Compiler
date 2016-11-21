@@ -128,7 +128,8 @@ class Typecheck : public Visitor
 
     // Create a symbol for the procedure and check there is none already
     // existing
-    void add_proc_symbol(ProcImpl* p) {
+    void add_proc_symbol(ProcImpl* p) { 
+        cout << "add_proc_symbol" << endl;
         char* name;
         Symbol* s;
 
@@ -138,10 +139,11 @@ class Typecheck : public Visitor
         s->m_return_type = p->m_type->m_attribute.m_basetype;
 
         // add arguments to args list
+        // DeclImpl_ptr* dec = dynamic_cast<DeclImpl_ptr*>(Decl_ptr);
         list<Decl_ptr>::iterator iter;
         iterate(iter, p->m_decl_list) {
-            cout << (*iter)->m_attribute.basetype() << endl;
-            s->m_arg_type.push_back((*iter)->m_attribute.m_basetype);
+             cout << dynamic_cast<DeclImpl*>(*iter)->m_attribute.basetype() << endl;
+            s->m_arg_type.push_back(dynamic_cast<DeclImpl*>(*iter)->m_attribute.m_basetype);
         }
 
         if(!m_st->insert_in_parent_scope(name, s)) {
@@ -151,11 +153,13 @@ class Typecheck : public Visitor
 
     // Add symbol table information for all the declarations following
     void add_decl_symbol(DeclImpl* p) {
+          cout << "add_decl_symbol ";
         list<SymName_ptr>::iterator iter;
         char* name;
         Symbol* s;
 
         iterate(iter, p->m_symname_list) {
+            cout << (*iter)->spelling() <<  ' ' << p->m_type->m_attribute.basetype() << endl;
             name = strdup((*iter)->spelling());
             s = new Symbol();
             s->m_basetype = p->m_type->m_attribute.m_basetype;
@@ -179,6 +183,7 @@ class Typecheck : public Visitor
 
     // Check that the return statement of a procedure has the appropriate type
     void check_return(ProcImpl *p) {
+        cout << "check_return -- " << p->m_type->m_attribute.basetype() << " " << p->m_procedure_block->m_attribute.basetype() << endl;
         if(p->m_type->m_attribute.m_basetype != p->m_procedure_block->m_attribute.m_basetype) {
             this->t_error(ret_type_mismatch, p->m_attribute);    
         }
@@ -197,22 +202,14 @@ class Typecheck : public Visitor
             this -> t_error(var_undef, p -> m_attribute);
         }
 
-        // cout << p->m_expr->m_attribute.basetype() << endl;
-        // cout << p->m_lhs->m_attribute.basetype() << endl; 
+        cout << "check_assignment -- " ;
+         cout << p->m_expr->m_attribute.basetype() << " ";
+         cout << p->m_lhs->m_attribute.basetype() << endl; 
 
         // check type match of two sides
-        if( p->m_expr->m_attribute.m_basetype != p->m_lhs->m_attribute.m_basetype) {
-            this-> t_error(incompat_assign, p->m_attribute);
-        }
-    }
-
-    void checkset_Ident(Ident* p) {     
-        Symbol* s = m_st->lookup(p->m_symname->spelling());
-        if (s == NULL) {
-            this -> t_error(var_undef, p -> m_attribute);
-        }
-
-        p->m_attribute.m_basetype = s->m_basetype;
+        // if( p->m_expr->m_attribute.m_basetype != p->m_lhs->m_attribute.m_basetype) {
+        //     this-> t_error(incompat_assign, p->m_attribute);
+        // }
     }
 
     void check_string_assignment(StringAssignment* p)
@@ -224,8 +221,10 @@ class Typecheck : public Visitor
         if (s == NULL) {
             this->t_error(var_undef, p -> m_attribute);
         }
+        cout << "check_array_access -- " << s->basetype() << endl;
+
         Basetype bt = s->m_basetype;
-        if(bt != bt_intptr && bt != bt_charptr) {
+        if(bt != bt_intptr && bt != bt_string) {
             this->t_error(incompat_assign, p->m_attribute);
         }
         if(p->m_expr->m_attribute.m_basetype != bt_integer) {
@@ -293,14 +292,6 @@ class Typecheck : public Visitor
     {
     }
 
-    void checkset_variable(Variable* p) {
-        cout << p->m_symname->spelling() << endl;
-        Symbol* s = m_st->lookup(p->m_symname->spelling());
-        if (s == NULL) {
-            this->t_error(var_undef, p -> m_attribute);
-        }
-        p->m_attribute.m_basetype = s->m_basetype;
-    }
 
 
   public:
@@ -349,6 +340,8 @@ class Typecheck : public Visitor
 
     void visitCall(Call* p) {
         default_rule(p); 
+        cout << "Call" << endl;
+
         Symbol* s = m_st->lookup(lhs_to_id(p->m_lhs));
         if (s == NULL) {
             this -> t_error(var_undef, p -> m_attribute);
@@ -357,7 +350,7 @@ class Typecheck : public Visitor
         // check the call name is indeed a call
         Symbol* f = m_st -> lookup(p->m_symname->spelling());
         if (f == NULL) {
-            this->t_error(var_undef, p->m_attribute);
+            this->t_error(proc_undef, p->m_attribute);
         }
         if (f->m_basetype != bt_procedure) {
             this->t_error(call_type_mismatch, p->m_attribute);
@@ -395,9 +388,14 @@ class Typecheck : public Visitor
     }
 
     void visitIdent(Ident* p) {
-        // cout << "Ident ";
+        cout << "Ident " << p->m_symname->spelling() << endl;
         default_rule(p);    
-        checkset_Ident(p);     
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        if (s == NULL) {
+            this -> t_error(var_undef, p -> m_attribute);
+        }
+
+        p->m_attribute.m_basetype = s->m_basetype;     
     }
 
     void visitReturn(Return* p) {
@@ -608,35 +606,49 @@ class Typecheck : public Visitor
     }
 
     void visitVariable(Variable* p) {
-        cout << "variable ";
         default_rule(p);
-        checkset_variable(p);
+        cout << "variable ";
+        cout << p->m_symname->spelling() << endl;
+
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        if (s == NULL) {
+            this->t_error(var_undef, p -> m_attribute);
+        }
+        p->m_attribute.m_basetype = s->m_basetype;;
     }
 
     void visitAddressOf(AddressOf* p) {
         default_rule(p);
-        // Symbol* s = m_st->lookup(p->m_symname->spelling());
-        // if (s == NULL) {
-        //     this->t_error(var_undef, p -> m_attribute);
-        // }
-        // Basetype bt = s->m_basetype;
-        // if(bt != bt_char && bt != bt_integer && bt != bt_charptr) {
-        //     this->t_error(expr_addressof_error, p->m_attribute);
-        // }
-        // p->m_attribute.m_basetype = s->m_basetype;
+        Symbol* s = m_st->lookup(lhs_to_id(p->m_lhs));
+        if (s == NULL) {
+            this->t_error(var_undef, p -> m_attribute);
+        }
+        Basetype bt = s->m_basetype;
+                cout << "AddressOf " << s->basetype() << endl;
+        if(bt != bt_char && bt != bt_integer && bt != bt_string) {
+            this->t_error(expr_addressof_error, p->m_attribute);
+        }
+        p->m_attribute.m_basetype = s->m_basetype;
     }
 
-    void visitDeref(Deref* p) {
+    void visitDeref(Deref* p) {                     // right side
         default_rule(p);
+        cout << "visitDeref " << p->m_expr->m_attribute.basetype() << endl;
 
+        Basetype bt = p->m_expr->m_attribute.m_basetype;
+        if(bt != bt_intptr && bt != bt_charptr) {
+            this->t_error(invalid_deref, p->m_attribute);
+        }
     }
 
-    void visitDerefVariable(DerefVariable* p) {
+    void visitDerefVariable(DerefVariable* p) {        // left side
         default_rule(p);
         Symbol* s = m_st->lookup(p->m_symname->spelling());
         if (s == NULL) {
             this->t_error(var_undef, p -> m_attribute);
         }
+
+        cout << "visitDerefVariable " << s->basetype() << endl;
         Basetype bt = s->m_basetype;
         if(bt != bt_intptr && bt != bt_charptr) {
             this->t_error(invalid_deref, p->m_attribute);
@@ -676,6 +688,7 @@ class Typecheck : public Visitor
         if(ae) {
             return ae->m_symname->spelling();
         }
+
 
         return nullptr;
       }
