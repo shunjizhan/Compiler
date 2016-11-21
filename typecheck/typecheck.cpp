@@ -172,11 +172,13 @@ class Typecheck : public Visitor
     // Check that there is one and only one main
     void check_for_one_main(ProgramImpl* p) {
         Symbol *s = m_st->lookup("Main");
-        if(s == NULL)  // check one Main
+        if(s == NULL || s->m_basetype != bt_procedure) { // check one Main
             this->t_error(no_main, p->m_attribute);
+        }
 
-        if(s->m_arg_type.size() > 0) // check no arguments
+        if(s->m_arg_type.size() > 0)  { // check no arguments
             this->t_error(nonvoid_main, p->m_attribute);
+        }
     }
 
     // Check that the return statement of a procedure has the appropriate type
@@ -214,22 +216,7 @@ class Typecheck : public Visitor
     {
     }
 
-    void check_array_access(ArrayAccess* p) {
-        Symbol* s = m_st->lookup(p->m_symname->spelling());
-        if (s == NULL) {
-            this->t_error(var_undef, p -> m_attribute);
-        }
-        cout << "check_array_access -- " << s->basetype() << endl;
-
-        Basetype bt = s->m_basetype;
-        if(bt != bt_string) {
-            this->t_error(no_array_var, p->m_attribute);
-        }
-        if(p->m_expr->m_attribute.m_basetype != bt_integer) {
-            this->t_error(array_index_error, p->m_attribute);
-        }
-        
-        p->m_attribute.m_basetype = bt_char;
+    void check_array_access(ArrayAccess* p) {    
     }
 
     void check_array_element(ArrayElement* p)
@@ -531,6 +518,8 @@ class Typecheck : public Visitor
 
     void visitMinus(Minus* p) { //OK
         default_rule(p);
+        cout << "Minus -- ";
+        cout << p->m_expr_1->m_attribute.basetype() << " " << p->m_expr_2->m_attribute.basetype() << endl;
         if(!((p->m_expr_1->m_attribute.m_basetype == bt_integer && p->m_expr_2->m_attribute.m_basetype == bt_integer)
             || (p->m_expr_1->m_attribute.m_basetype == bt_intptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)
             || (p->m_expr_1->m_attribute.m_basetype == bt_charptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)) ) 
@@ -541,11 +530,22 @@ class Typecheck : public Visitor
                this->t_error(expr_type_err, p->m_attribute);
             }
         }
-        p->m_attribute.m_basetype = bt_integer;
+        else {
+            if(p->m_expr_1->m_attribute.m_basetype == bt_intptr ) {
+                p->m_attribute.m_basetype = bt_intptr;
+            } else if(p->m_expr_1->m_attribute.m_basetype == bt_charptr) {
+                p->m_attribute.m_basetype = bt_charptr;
+            } else {
+               p->m_attribute.m_basetype = bt_integer;
+            }
+        }
+        
     }
 
     void visitPlus(Plus* p) { //OK
         default_rule(p);
+        cout << "Plus -- ";
+        cout << p->m_expr_1->m_attribute.basetype() << " " << p->m_expr_2->m_attribute.basetype() << endl;
         if(!((p->m_expr_1->m_attribute.m_basetype == bt_integer && p->m_expr_2->m_attribute.m_basetype == bt_integer)
             || (p->m_expr_1->m_attribute.m_basetype == bt_intptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)
             || (p->m_expr_1->m_attribute.m_basetype == bt_charptr && p->m_expr_2->m_attribute.m_basetype == bt_integer)) ) 
@@ -556,7 +556,15 @@ class Typecheck : public Visitor
                this->t_error(expr_type_err, p->m_attribute);
             }
         }
-        p->m_attribute.m_basetype = bt_integer;
+        else {
+            if(p->m_expr_1->m_attribute.m_basetype == bt_intptr ) {
+                p->m_attribute.m_basetype = bt_intptr;
+            } else if(p->m_expr_1->m_attribute.m_basetype == bt_charptr) {
+                p->m_attribute.m_basetype = bt_charptr;
+            } else {
+               p->m_attribute.m_basetype = bt_integer;
+            }
+        }
     }
 
     void visitTimes(Times* p) { //OK
@@ -643,11 +651,15 @@ class Typecheck : public Visitor
             this->t_error(var_undef, p -> m_attribute);
         }
         Basetype bt = s->m_basetype;
-                cout << "AddressOf " << s->basetype() << endl;
+        cout << "AddressOf " << s->basetype() << endl;
         if(bt != bt_char && bt != bt_integer && bt != bt_string) {
             this->t_error(expr_addressof_error, p->m_attribute);
         }
-        p->m_attribute.m_basetype = bt_integer;
+        else if(bt == bt_integer) {
+            p->m_attribute.m_basetype = bt_intptr;
+        }else{
+            p->m_attribute.m_basetype = bt_charptr;
+        }
     }
 
     void visitDeref(Deref* p) {                     // right side
@@ -693,10 +705,16 @@ class Typecheck : public Visitor
         if (s == NULL) {
             this->t_error(var_undef, p -> m_attribute);
         }
+        Basetype bt = s->m_basetype;
+        if(bt != bt_string) {
+            this->t_error(no_array_var, p->m_attribute);
+        }
         if(p->m_expr->m_attribute.m_basetype != bt_integer) {
             this->t_error(array_index_error, p->m_attribute);
-        }
-        p->m_attribute.m_basetype = s->m_basetype;
+        } 
+
+        p->m_attribute.m_basetype = bt_char;
+        // p->m_attribute.m_basetype = s->m_basetype;
     }
 
     // Special cases

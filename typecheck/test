@@ -1,5 +1,9 @@
 procedure call(x:boolean; y:integer; a:integer) return integer
-{	
+{		procedure Main() return boolean
+	{
+		return false;
+	}
+
 /%
     var z : integer;
     var k : boolean;
@@ -21,26 +25,29 @@ procedure call(x:boolean; y:integer; a:integer) return integer
 
 procedure call2() return boolean
 {	
-    procedure foo(a:integer; c:boolean) return integer {
+    procedure foo(aq:integer; c:boolean) return integer {
+       /% procedure bar() return integer {
+	    	var cc : integer;
+	    	aq = 3;
+	    	cc = bar();
+	    	return cc;
+    }%/
     	var cc : integer;
 
     	return 4;
     }
-    procedure bar() return integer {
-    	var cc : integer;
-    	cc = foo( 3, true);
-    	return cc;
-    }
 
 
-    var z : integer;
+
+    var zzzz : integer;
     var k : boolean;
     var c : char;
     var b : string[5];
-
+{zzzz = 4;}
 
     {
-		var e : integer;   
+
+		var ppppp : integer;   
 		    var z : integer;
     var k : boolean;
     var c : char;
@@ -52,13 +59,14 @@ procedure call2() return boolean
     }
 
 
+
+
     c = b[3];
 
 
 
 
 
-    z = 3;
 
 	return true;
 }
