@@ -629,7 +629,20 @@ class Typecheck : public Visitor
 
     void visitArrayAccess(ArrayAccess* p) {
         default_rule(p);
-        check_array_access(p);
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        cout << "visitArrayAccess -- " << p->m_symname->spelling() << "[" << p->m_expr->m_attribute.basetype() << "]" << endl;
+        if (s == NULL) {
+            this->t_error(var_undef, p -> m_attribute);
+        }
+        Basetype bt = s->m_basetype;
+        if(bt != bt_string) {
+            this->t_error(no_array_var, p->m_attribute);
+        }
+        if(p->m_expr->m_attribute.m_basetype != bt_integer) {
+            this->t_error(array_index_error, p->m_attribute);
+        } 
+
+        p->m_attribute.m_basetype = bt_char;
     }
 
     void visitVariable(Variable* p) {

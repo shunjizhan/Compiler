@@ -107,7 +107,7 @@ procedure Main() return integer
 	 z = call(true, 3,3); 
 	 t = call2();
 
-	 a = e -3;
+	 e = e -3;
 
 	return a;
 }
