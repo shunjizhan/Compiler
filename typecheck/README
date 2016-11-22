@@ -8,7 +8,9 @@ In order to debug, since there are a lot of issues regarding Basetype, I added f
 
 	cout << p->m_expr->m_attribute.basetype() << endl;
 
-to check where the problem is. I used this method to debug for a long time and fixed all my issues.
+to check where the problem is. I also print out the name of the node that is visited so I can see how the tree is traversed from the terminal. I used this method to debug for a long time and fixed all my issues.
 
 I also went over the instrtuction's error type one by one to see if there is any missing in the implementation. After that I checked issues about scope, and there didn't seem to have a problem.
+
+Last I comment out all the cout statements so that it can build a ast.
 
