@@ -1,0 +1,9 @@
+First I integrated all codes from last project to the new provided skeleton, and followed the instruction to set up the basic environment. I changed the Makefile so that I can test my program using "make test", which will input test to generate csimple.s, and linked with start.c to generate the final binary start, which I can run directly.
+
+Then in order the trach the flow of the program, I addded a print statement to print the function name whenever the program visit something, such as:
+
+    void visitIfNoElse(IfNoElse* p) {
+        fprintf( m_outputfile, "#-- IfNoElse --#\n");
+    }
+
+Next I implemented the most basic program flow, that will mainly visit function and return. After the most basic program worked, I started to add support for more functionalities.

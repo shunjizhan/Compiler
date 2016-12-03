@@ -149,6 +149,7 @@ class Codegen : public Visitor
         char *name = strdup(p -> m_symname -> spelling());
         if ( strcmp(name,"Main") == 0 ) {
             //inMain(true);
+            fprintf( m_outputfile, "### Main\n");
             fprintf( m_outputfile, ".globl _Main\n");
             fprintf( m_outputfile, "_Main:\n");
             fprintf(m_outputfile, "push %%ebp\n");
@@ -197,192 +198,196 @@ class Codegen : public Visitor
         p->visit_children(this);
     }
 
-    void visitAssignment(Assignment* p)
-    {
+    void visitAssignment(Assignment* p) {
+        fprintf( m_outputfile, "#-- Assignment --#\n");
     }
 
-    void visitCall(Call* p)
-    {
+    void visitCall(Call* p) {
+        fprintf( m_outputfile, "#-- Call --#\n");
     }
 
     void visitReturn(Return* p) {
         p -> visit_children(this);
-        fprintf( m_outputfile, "#### RETURN\n");
+        fprintf( m_outputfile, "#-- RETURN --#\n");
         fprintf( m_outputfile, "popl %%eax\n");
+        fprintf( m_outputfile, "#------------#\n");
     }
 
     // Control flow
-    void visitIfNoElse(IfNoElse* p)
-    {
+    void visitIfNoElse(IfNoElse* p) {
+        fprintf( m_outputfile, "#-- IfNoElse --#\n");
     }
 
-    void visitIfWithElse(IfWithElse* p)
-    {
+    void visitIfWithElse(IfWithElse* p) {
+        fprintf( m_outputfile, "#-- IfWithElse --#\n");
     }
 
-    void visitWhileLoop(WhileLoop* p)
-    {
+    void visitWhileLoop(WhileLoop* p) {
+        fprintf( m_outputfile, "#-- WhileLoop --#\n");
     }
 
-    void visitCodeBlock(CodeBlock *p) 
-    {
+    void visitCodeBlock(CodeBlock *p) {
+        fprintf( m_outputfile, "#-- CodeBlock --#\n");
     }
 
     // Variable declarations (no code generation needed)
-    void visitDeclImpl(DeclImpl* p)
-    {
+    void visitDeclImpl(DeclImpl* p) {
+        fprintf( m_outputfile, "#-- DeclImpl --#\n");
     }
 
-    void visitTInteger(TInteger* p)
-    {
+    void visitTInteger(TInteger* p) {
+        fprintf( m_outputfile, "#-- TInteger --#\n");
     }
 
-    void visitTIntPtr(TIntPtr* p)
-    {
+    void visitTIntPtr(TIntPtr* p) {
+        fprintf( m_outputfile, "#-- TIntPtr --#\n");
     }
 
-    void visitTBoolean(TBoolean* p)
-    {
+    void visitTBoolean(TBoolean* p) {
+        fprintf( m_outputfile, "#-- TBoolean --#\n");
     }
 
-    void visitTCharacter(TCharacter* p)
-    {
+    void visitTCharacter(TCharacter* p) {
+        fprintf( m_outputfile, "#-- TCharacter --#\n");
     }
 
-    void visitTCharPtr(TCharPtr* p)
-    {
+    void visitTCharPtr(TCharPtr* p) {
+        fprintf( m_outputfile, "#-- TCharPtr --#\n");
     }
 
-    void visitTString(TString* p)
-    {
+    void visitTString(TString* p) {
+        fprintf( m_outputfile, "#-- TString --#\n");
     }
 
     // Comparison operations
-    void visitCompare(Compare* p)
-    {
+    void visitCompare(Compare* p) {
+        fprintf( m_outputfile, "#-- Compare --#\n");
     }
 
-    void visitNoteq(Noteq* p)
-    {
+    void visitNoteq(Noteq* p) {
+        fprintf( m_outputfile, "#-- Noteq --#\n");
     }
 
-    void visitGt(Gt* p)
-    {
+    void visitGt(Gt* p) {
+        fprintf( m_outputfile, "#-- Gt --#\n");
     }
 
-    void visitGteq(Gteq* p)
-    {
+    void visitGteq(Gteq* p) {
+        fprintf( m_outputfile, "#-- Gteq --#\n");
     }
 
-    void visitLt(Lt* p)
-    {
+    void visitLt(Lt* p) {
+        fprintf( m_outputfile, "#-- Lt --#\n");
     }
 
-    void visitLteq(Lteq* p)
-    {
+    void visitLteq(Lteq* p) {
+        fprintf( m_outputfile, "#-- Lteq --#\n");
     }
 
     // Arithmetic and logic operations
-    void visitAnd(And* p)
-    {
+    void visitAnd(And* p) {
+        fprintf( m_outputfile, "#-- And --#\n");
     }
 
-    void visitOr(Or* p)
-    {
+    void visitOr(Or* p) {
+        fprintf( m_outputfile, "#-- Or --#\n");
     }
 
-    void visitMinus(Minus* p)
-    {
+    void visitMinus(Minus* p) {
+        fprintf( m_outputfile, "#-- Minus --#\n");
     }
 
-    void visitPlus(Plus* p)
-    {
+    void visitPlus(Plus* p) {
+        fprintf( m_outputfile, "#-- Plus --#\n");
     }
 
-    void visitTimes(Times* p)
-    {
+    void visitTimes(Times* p) {
+        fprintf( m_outputfile, "#-- Times --#\n");
     }
 
-    void visitDiv(Div* p)
-    {
+    void visitDiv(Div* p) {
+        fprintf( m_outputfile, "#-- Div --#\n");
     }
 
-    void visitNot(Not* p)
-    {
+    void visitNot(Not* p) {
+        fprintf( m_outputfile, "#-- Not --#\n");
     }
 
-    void visitUminus(Uminus* p)
-    {
+    void visitUminus(Uminus* p) {
+        fprintf( m_outputfile, "#-- Uminus --#\n");
     }
 
     // Variable and constant access
-    void visitIdent(Ident* p)
-    {
+    void visitIdent(Ident* p) {
+        fprintf( m_outputfile, "#-- Ident --#\n");
     }
 
-    void visitBoolLit(BoolLit* p)
-    {
+    void visitBoolLit(BoolLit* p) {
+        fprintf( m_outputfile, "#-- BoolLit --#\n");
     }
 
-    void visitCharLit(CharLit* p)
-    {
+    void visitCharLit(CharLit* p) {
+        fprintf( m_outputfile, "#-- CharLit --#\n");
     }
 
-    void visitIntLit(IntLit* p)
-    {
+    void visitIntLit(IntLit* p) {
+        fprintf( m_outputfile, "#-- IntLit --#\n");
+        fprintf( m_outputfile, "pushl $%d\n", p->m_primitive->m_data);
     }
 
-    void visitNullLit(NullLit* p)
-    {
+    void visitNullLit(NullLit* p) {
+        fprintf( m_outputfile, "#-- NullLit --#\n");
     }
 
-    void visitArrayAccess(ArrayAccess* p)
-    {
+    void visitArrayAccess(ArrayAccess* p) {
+        fprintf( m_outputfile, "#-- ArrayAccess --#\n");
     }
 
     // LHS
-    void visitVariable(Variable* p)
-    {
+    void visitVariable(Variable* p) {
+        fprintf( m_outputfile, "#-- Variable --#\n");
     }
 
-    void visitDerefVariable(DerefVariable* p)
-    {
+    void visitDerefVariable(DerefVariable* p) {
+        fprintf( m_outputfile, "#-- DerefVariable --#\n");
     }
 
-    void visitArrayElement(ArrayElement* p)
-    {
+    void visitArrayElement(ArrayElement* p) {
+        fprintf( m_outputfile, "#-- ArrayElement --#\n");
     }
 
     // Special cases
-    void visitSymName(SymName* p)
-    {
+    void visitSymName(SymName* p) {
+        fprintf( m_outputfile, "#-- SymName --#\n");
     }
 
-    void visitPrimitive(Primitive* p)
-    {
+    void visitPrimitive(Primitive* p) {
+        fprintf( m_outputfile, "#-- Primitive --#\n");
     }
 
     // Strings
-    void visitStringAssignment(StringAssignment* p)
-    {
+    void visitStringAssignment(StringAssignment* p) {
+        fprintf( m_outputfile, "#-- StringAssignment --#\n");
     }
 
-    void visitStringPrimitive(StringPrimitive* p)
-    {
+    void visitStringPrimitive(StringPrimitive* p) {
+        fprintf( m_outputfile, "#-- StringPrimitive --#\n");
     }
 
-    void visitAbsoluteValue(AbsoluteValue* p)
-    {
+    void visitAbsoluteValue(AbsoluteValue* p) {
+        fprintf( m_outputfile, "#-- AbsoluteValue --#\n");
     }
 
     // Pointer
-    void visitAddressOf(AddressOf* p)
-    {
+    void visitAddressOf(AddressOf* p) {
+        fprintf( m_outputfile, "#-- AddressOf --#\n");
     }
 
-    void visitDeref(Deref* p)
-    {
+    void visitDeref(Deref* p) {
+        fprintf( m_outputfile, "#-- Deref --#\n");
     }
+
+
 };
 
 
