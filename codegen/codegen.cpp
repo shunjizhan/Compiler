@@ -218,7 +218,7 @@ class Codegen : public Visitor
     // Control flow
     void visitIfNoElse(IfNoElse* p) {
         fprintf(m_outputfile, "#-- IfNoElse --#\n");
-        p->m_expr->visit_children(this);
+        p->m_expr->accept(this);
        // if (p ->m_expr->m_attribute.m_lattice_elem != TOP ) {   // ??????
        //     if( p->m_expr->m_attribute.m_lattice_elem.value == 1)
        //          p->m_nested_block->visit_children(this);
@@ -239,10 +239,9 @@ class Codegen : public Visitor
 
     void visitIfWithElse(IfWithElse* p) {
         fprintf(m_outputfile, "#-- IfWithElse --#\n");
+        p ->m_expr->accept(this);
 
         int num = new_label();
-        p ->m_expr->visit_children(this);
-
         fprintf(m_outputfile, "popl %%eax\n");
         fprintf(m_outputfile, "movl $1, %%ebx\n");
 
@@ -280,7 +279,7 @@ class Codegen : public Visitor
     void visitTString(TString* p)       {}
 
     // Comparison operations
-    void visitCompare(Compare* p) {
+    void visitCompare(Compare* p) {                     // OK
         fprintf(m_outputfile, "#-- Compare --#\n");
         p -> visit_children(this);
 
@@ -296,7 +295,7 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "next%d:\n", num); 
     }
 
-    void visitNoteq(Noteq* p) {
+    void visitNoteq(Noteq* p) {                         // OK
         fprintf(m_outputfile, "#-- Noteq --#\n");
         p -> visit_children(this);
 
@@ -312,7 +311,7 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "next%d:\n", num); 
     }
 
-    void visitGt(Gt* p) {
+    void visitGt(Gt* p) {                               // OK
         fprintf(m_outputfile, "#-- Gt --#\n");
         p -> visit_children(this);
 
@@ -328,7 +327,7 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "next%d:\n", num); 
     }
 
-    void visitGteq(Gteq* p) {
+    void visitGteq(Gteq* p) {                           // OK
         fprintf(m_outputfile, "#-- Gteq --#\n");
         p -> visit_children(this);
 
@@ -344,7 +343,7 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "next%d:\n", num); 
     }
 
-    void visitLt(Lt* p) {
+    void visitLt(Lt* p) {                               // OK
         fprintf(m_outputfile, "#-- Lt --#\n");
         p -> visit_children(this);
 
@@ -360,7 +359,7 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "next%d:\n", num);        
     }
 
-    void visitLteq(Lteq* p) {
+    void visitLteq(Lteq* p) {                               // OK
         fprintf(m_outputfile, "#-- Lteq --#\n");
         p -> visit_children(this);
 
@@ -442,7 +441,7 @@ class Codegen : public Visitor
         fprintf(m_outputfile, " pushl %%eax\n");
     }
 
-    void visitNot(Not* p) {
+    void visitNot(Not* p) {                            // ?????????????  
         fprintf(m_outputfile, "#-- Not --#\n");
         p -> visit_children(this);
 
@@ -466,18 +465,20 @@ class Codegen : public Visitor
         p -> visit_children(this);
     
         Symbol* s = m_st->lookup(p->m_attribute.m_scope, strdup(p->m_symname->spelling()));
-        int offset = 4 + s->get_offset();
-        fprintf(m_outputfile, "pushl -%d(%%ebp)\n", offset);
+        fprintf(m_outputfile, "pushl -%d(%%ebp)\n", s->get_offset()+4);
     }
 
 
 
-    void visitCharLit(CharLit* p) {
-        fprintf(m_outputfile, "#-- CharLit --#\n");
-    }
+
 
     void visitArrayAccess(ArrayAccess* p) {
         fprintf(m_outputfile, "#-- ArrayAccess --#\n");
+    }
+
+    void visitCharLit(CharLit* p) {
+        fprintf(m_outputfile, "#-- CharLit --#\n");
+        fprintf(m_outputfile, "pushl $%d\n", p->m_primitive->m_data);
     }
 
     void visitNullLit(NullLit* p) {     
@@ -529,8 +530,15 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "#-- StringPrimitive --#\n");
     }
 
-    void visitAbsoluteValue(AbsoluteValue* p) {
+    void visitAbsoluteValue(AbsoluteValue* p) {         // ??????????
         fprintf(m_outputfile, "#-- AbsoluteValue --#\n");
+        p -> visit_children(this);
+
+        fprintf( m_outputfile, " popl %%eax\n");
+        fprintf( m_outputfile, "cdq\n");
+        fprintf( m_outputfile, "xorl %%edx, %%eax\n");
+        fprintf( m_outputfile, " subl %%edx, %%eax\n");
+        fprintf( m_outputfile, " pushl %%eax\n");
     }
 
     // Pointer
