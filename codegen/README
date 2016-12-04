@@ -7,3 +7,10 @@ Then in order the trach the flow of the program, I addded a print statement to p
     }
 
 Next I implemented the most basic program flow, that will mainly visit function and return. After the most basic program worked, I started to add support for more functionalities.
+
+
+
+
+
+TODO:
+visitNOT doesn't work

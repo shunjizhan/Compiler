@@ -1,5 +1,13 @@
-procedure Main() return boolean
+procedure Main() return integer
 {	
-	return false;
+	var a, b: integer;
+	var c, d: boolean;
+
+	a = --2;
+	b = -a;
+	c = true && false || true;
+	d = !false;
+
+	return --------a;
 }
 

@@ -126,10 +126,10 @@ class Codegen : public Visitor
     }
 
     void emit_epilogue() {
-        fprintf( m_outputfile, "\n### restore stack position\n");
+        fprintf(m_outputfile, "\n### restore stack position\n");
         fprintf(m_outputfile, "mov %%ebp, %%esp \n");
         fprintf(m_outputfile, "pop %%ebp\n");
-        fprintf( m_outputfile, "\tret\n");
+        fprintf(m_outputfile, "\tret\n");
     }
 
   public:
@@ -149,20 +149,20 @@ class Codegen : public Visitor
     void visitProcImpl(ProcImpl* p) {
         char* proc_name = strdup(p->m_symname->spelling());
         if ( strcmp(proc_name,"Main") == 0 ) {
-            fprintf( m_outputfile, "#-- Main --#\n");
-            fprintf( m_outputfile, ".globl _Main\n\n");
-            fprintf( m_outputfile, "_Main:\n");
+            fprintf(m_outputfile, "#-- Main --#\n");
+            fprintf(m_outputfile, ".globl _Main\n\n");
+            fprintf(m_outputfile, "_Main:\n");
         }
         else{
-            fprintf( m_outputfile, "#-- ProcImpl --#\n");
+            fprintf(m_outputfile, "#-- ProcImpl --#\n");
             fprintf(m_outputfile, "_%s: \n", proc_name);
         }
 
-        fprintf( m_outputfile, "### ready for program\n");
+        fprintf(m_outputfile, "### ready for program\n");
         fprintf(m_outputfile, "push %%ebp\n");
         fprintf(m_outputfile, "mov %%esp, %%ebp\n");
         //sub esp, 4 Make room for 4-byte local variables
-        fprintf(m_outputfile,"sub $%i,%%esp\n\n",m_st->scopesize(p->m_procedure_block->m_attribute.m_scope));
+        fprintf(m_outputfile,"sub $%i,%%esp\n\n", m_st->scopesize(p->m_procedure_block->m_attribute.m_scope));
 
         p->visit_children(this);
 
@@ -171,282 +171,273 @@ class Codegen : public Visitor
         return;
     }
 
-    void visitProcedure_blockImpl(Procedure_blockImpl* p) {
-        p->visit_children(this);
-    }
-
-    void visitNested_blockImpl(Nested_blockImpl* p) {
-        p->visit_children(this);
-    }
+    void visitProcedure_blockImpl(Procedure_blockImpl* p) { p->visit_children(this); }
+    void visitNested_blockImpl(Nested_blockImpl* p) { p->visit_children(this); }
 
     void visitAssignment(Assignment* p) {
-        fprintf( m_outputfile, "#-- Assignment --#\n");
+        fprintf(m_outputfile, "#-- Assignment --#\n");
+        p->visit_children(this);
+
+        Symbol* s = m_st->lookup(p->m_attribute.m_scope, lhs_to_id(p->m_lhs));
+        int offset = 4 + s->get_offset();
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "mov %%eax, -%d(%%ebp)\n", offset);
     }
 
     void visitCall(Call* p) {
-        fprintf( m_outputfile, "#-- Call --#\n");
+        fprintf(m_outputfile, "#-- Call --#\n");
     }
 
     void visitReturn(Return* p) {
         p -> visit_children(this);
-        fprintf( m_outputfile, "#-- RETURN --#\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "#------------#\n");
+        fprintf(m_outputfile, "#-- RETURN --#\n");
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "#------------#\n");
     }
 
     // Control flow
     void visitIfNoElse(IfNoElse* p) {
-        fprintf( m_outputfile, "#-- IfNoElse --#\n");
+        fprintf(m_outputfile, "#-- IfNoElse --#\n");
     }
 
     void visitIfWithElse(IfWithElse* p) {
-        fprintf( m_outputfile, "#-- IfWithElse --#\n");
+        fprintf(m_outputfile, "#-- IfWithElse --#\n");
     }
 
     void visitWhileLoop(WhileLoop* p) {
-        fprintf( m_outputfile, "#-- WhileLoop --#\n");
+        fprintf(m_outputfile, "#-- WhileLoop --#\n");
     }
 
     void visitCodeBlock(CodeBlock *p) {
-        fprintf( m_outputfile, "#-- CodeBlock --#\n");
+        fprintf(m_outputfile, "#-- CodeBlock --#\n");
     }
 
     // Variable declarations (no code generation needed)
-    void visitDeclImpl(DeclImpl* p) {
-        fprintf( m_outputfile, "#-- DeclImpl --#\n");
+    void visitDeclImpl(DeclImpl* p)     { 
+        fprintf(m_outputfile, "#-- DeclImpl --#\n"); 
+        p -> visit_children(this);
     }
 
-    void visitTInteger(TInteger* p) { fprintf( m_outputfile, "#-- TInteger --#\n"); }
-
-    void visitTIntPtr(TIntPtr* p) { fprintf( m_outputfile, "#-- TIntPtr --#\n"); }
-
-    void visitTBoolean(TBoolean* p) { fprintf( m_outputfile, "#-- TBoolean --#\n"); }
-
-    void visitTCharacter(TCharacter* p) { fprintf( m_outputfile, "#-- TCharacter --#\n"); }
-
-    void visitTCharPtr(TCharPtr* p) { fprintf( m_outputfile, "#-- TCharPtr --#\n"); }
-
-    void visitTString(TString* p) { fprintf( m_outputfile, "#-- TString --#\n"); }
+    void visitTInteger(TInteger* p)     {}
+    void visitTIntPtr(TIntPtr* p)       {}
+    void visitTBoolean(TBoolean* p)     {}
+    void visitTCharacter(TCharacter* p) {}
+    void visitTCharPtr(TCharPtr* p)     {}
+    void visitTString(TString* p)       {}
 
     // Comparison operations
     void visitCompare(Compare* p) {
-        fprintf( m_outputfile, "#-- Compare --#\n");
+        fprintf(m_outputfile, "#-- Compare --#\n");
         p -> visit_children(this);
 
         int num = new_label();
-        fprintf( m_outputfile, "popl %%ebx\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "cmp %%ebx,%%eax\n");
-        fprintf( m_outputfile, "je yes%d # equal\n", num);      
-        fprintf( m_outputfile, "pushl $0\n");
-        fprintf( m_outputfile, "jmp next%d\n", num);    
-        fprintf( m_outputfile, "yes%d:\n", num);
-        fprintf( m_outputfile, "pushl $1\n");   
-        fprintf( m_outputfile, "next%d:\n", num); 
+        fprintf(m_outputfile, "popl %%ebx\n");
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "cmp %%ebx,%%eax\n");
+        fprintf(m_outputfile, "je yes%d # equal\n", num);      
+        fprintf(m_outputfile, "pushl $0\n");
+        fprintf(m_outputfile, "jmp next%d\n", num);    
+        fprintf(m_outputfile, "yes%d:\n", num);
+        fprintf(m_outputfile, "pushl $1\n");   
+        fprintf(m_outputfile, "next%d:\n", num); 
     }
 
     void visitNoteq(Noteq* p) {
-        fprintf( m_outputfile, "#-- Noteq --#\n");
+        fprintf(m_outputfile, "#-- Noteq --#\n");
         p -> visit_children(this);
 
         int num = new_label();
-        fprintf( m_outputfile, "popl %%ebx\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "cmp %%ebx,%%eax\n");
-        fprintf( m_outputfile, "jne yes%d # not equal\n", num);      
-        fprintf( m_outputfile, "pushl $0\n");
-        fprintf( m_outputfile, "jmp next%d\n", num);    
-        fprintf( m_outputfile, "yes%d:\n", num);
-        fprintf( m_outputfile, "pushl $1\n");   
-        fprintf( m_outputfile, "next%d:\n", num); 
+        fprintf(m_outputfile, "popl %%ebx\n");
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "cmp %%ebx,%%eax\n");
+        fprintf(m_outputfile, "jne yes%d # not equal\n", num);      
+        fprintf(m_outputfile, "pushl $0\n");
+        fprintf(m_outputfile, "jmp next%d\n", num);    
+        fprintf(m_outputfile, "yes%d:\n", num);
+        fprintf(m_outputfile, "pushl $1\n");   
+        fprintf(m_outputfile, "next%d:\n", num); 
     }
 
     void visitGt(Gt* p) {
-        fprintf( m_outputfile, "#-- Gt --#\n");
+        fprintf(m_outputfile, "#-- Gt --#\n");
         p -> visit_children(this);
 
         int num = new_label();
-        fprintf( m_outputfile, "popl %%ebx\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "cmp %%ebx,%%eax\n");
-        fprintf( m_outputfile, "jg yes%d # greater\n", num);      
-        fprintf( m_outputfile, "pushl $0\n");
-        fprintf( m_outputfile, "jmp next%d\n", num);    
-        fprintf( m_outputfile, "yes%d:\n", num);
-        fprintf( m_outputfile, "pushl $1\n");   
-        fprintf( m_outputfile, "next%d:\n", num); 
+        fprintf(m_outputfile, "popl %%ebx\n");
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "cmp %%ebx,%%eax\n");
+        fprintf(m_outputfile, "jg yes%d # greater\n", num);      
+        fprintf(m_outputfile, "pushl $0\n");
+        fprintf(m_outputfile, "jmp next%d\n", num);    
+        fprintf(m_outputfile, "yes%d:\n", num);
+        fprintf(m_outputfile, "pushl $1\n");   
+        fprintf(m_outputfile, "next%d:\n", num); 
     }
 
     void visitGteq(Gteq* p) {
-        fprintf( m_outputfile, "#-- Gteq --#\n");
+        fprintf(m_outputfile, "#-- Gteq --#\n");
         p -> visit_children(this);
 
         int num = new_label();
-        fprintf( m_outputfile, "popl %%ebx\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "cmp %%ebx,%%eax\n");
-        fprintf( m_outputfile, "jge yes%d # greater or equal\n", num);      
-        fprintf( m_outputfile, "pushl $0\n");
-        fprintf( m_outputfile, "jmp next%d\n", num);    
-        fprintf( m_outputfile, "yes%d:\n", num);
-        fprintf( m_outputfile, "pushl $1\n");   
-        fprintf( m_outputfile, "next%d:\n", num); 
+        fprintf(m_outputfile, "popl %%ebx\n");
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "cmp %%ebx,%%eax\n");
+        fprintf(m_outputfile, "jge yes%d # greater or equal\n", num);      
+        fprintf(m_outputfile, "pushl $0\n");
+        fprintf(m_outputfile, "jmp next%d\n", num);    
+        fprintf(m_outputfile, "yes%d:\n", num);
+        fprintf(m_outputfile, "pushl $1\n");   
+        fprintf(m_outputfile, "next%d:\n", num); 
     }
 
     void visitLt(Lt* p) {
-        fprintf( m_outputfile, "#-- Lt --#\n");
+        fprintf(m_outputfile, "#-- Lt --#\n");
         p -> visit_children(this);
 
         int num = new_label();
-        fprintf( m_outputfile, "popl %%ebx\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "cmp %%ebx,%%eax\n");
-        fprintf( m_outputfile, "jl yes%d # less than\n", num);      
-        fprintf( m_outputfile, "pushl $0\n");
-        fprintf( m_outputfile, "jmp next%d\n", num);    
-        fprintf( m_outputfile, "yes%d:\n", num);
-        fprintf( m_outputfile, "pushl $1\n");   
-        fprintf( m_outputfile, "next%d:\n", num);        
+        fprintf(m_outputfile, "popl %%ebx\n");
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "cmp %%ebx,%%eax\n");
+        fprintf(m_outputfile, "jl yes%d # less than\n", num);      
+        fprintf(m_outputfile, "pushl $0\n");
+        fprintf(m_outputfile, "jmp next%d\n", num);    
+        fprintf(m_outputfile, "yes%d:\n", num);
+        fprintf(m_outputfile, "pushl $1\n");   
+        fprintf(m_outputfile, "next%d:\n", num);        
     }
 
     void visitLteq(Lteq* p) {
-        fprintf( m_outputfile, "#-- Lteq --#\n");
+        fprintf(m_outputfile, "#-- Lteq --#\n");
         p -> visit_children(this);
 
         int num = new_label();
-        fprintf( m_outputfile, "popl %%ebx\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "cmp %%ebx,%%eax\n");
-        fprintf( m_outputfile, "jle yes%d # less or equal\n", num);      
-        fprintf( m_outputfile, "pushl $0\n");
-        fprintf( m_outputfile, "jmp next%d\n", num);    
-        fprintf( m_outputfile, "yes%d:\n", num);
-        fprintf( m_outputfile, "pushl $1\n");   
-        fprintf( m_outputfile, "next%d:\n", num);
+        fprintf(m_outputfile, "popl %%ebx\n");
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "cmp %%ebx,%%eax\n");
+        fprintf(m_outputfile, "jle yes%d # less or equal\n", num);      
+        fprintf(m_outputfile, "pushl $0\n");
+        fprintf(m_outputfile, "jmp next%d\n", num);    
+        fprintf(m_outputfile, "yes%d:\n", num);
+        fprintf(m_outputfile, "pushl $1\n");   
+        fprintf(m_outputfile, "next%d:\n", num);
     }
 
     // Arithmetic and logic operations
-    void visitAnd(And* p) {                 // ????????????
-        fprintf( m_outputfile, "#-- And --#\n");
-     // if (p -> m_attribute.m_lattice_elem != TOP) {
-     //     fprintf( m_outputfile, " pushl $%d\n", p -> m_attribute.m_lattice_elem.value);
+    void visitAnd(And* p) {                             // OK                
+        fprintf(m_outputfile, "#-- And --#\n");
+     // if (p -> m_attribute.m_lattice_elem != TOP) {                // ????????????
+     //     fprintf(m_outputfile, " pushl $%d\n", p -> m_attribute.m_lattice_elem.value);
      //     return;
      // }
 
         p -> visit_children(this);
 
-        fprintf( m_outputfile, " popl %%ebx\n");
-        fprintf( m_outputfile, " popl %%eax\n");
-        fprintf( m_outputfile, " andl %%ebx, %%eax\n");
-        fprintf( m_outputfile, " pushl %%eax\n");
+        fprintf(m_outputfile, " popl %%ebx\n");
+        fprintf(m_outputfile, " popl %%eax\n");
+        fprintf(m_outputfile, " andl %%ebx, %%eax\n");
+        fprintf(m_outputfile, " pushl %%eax\n");
     }
 
-    void visitOr(Or* p) {                   // ????????????
-        fprintf( m_outputfile, "#-- Or --#\n");
-        // if (p -> m_attribute.m_lattice_elem != TOP) {
-        //      fprintf( m_outputfile, " pushl $%d\n", p -> m_attribute.m_lattice_elem.value);
+    void visitOr(Or* p) {                             // OK                   
+        fprintf(m_outputfile, "#-- Or --#\n");
+        // if (p -> m_attribute.m_lattice_elem != TOP) {               // ????????????
+        //      fprintf(m_outputfile, " pushl $%d\n", p -> m_attribute.m_lattice_elem.value);
         //      return;
         // }
-
         p -> visit_children(this);
 
-        fprintf( m_outputfile, " popl %%ebx\n");
-        fprintf( m_outputfile, " popl %%eax\n");
-        fprintf( m_outputfile, " orl %%ebx, %%eax\n");
-        fprintf( m_outputfile, " pushl %%eax\n");
+        pop_ebx_eax();
+        fprintf(m_outputfile, " orl %%ebx, %%eax\n");
+        fprintf(m_outputfile, " pushl %%eax\n");
     }
 
-    void visitMinus(Minus* p) {
-        fprintf( m_outputfile, "#-- Minus --#\n");
+    void visitMinus(Minus* p) {                      // OK
+        fprintf(m_outputfile, "#-- Minus --#\n");
         p -> visit_children(this);
 
-        fprintf( m_outputfile, " popl %%ebx\n");
-        fprintf( m_outputfile, " popl %%eax\n");
-        fprintf( m_outputfile, " subl %%ebx, %%eax\n");
-        fprintf( m_outputfile, " pushl %%eax\n");        
+        pop_ebx_eax();
+        fprintf(m_outputfile, " subl %%ebx, %%eax\n");
+        fprintf(m_outputfile, " pushl %%eax\n");        
     }
 
-    void visitPlus(Plus* p) {
-        fprintf( m_outputfile, "#-- Plus --#\n");
+    void visitPlus(Plus* p) {                            // OK
+        fprintf(m_outputfile, "#-- Plus --#\n");
         p -> visit_children(this);
 
-        fprintf( m_outputfile, "popl %%ebx\n");
-        fprintf( m_outputfile, "popl %%eax\n");
-        fprintf( m_outputfile, "addl %%ebx, %%eax\n");
-        fprintf( m_outputfile, "pushl %%eax\n");        
+        pop_ebx_eax();
+        fprintf(m_outputfile, "addl %%ebx, %%eax\n");
+        fprintf(m_outputfile, "pushl %%eax\n");        
     }
 
-    void visitTimes(Times* p) {
-        fprintf( m_outputfile, "#-- Times --#\n");
+    void visitTimes(Times* p) {                         // OK
+        fprintf(m_outputfile, "#-- Times --#\n");
         p -> visit_children(this);
 
-        fprintf( m_outputfile, " popl %%ebx\n");
-        fprintf( m_outputfile, " popl %%eax\n");
-        fprintf( m_outputfile, " imull %%ebx, %%eax\n");
-        fprintf( m_outputfile, " pushl %%eax\n");
+        pop_ebx_eax();
+        fprintf(m_outputfile, " imull %%ebx, %%eax\n");
+        fprintf(m_outputfile, " pushl %%eax\n");
     }
 
-    void visitDiv(Div* p) {                         // ?????????????
-        fprintf( m_outputfile, "#-- Div --#\n");
+    void visitDiv(Div* p) {                             // OK
+        fprintf(m_outputfile, "#-- Div --#\n");
         p -> visit_children(this);
 
-        fprintf( m_outputfile, " popl %%ebx\n");
-        fprintf( m_outputfile, " popl %%eax\n");
-        // fprintf( m_outputfile, " cdq\n");
-        fprintf( m_outputfile, " idivl %%ebx\n");
-        fprintf( m_outputfile, " pushl %%eax\n");
+        pop_ebx_eax();
+        fprintf(m_outputfile, " cdq\n");               // ?????????????     
+        fprintf(m_outputfile, " idivl %%ebx\n");
+        fprintf(m_outputfile, " pushl %%eax\n");
     }
 
     void visitNot(Not* p) {
-        fprintf( m_outputfile, "#-- Not --#\n");
+        fprintf(m_outputfile, "#-- Not --#\n");
         p -> visit_children(this);
 
-        fprintf( m_outputfile, " popl %%eax\n");
-        fprintf( m_outputfile, " not  %%eax\n");
-        fprintf( m_outputfile, " pushl %%eax\n");
+        fprintf(m_outputfile, " popl %%eax\n");
+        fprintf(m_outputfile, " not  %%eax\n");
+        fprintf(m_outputfile, " pushl %%eax\n");
     }
 
-    void visitUminus(Uminus* p) {
-        fprintf( m_outputfile, "#-- Uminus --#\n");
+    void visitUminus(Uminus* p) {                           // OK
+        fprintf(m_outputfile, "#-- Uminus --#\n");
         p -> visit_children(this);
 
-        fprintf( m_outputfile, " popl %%eax\n");
-        fprintf( m_outputfile, " negl %%eax\n");
-        fprintf( m_outputfile, " pushl %%eax\n");
+        fprintf(m_outputfile, " popl %%eax\n");
+        fprintf(m_outputfile, " negl %%eax\n");
+        fprintf(m_outputfile, " pushl %%eax\n");
     }
 
     // Variable and constant access
     void visitIdent(Ident* p) {
-        fprintf( m_outputfile, "#-- Ident --#\n");
+        fprintf(m_outputfile, "#-- Ident --#\n");
         p -> visit_children(this);
     
         Symbol* s = m_st->lookup(p->m_attribute.m_scope, strdup(p->m_symname->spelling()));
-        int offset = 4+s->get_offset();
-        fprintf( m_outputfile, "pushl -%d(%%ebp)\n", offset);
+        int offset = 4 + s->get_offset();
+        fprintf(m_outputfile, "pushl -%d(%%ebp)\n", offset);
     }
 
 
 
     void visitCharLit(CharLit* p) {
-        fprintf( m_outputfile, "#-- CharLit --#\n");
+        fprintf(m_outputfile, "#-- CharLit --#\n");
     }
 
     void visitArrayAccess(ArrayAccess* p) {
-        fprintf( m_outputfile, "#-- ArrayAccess --#\n");
+        fprintf(m_outputfile, "#-- ArrayAccess --#\n");
     }
 
     void visitNullLit(NullLit* p) {     
-        fprintf( m_outputfile, "#-- NullLit --#\n");
+        fprintf(m_outputfile, "#-- NullLit --#\n");
     }    
 
     void visitBoolLit(BoolLit* p) {     // OK
-        fprintf( m_outputfile, "#-- BoolLit --#\n");
-        fprintf( m_outputfile, "pushl $%d\n", p->m_primitive->m_data);
+        fprintf(m_outputfile, "#-- BoolLit --#\n");
+        fprintf(m_outputfile, "pushl $%d\n", p->m_primitive->m_data);
     }
 
     void visitIntLit(IntLit* p) {    // OK
-        fprintf( m_outputfile, "#-- IntLit --#\n");
-        fprintf( m_outputfile, "pushl $%d\n", p->m_primitive->m_data);
+        fprintf(m_outputfile, "#-- IntLit --#\n");
+        fprintf(m_outputfile, "pushl $%d\n", p->m_primitive->m_data);
     }
 
 
@@ -455,15 +446,15 @@ class Codegen : public Visitor
 
     // LHS
     void visitVariable(Variable* p) {
-        fprintf( m_outputfile, "#-- Variable --#\n");
+        fprintf(m_outputfile, "#-- Variable --#\n");
     }
 
     void visitDerefVariable(DerefVariable* p) {
-        fprintf( m_outputfile, "#-- DerefVariable --#\n");
+        fprintf(m_outputfile, "#-- DerefVariable --#\n");
     }
 
     void visitArrayElement(ArrayElement* p) {
-        fprintf( m_outputfile, "#-- ArrayElement --#\n");
+        fprintf(m_outputfile, "#-- ArrayElement --#\n");
     }
 
 
@@ -476,24 +467,49 @@ class Codegen : public Visitor
 
     // Strings
     void visitStringAssignment(StringAssignment* p) {
-        fprintf( m_outputfile, "#-- StringAssignment --#\n");
+        fprintf(m_outputfile, "#-- StringAssignment --#\n");
     }
 
     void visitStringPrimitive(StringPrimitive* p) {
-        fprintf( m_outputfile, "#-- StringPrimitive --#\n");
+        fprintf(m_outputfile, "#-- StringPrimitive --#\n");
     }
 
     void visitAbsoluteValue(AbsoluteValue* p) {
-        fprintf( m_outputfile, "#-- AbsoluteValue --#\n");
+        fprintf(m_outputfile, "#-- AbsoluteValue --#\n");
     }
 
     // Pointer
     void visitAddressOf(AddressOf* p) {
-        fprintf( m_outputfile, "#-- AddressOf --#\n");
+        fprintf(m_outputfile, "#-- AddressOf --#\n");
     }
 
     void visitDeref(Deref* p) {
-        fprintf( m_outputfile, "#-- Deref --#\n");
+        fprintf(m_outputfile, "#-- Deref --#\n");
+    }
+
+    const char* lhs_to_id(Lhs* lhs) {
+        Variable* v = dynamic_cast<Variable*>(lhs);
+        if(v) {
+            return v->m_symname->spelling();
+        }
+
+        DerefVariable* dv = dynamic_cast<DerefVariable*>(lhs);
+        if(dv) {
+            return dv->m_symname->spelling();
+        }
+
+        ArrayElement* ae = dynamic_cast<ArrayElement*>(lhs);
+        if(ae) {
+            return ae->m_symname->spelling();
+        }
+
+
+        return nullptr;
+    }    
+
+    void pop_ebx_eax() {
+        fprintf(m_outputfile, " popl %%ebx\n");
+        fprintf(m_outputfile, " popl %%eax\n");
     }
 
 
