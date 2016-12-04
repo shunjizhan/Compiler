@@ -1,5 +1,5 @@
-procedure Main() return integer
+procedure Main() return boolean
 {	
-	return 5;
+	return false;
 }
 
