@@ -143,12 +143,12 @@ class Codegen : public Visitor
 
     void visitProgramImpl(ProgramImpl* p) {
         set_text_mode();
-        p -> visit_children(this);
+        p->visit_children(this);
     }
 
     void visitProcImpl(ProcImpl* p) {
         char* proc_name = strdup(p->m_symname->spelling());
-        if ( strcmp(proc_name,"Main") == 0 ) {
+        if (strcmp(proc_name,"Main") == 0 ) {
             fprintf(m_outputfile, "#-- Main --#\n");
             fprintf(m_outputfile, ".globl _Main\n\n");
             fprintf(m_outputfile, "_Main:\n");
@@ -178,19 +178,39 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "#-- Assignment --#\n");
         p->visit_children(this);
 
+        //    * after call instruction:
+        //           o %eip points at first instruction of function
+        //           o %esp+4 points at first argument
+        //           o %esp points at return address
+
         Symbol* s = m_st->lookup(p->m_attribute.m_scope, lhs_to_id(p->m_lhs));
-        int offset = 4 + s->get_offset();
         fprintf(m_outputfile, "popl %%eax\n");
-        fprintf(m_outputfile, "mov %%eax, -%d(%%ebp)\n", offset);
+        fprintf(m_outputfile, "mov %%eax, -%d(%%ebp)\n", s->get_offset()+4);
     }
 
     void visitCall(Call* p) {
         fprintf(m_outputfile, "#-- Call --#\n");
+        p->visit_children(this);
+       
+        // call the function, the result will be at the top of stack
+        fprintf(m_outputfile, "call _%s\n", strdup(p->m_symname->spelling()));  
+
+        //    * after call instruction:
+        //           o %eip points at first instruction of function
+        //           o %esp+4 points at first argument
+        //           o %esp points at return address
+
+        Symbol* s = m_st->lookup(p->m_attribute.m_scope, lhs_to_id(p->m_lhs));
+        // int offset2=m_st->scopesize(p->m_attribute.m_scope); // ??????????????
+
+        // save the function call result to corresponsing position
+        fprintf(m_outputfile, "movl %%eax, -%d(%%ebp)\n", s->get_offset()+4);
     }
 
     void visitReturn(Return* p) {
-        p -> visit_children(this);
         fprintf(m_outputfile, "#-- RETURN --#\n");
+        p->visit_children(this);
+
         fprintf(m_outputfile, "popl %%eax\n");
         fprintf(m_outputfile, "#------------#\n");
     }
@@ -198,10 +218,44 @@ class Codegen : public Visitor
     // Control flow
     void visitIfNoElse(IfNoElse* p) {
         fprintf(m_outputfile, "#-- IfNoElse --#\n");
+        p->m_expr->visit_children(this);
+       // if (p ->m_expr->m_attribute.m_lattice_elem != TOP ) {   // ??????
+       //     if( p->m_expr->m_attribute.m_lattice_elem.value == 1)
+       //          p->m_nested_block->visit_children(this);
+       //    return;
+       // }
+      
+       int num = new_label();
+       fprintf(m_outputfile, "popl %%eax\n");
+       fprintf(m_outputfile, "movl $1, %%ebx\n");
+
+       fprintf(m_outputfile, "cmp %%eax, %%ebx\n");
+       fprintf(m_outputfile, "jne next%i\n", num);
+
+       p->m_nested_block->visit_children(this);
+
+       fprintf( m_outputfile, "next%i:\n", num);
     }
 
     void visitIfWithElse(IfWithElse* p) {
         fprintf(m_outputfile, "#-- IfWithElse --#\n");
+
+        int num = new_label();
+        p ->m_expr->visit_children(this);
+
+        fprintf(m_outputfile, "popl %%eax\n");
+        fprintf(m_outputfile, "movl $1, %%ebx\n");
+
+        fprintf(m_outputfile, "cmp %%eax, %%ebx\n");
+        fprintf(m_outputfile, "jne next%i\n", num);
+
+        p->m_nested_block_1->visit_children(this);
+        fprintf( m_outputfile, "jmp end%i\n", num);
+
+        fprintf( m_outputfile, "next%i:\n", num);
+        p->m_nested_block_2->visit_children(this);
+
+        fprintf( m_outputfile, "end%i:\n", num);
     }
 
     void visitWhileLoop(WhileLoop* p) {
@@ -428,6 +482,7 @@ class Codegen : public Visitor
 
     void visitNullLit(NullLit* p) {     
         fprintf(m_outputfile, "#-- NullLit --#\n");
+        fprintf(m_outputfile, "pushl $0\n");        
     }    
 
     void visitBoolLit(BoolLit* p) {     // OK

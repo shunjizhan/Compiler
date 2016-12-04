@@ -8,9 +8,36 @@ Then in order the trach the flow of the program, I addded a print statement to p
 
 Next I implemented the most basic program flow, that will mainly visit function and return. After the most basic program worked, I started to add support for more functionalities.
 
+I first implemented assignment, add, minus, etc. And now I could test with some declaration, then assignment, then return that value. If the return value is as expected, then the whole process has no problem. The basic structure I used for testsing is something like:
 
+	procedure Main() return integer
+	{	
+		var a, b: integer;
+		var c, d: boolean;
+
+		a = --2;
+		b = -a;
+		c = true && false || true;
+		d = !false;
+
+		return --------a;
+	}
+
+and I modified a, b, c, d to return different values for testing.
+
+Next I started to implement function call. I found the hint provided in the comment really helpful for understanding how function call and assignment works. I tested this by using a couple procedures that call each other and finally the result is returned to main. I made sure that the return value in main is correct so that the function call worked.
+
+Next step I implemneted all those if and while loops. I encountered a problem that the condition for them didn't visit their children, so I coudn't get the condition correct.
 
 
 
 TODO:
+if while conditions visit children problem
+
 visitNOT doesn't work
+
+Last: go through whole code to modify structure
+
+
+
+

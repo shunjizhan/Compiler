@@ -1,13 +1,44 @@
-procedure Main() return integer
+
+/%
+procedure aaa() return integer
 {	
 	var a, b: integer;
 	var c, d: boolean;
 
-	a = --2;
-	b = -a;
-	c = true && false || true;
+	a = 5;
+	b = 10;
+	c = true;
 	d = !false;
 
-	return --------a;
+	return --------a*10;
+}
+
+procedure bbb() return integer
+{	
+	var a,b: integer;
+
+	b = 10;
+	a = aaa();
+	a = a + 10;
+
+	return a;
+}
+%/
+
+procedure Main() return integer
+{	
+	var a: integer;
+	var c: boolean;
+
+	a = 0;
+	c = true;
+
+	if( a == 1) {
+		a = 1;
+	}else {
+		a = 0;
+	}
+
+	return a;
 }
 
