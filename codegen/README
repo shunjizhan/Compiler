@@ -27,18 +27,13 @@ and I modified a, b, c, d to return different values for testing.
 
 Next I started to implement function call. I found the hint provided in the comment really helpful for understanding how function call and assignment works. I tested this by using a couple procedures that call each other and finally the result is returned to main. I made sure that the return value in main is correct so that the function call worked.
 
-Next step I implemneted all those if and while loops. I encountered a problem that the condition for them didn't visit their children, so I coudn't get the condition correct. With Fish's help I changed visitchildren(this) to accept(this) and it worked!
+Next step I implemneted all those if and while loops. I encountered a problem that the condition for them didn't visit their children, so I coudn't get the condition correct. With Fish's help I changed visitchildren(this) to accept(this) and it worked! 
+
+Next I tried hard to deal with all the pointer stuff, but the address was too complex and I got a lot of segmentation fault. When I try to deal with strings, I feel like my idea was correct, but the syntax had some problem. In order for my whole program to run, I decided to delete these codes. But I think the deref and address stuff works, hopefully.
 
 
+The other thing I tried to do but didn't succeed was the function parameters. I tried to iterate the m_decl_list to find the number of arguments first, and then allocate some memory according to the number of arguments. And save each of them on $ebp, but for some reason there is seg fault. In order not to affect the whole program, I also removed those part. But I really tried!
 
-TODO:
-while conditions visit children problem
-
-parameters
-
-visitNOT doesn't work
-
-Last: go through whole code to modify structure
 
 
 

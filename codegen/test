@@ -49,16 +49,30 @@ procedure Main() return boolean
 }
 %/
 
+procedure aaa() return integer {
+	return 10;
+}
+
+procedure bbb() return integer {
+	var a: integer;
+	a = aaa();
+	a = a/3;
+	return a;
+}
+
 	procedure Main() return integer {
-		/% var s : string[10]; %/
+		var a,b,c: integer;
+		a = 0;
+		b = 1;
+		c = 2;
 
-		var a : intptr;
-		var b,c: integer;
+		while(b < 10) {
+			b = b+1;
+		} 
 
-		/% s = "abc"; %/
-		b = 12345678;
-		a = &b;
-		c = ^a;
+		c = bbb();
+		b = c/10;
+
 
 
 		return c;

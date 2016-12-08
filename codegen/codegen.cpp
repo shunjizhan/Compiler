@@ -162,7 +162,7 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "### ready for program\n");
         fprintf(m_outputfile, "push %%ebp\n");
         fprintf(m_outputfile, "mov %%esp, %%ebp\n");
-        fprintf(m_outputfile,"sub $%i,%%esp\n\n", m_st->scopesize(p->m_procedure_block->m_attribute.m_scope));
+        fprintf(m_outputfile, "sub $%i,%%esp\n\n", m_st->scopesize(p->m_procedure_block->m_attribute.m_scope));
 
         p->visit_children(this);
 
@@ -176,7 +176,7 @@ class Codegen : public Visitor
 
     void visitAssignment(Assignment* p) {
         fprintf(m_outputfile, "#-- Assignment --#\n");
-        p->visit_children(this);
+        p->visit_children(this);        // get lhs relative position to ebp 
 
         //    * after call instruction:
         //           o %eip points at first instruction of function
@@ -184,8 +184,8 @@ class Codegen : public Visitor
         //           o %esp points at return address
 
         Symbol* s = m_st->lookup(p->m_attribute.m_scope, lhs_to_id(p->m_lhs));
-        fprintf(m_outputfile, "popl %%eax\n");
-        fprintf(m_outputfile, "mov %%eax, -%d(%%ebp)\n", s->get_offset()+4);
+        fprintf(m_outputfile, "popl %%eax\n");                      // rhs value
+        fprintf(m_outputfile, "mov %%eax, -%d(%%ebp)\n", s->get_offset()+4);    // lhs = rhs value
     }
 
     void visitCall(Call* p) {
@@ -201,7 +201,6 @@ class Codegen : public Visitor
         //           o %esp points at return address
 
         Symbol* s = m_st->lookup(p->m_attribute.m_scope, lhs_to_id(p->m_lhs));
-        // int offset2=m_st->scopesize(p->m_attribute.m_scope); // ??????????????
 
         // save the function call result to corresponsing position
         fprintf(m_outputfile, "movl %%eax, -%d(%%ebp)\n", s->get_offset()+4);
@@ -254,6 +253,23 @@ class Codegen : public Visitor
 
     void visitWhileLoop(WhileLoop* p) {
         fprintf(m_outputfile, "#-- WhileLoop --#\n");
+        
+        int num = new_label();
+        int num2 = new_label();
+
+        fprintf(m_outputfile, "while%i:\n", num2);
+        p->m_expr->accept(this);
+
+       fprintf(m_outputfile, "popl %%eax\n");
+       fprintf(m_outputfile, "movl $1, %%ebx\n");
+
+       fprintf(m_outputfile, "cmp %%eax, %%ebx\n");
+       fprintf(m_outputfile, "jne next%i\n", num);
+
+       p->m_nested_block->visit_children(this);
+        fprintf( m_outputfile, "jmp while%i\n", num2);
+
+       fprintf( m_outputfile, "next%i:\n", num);
     }
 
     void visitCodeBlock(CodeBlock *p) {
@@ -373,11 +389,6 @@ class Codegen : public Visitor
     // Arithmetic and logic operations
     void visitAnd(And* p) {                             // OK                
         fprintf(m_outputfile, "#-- And --#\n");
-     // if (p -> m_attribute.m_lattice_elem != TOP) {                // ????????????
-     //     fprintf(m_outputfile, " pushl $%d\n", p -> m_attribute.m_lattice_elem.value);
-     //     return;
-     // }
-
         p -> visit_children(this);
 
         fprintf(m_outputfile, " popl %%ebx\n");
@@ -388,10 +399,6 @@ class Codegen : public Visitor
 
     void visitOr(Or* p) {                             // OK                   
         fprintf(m_outputfile, "#-- Or --#\n");
-        // if (p -> m_attribute.m_lattice_elem != TOP) {               // ????????????
-        //      fprintf(m_outputfile, " pushl $%d\n", p -> m_attribute.m_lattice_elem.value);
-        //      return;
-        // }
         p -> visit_children(this);
 
         pop_ebx_eax();
@@ -436,12 +443,12 @@ class Codegen : public Visitor
         fprintf(m_outputfile, " pushl %%eax\n");
     }
 
-    void visitNot(Not* p) {                           
+    void visitNot(Not* p) {                           // OK               
         fprintf(m_outputfile, "#-- Not --#\n");
         p -> visit_children(this);
 
         fprintf(m_outputfile, " popl %%eax\n");
-        fprintf(m_outputfile, " xor $1,  %%eax\n");         // ?????????????  
+        fprintf(m_outputfile, " xor $1,  %%eax\n");          
         fprintf(m_outputfile, " pushl %%eax\n");
     }
 
@@ -505,8 +512,8 @@ class Codegen : public Visitor
 
 
     // LHS
-    void visitVariable(Variable* p) {
-          fprintf(m_outputfile, "#-- Variable_LHS --#\n");
+    void visitVariable(Variable* p) {                   // push the address the the variable 
+          fprintf(m_outputfile, "#-- Variable --#\n");
         //  fprintf(m_outputfile, "%s", p->m_symname->spelling());
 
         // char* symbol_name = (char*)lhs_to_id(p);
@@ -524,8 +531,26 @@ class Codegen : public Visitor
     void visitDerefVariable(DerefVariable* p) {
         fprintf(m_outputfile, "#-- DerefVariable --#\n");
 
-        int offset = m_st->lookup(p->m_symname->spelling())->get_offset() + 4;
-        fprintf(m_outputfile, "pushl -%d(%%ebp)", offset);      // get the value at that position directly
+
+        //  fprintf(m_outputfile, "%s", p->m_symname->spelling());
+
+        // char* symbol_name = (char*)lhs_to_id(p);
+        // printf("%s\n", symbol_name);
+        // printf("symbol: %p\n", symbol);
+
+        // Symbol* symbol = m_st->lookup(p->m_attribute.m_scope, strdup(p->m_symname->spelling()));
+        // int offset = symbol->get_offset() + 4;
+        // fprintf(m_outputfile, "movl $%d, %%eax\n", offset);       // offset
+        // fprintf(m_outputfile, "subl %%ebp, %%eax\n");             // relative position
+        // fprintf(m_outputfile, "neg %%eax\n");                 
+        // fprintf(m_outputfile, "pushl %%eax\n");   
+
+        Symbol* s = m_st->lookup(p->m_attribute.m_scope, strdup(p->m_symname->spelling()));
+        fprintf(m_outputfile, "pushl -%d(%%ebp)\n", s->get_offset() + 4);
+
+
+        // int offset = m_st->lookup(p->m_symname->spelling())->get_offset() + 4;
+        // fprintf(m_outputfile, "pushl -%d(%%ebp)", offset);      // get the value at that position directly
     }
 
     void visitArrayElement(ArrayElement* p) {
@@ -548,35 +573,20 @@ class Codegen : public Visitor
 
     // Special cases
     void visitSymName(SymName* p) {}
-    void visitPrimitive(Primitive* p) {
-                fprintf(m_outputfile, "#-- StringPrimitive --#\n");
-    }
+    void visitPrimitive(Primitive* p) { fprintf(m_outputfile, "#-- StringPrimitive --#\n"); }
 
 
 
     // Strings
     void visitStringAssignment(StringAssignment* p) {
         fprintf(m_outputfile, "#-- StringAssignment --#\n");
-
-        set_data_mode();
-        int num = new_label();
-        fprintf(m_outputfile, "str%d: ", num);
-        fprintf(m_outputfile, ".asciz \"%s\"\n", p->m_stringprimitive->m_string);
-
-        set_text_mode();
-        int size = strlen(p->m_stringprimitive->m_string);
-        fprintf(m_outputfile, "popl %%eax\n");
-        for(int i = 0; i < size; i++) {
-            fprintf(m_outputfile, "movb %d(str%d), %%ebx\n", i, num);
-            fprintf(m_outputfile, "movb %%ebx, %d(%%eax)\n", -i);
-        }
     }
 
     void visitStringPrimitive(StringPrimitive* p) {
         fprintf(m_outputfile, "#-- StringPrimitive --#\n");
     }
 
-    void visitAbsoluteValue(AbsoluteValue* p) {         // ??????????
+    void visitAbsoluteValue(AbsoluteValue* p) {         
         fprintf(m_outputfile, "#-- AbsoluteValue --#\n");
         p -> visit_children(this);
 
@@ -588,12 +598,12 @@ class Codegen : public Visitor
     }
 
     // Pointer
-    void visitAddressOf(AddressOf* p) {
+    void visitAddressOf(AddressOf* p) {             // OK
         fprintf(m_outputfile, "#-- AddressOf --#\n");
-        p->visit_children(this);
+        p->visit_children(this);                    // visit the variable and push the address directly
     }
 
-    void visitDeref(Deref* p) {
+    void visitDeref(Deref* p) {                     // OK
         fprintf(m_outputfile, "#-- Deref --#\n");
         p->visit_children(this);                    // get the variable address
 
