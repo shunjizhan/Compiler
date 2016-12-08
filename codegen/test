@@ -12,7 +12,7 @@ procedure aaa() return integer
 
 	return --------a*10;
 }
-%/
+
 
 procedure bbb(k:integer) return integer
 {	
@@ -47,4 +47,20 @@ procedure Main() return boolean
 	d = true; 
 	return !!!d;
 }
+%/
+
+	procedure Main() return integer {
+		/% var s : string[10]; %/
+
+		var a : intptr;
+		var b,c: integer;
+
+		/% s = "abc"; %/
+		b = 12345678;
+		a = &b;
+		c = ^a;
+
+
+		return c;
+	}
 

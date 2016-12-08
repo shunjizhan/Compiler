@@ -127,6 +127,7 @@ class Codegen : public Visitor
 
     void emit_epilogue() {
         fprintf(m_outputfile, "\n### restore stack position\n");
+
         fprintf(m_outputfile, "mov %%ebp, %%esp \n");
         fprintf(m_outputfile, "pop %%ebp\n");
         fprintf(m_outputfile, "\tret\n");
@@ -218,11 +219,6 @@ class Codegen : public Visitor
     void visitIfNoElse(IfNoElse* p) {
         fprintf(m_outputfile, "#-- IfNoElse --#\n");
         p->m_expr->accept(this);
-       // if (p ->m_expr->m_attribute.m_lattice_elem != TOP ) {   // ??????
-       //     if( p->m_expr->m_attribute.m_lattice_elem.value == 1)
-       //          p->m_nested_block->visit_children(this);
-       //    return;
-       // }
       
        int num = new_label();
        fprintf(m_outputfile, "popl %%eax\n");
@@ -552,13 +548,28 @@ class Codegen : public Visitor
 
     // Special cases
     void visitSymName(SymName* p) {}
-    void visitPrimitive(Primitive* p) {}
+    void visitPrimitive(Primitive* p) {
+                fprintf(m_outputfile, "#-- StringPrimitive --#\n");
+    }
 
 
 
     // Strings
     void visitStringAssignment(StringAssignment* p) {
         fprintf(m_outputfile, "#-- StringAssignment --#\n");
+
+        set_data_mode();
+        int num = new_label();
+        fprintf(m_outputfile, "str%d: ", num);
+        fprintf(m_outputfile, ".asciz \"%s\"\n", p->m_stringprimitive->m_string);
+
+        set_text_mode();
+        int size = strlen(p->m_stringprimitive->m_string);
+        fprintf(m_outputfile, "popl %%eax\n");
+        for(int i = 0; i < size; i++) {
+            fprintf(m_outputfile, "movb %d(str%d), %%ebx\n", i, num);
+            fprintf(m_outputfile, "movb %%ebx, %d(%%eax)\n", -i);
+        }
     }
 
     void visitStringPrimitive(StringPrimitive* p) {
@@ -570,8 +581,8 @@ class Codegen : public Visitor
         p -> visit_children(this);
 
         fprintf( m_outputfile, " popl %%eax\n");
-        fprintf( m_outputfile, "cdq\n");
-        fprintf( m_outputfile, "xorl %%edx, %%eax\n");
+        fprintf( m_outputfile, " cdq\n");
+        fprintf( m_outputfile, " xorl %%edx, %%eax\n");
         fprintf( m_outputfile, " subl %%edx, %%eax\n");
         fprintf( m_outputfile, " pushl %%eax\n");
     }
@@ -584,10 +595,10 @@ class Codegen : public Visitor
 
     void visitDeref(Deref* p) {
         fprintf(m_outputfile, "#-- Deref --#\n");
-        p->visit_children(this);                    // get the address
+        p->visit_children(this);                    // get the variable address
 
-        fprintf( m_outputfile, "popl %%eax");       // pop address
-        fprintf( m_outputfile, "pushl 0(%%eax)");   // get the value
+        fprintf( m_outputfile, "popl %%eax\n");       // pop address
+        fprintf( m_outputfile, "pushl 0(%%eax)\n");   // push the value
     }
 
     const char* lhs_to_id(Lhs* lhs) {
@@ -605,7 +616,6 @@ class Codegen : public Visitor
         if(ae) {
             return ae->m_symname->spelling();
         }
-
 
         return nullptr;
     }    
