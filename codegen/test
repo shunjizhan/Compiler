@@ -12,35 +12,39 @@ procedure aaa() return integer
 
 	return --------a*10;
 }
+%/
 
-procedure bbb() return integer
+procedure bbb(k:integer) return integer
 {	
 	var a,b: integer;
 
 	b = 10;
-	a = aaa();
 	a = a + 10;
 
-	return a;
+	return k;
 }
-%/
 
-procedure Main() return integer
+procedure Main() return boolean
 {	
 	var a,b: integer;
-	var c: boolean;
+	var c,d: boolean;
 
 	a = -5;
 	b = a;
 	c = true;
+	d = false;
 
-	if(a >= -5) {
+	if(false) {
 		a = 1;
 	}
 	else {
 		a = 2;
 	}
 
-	return a;
+	a = bbb(3);
+
+	c = d;
+	d = true; 
+	return !!!d;
 }
 

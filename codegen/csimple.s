@@ -1,9 +1,7 @@
 .text
 
-#-- Main --#
-.globl _Main
-
-_Main:
+#-- ProcImpl --#
+_bbb: 
 ### ready for program
 push %ebp
 mov %esp, %ebp
@@ -12,7 +10,59 @@ sub $12,%esp
 #-- DeclImpl --#
 #-- DeclImpl --#
 #-- Assignment --#
-#-- Variable --#
+#-- Variable_LHS --#
+movl $12, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
+#-- IntLit --#
+pushl $10
+popl %eax
+mov %eax, -12(%ebp)
+#-- Assignment --#
+#-- Variable_LHS --#
+movl $8, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
+#-- Plus --#
+#-- Ident --#
+pushl -8(%ebp)
+#-- IntLit --#
+pushl $10
+ popl %ebx
+ popl %eax
+addl %ebx, %eax
+pushl %eax
+popl %eax
+mov %eax, -8(%ebp)
+#-- RETURN --#
+#-- Ident --#
+pushl -4(%ebp)
+popl %eax
+#------------#
+
+### restore stack position
+mov %ebp, %esp 
+pop %ebp
+	ret
+#-- Main --#
+.globl _Main
+
+_Main:
+### ready for program
+push %ebp
+mov %esp, %ebp
+sub $16,%esp
+
+#-- DeclImpl --#
+#-- DeclImpl --#
+#-- Assignment --#
+#-- Variable_LHS --#
+movl $4, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
 #-- Uminus --#
 #-- IntLit --#
 pushl $5
@@ -22,58 +72,110 @@ pushl $5
 popl %eax
 mov %eax, -4(%ebp)
 #-- Assignment --#
-#-- Variable --#
+#-- Variable_LHS --#
+movl $8, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
 #-- Ident --#
 pushl -4(%ebp)
 popl %eax
 mov %eax, -8(%ebp)
 #-- Assignment --#
-#-- Variable --#
+#-- Variable_LHS --#
+movl $12, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
 #-- BoolLit --#
 pushl $1
 popl %eax
 mov %eax, -12(%ebp)
-#-- IfWithElse --#
-#-- Gteq --#
-#-- Ident --#
-pushl -4(%ebp)
-#-- Uminus --#
-#-- IntLit --#
-pushl $5
- popl %eax
- negl %eax
- pushl %eax
-popl %ebx
-popl %eax
-cmp %ebx,%eax
-jge yes0 # greater or equal
+#-- Assignment --#
+#-- Variable_LHS --#
+movl $16, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
+#-- BoolLit --#
 pushl $0
-jmp next0
-yes0:
-pushl $1
-next0:
+popl %eax
+mov %eax, -16(%ebp)
+#-- IfWithElse --#
+#-- BoolLit --#
+pushl $0
 popl %eax
 movl $1, %ebx
 cmp %eax, %ebx
-jne next1
+jne next0
 #-- Assignment --#
-#-- Variable --#
+#-- Variable_LHS --#
+movl $4, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
 #-- IntLit --#
 pushl $1
 popl %eax
 mov %eax, -4(%ebp)
-jmp end1
-next1:
+jmp end0
+next0:
 #-- Assignment --#
-#-- Variable --#
+#-- Variable_LHS --#
+movl $4, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
 #-- IntLit --#
 pushl $2
 popl %eax
 mov %eax, -4(%ebp)
-end1:
-#-- RETURN --#
+end0:
+#-- Call --#
+#-- Variable_LHS --#
+movl $4, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
+#-- IntLit --#
+pushl $3
+call _bbb
+movl %eax, -4(%ebp)
+#-- Assignment --#
+#-- Variable_LHS --#
+movl $12, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
 #-- Ident --#
-pushl -4(%ebp)
+pushl -16(%ebp)
+popl %eax
+mov %eax, -12(%ebp)
+#-- Assignment --#
+#-- Variable_LHS --#
+movl $16, %eax
+subl %ebp, %eax
+neg %eax
+pushl %eax
+#-- BoolLit --#
+pushl $1
+popl %eax
+mov %eax, -16(%ebp)
+#-- RETURN --#
+#-- Not --#
+#-- Not --#
+#-- Not --#
+#-- Ident --#
+pushl -16(%ebp)
+ popl %eax
+ xor $1,  %eax
+ pushl %eax
+ popl %eax
+ xor $1,  %eax
+ pushl %eax
+ popl %eax
+ xor $1,  %eax
+ pushl %eax
 popl %eax
 #------------#
 

@@ -41,6 +41,7 @@ return  { return RETURN; }
 "*"  { return TIMES; }
 "&"  { return ADDRESS; }
 "^"  { return DEREF; }
+"null" {return N;}
 
 ";"  { return SEMI; }
 ":"  { return COLON; }

@@ -27,12 +27,14 @@ and I modified a, b, c, d to return different values for testing.
 
 Next I started to implement function call. I found the hint provided in the comment really helpful for understanding how function call and assignment works. I tested this by using a couple procedures that call each other and finally the result is returned to main. I made sure that the return value in main is correct so that the function call worked.
 
-Next step I implemneted all those if and while loops. I encountered a problem that the condition for them didn't visit their children, so I coudn't get the condition correct.
+Next step I implemneted all those if and while loops. I encountered a problem that the condition for them didn't visit their children, so I coudn't get the condition correct. With Fish's help I changed visitchildren(this) to accept(this) and it worked!
 
 
 
 TODO:
-if while conditions visit children problem
+while conditions visit children problem
+
+parameters
 
 visitNOT doesn't work
 

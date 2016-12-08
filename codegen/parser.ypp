@@ -68,6 +68,8 @@
 %token CL
 %token CR
 
+%token N
+
 %left  OROR
 %left  ANDAND
 %left  EQEQ NOTEQUAL

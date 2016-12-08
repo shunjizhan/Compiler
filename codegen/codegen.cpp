@@ -161,7 +161,6 @@ class Codegen : public Visitor
         fprintf(m_outputfile, "### ready for program\n");
         fprintf(m_outputfile, "push %%ebp\n");
         fprintf(m_outputfile, "mov %%esp, %%ebp\n");
-        //sub esp, 4 Make room for 4-byte local variables
         fprintf(m_outputfile,"sub $%i,%%esp\n\n", m_st->scopesize(p->m_procedure_block->m_attribute.m_scope));
 
         p->visit_children(this);
@@ -436,17 +435,17 @@ class Codegen : public Visitor
         p -> visit_children(this);
 
         pop_ebx_eax();
-        fprintf(m_outputfile, " cdq\n");               // ?????????????     
+        fprintf(m_outputfile, " cdq\n");               // OK   
         fprintf(m_outputfile, " idivl %%ebx\n");
         fprintf(m_outputfile, " pushl %%eax\n");
     }
 
-    void visitNot(Not* p) {                            // ?????????????  
+    void visitNot(Not* p) {                           
         fprintf(m_outputfile, "#-- Not --#\n");
         p -> visit_children(this);
 
         fprintf(m_outputfile, " popl %%eax\n");
-        fprintf(m_outputfile, " not  %%eax\n");
+        fprintf(m_outputfile, " xor $1,  %%eax\n");         // ?????????????  
         fprintf(m_outputfile, " pushl %%eax\n");
     }
 
@@ -469,11 +468,20 @@ class Codegen : public Visitor
     }
 
 
-
-
-
     void visitArrayAccess(ArrayAccess* p) {
         fprintf(m_outputfile, "#-- ArrayAccess --#\n");
+        p->m_expr->accept(this);
+
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        int offset = s->get_offset() + 4;
+
+        fprintf(m_outputfile, "popl %%eax");                // index
+        fprintf(m_outputfile, "shl, $2, %%eax");            // real address
+        fprintf(m_outputfile, "addl $%d, %%eax", offset);   // position
+        fprintf(m_outputfile, "neg, %%eax");
+        fprintf(m_outputfile, "addl %%ebp, %%eax");         // element address
+        fprintf(m_outputfile, "pushl 0(%%eax)");            // get element
+
     }
 
     void visitCharLit(CharLit* p) {
@@ -502,15 +510,42 @@ class Codegen : public Visitor
 
     // LHS
     void visitVariable(Variable* p) {
-        fprintf(m_outputfile, "#-- Variable --#\n");
+          fprintf(m_outputfile, "#-- Variable_LHS --#\n");
+        //  fprintf(m_outputfile, "%s", p->m_symname->spelling());
+
+        // char* symbol_name = (char*)lhs_to_id(p);
+        // printf("%s\n", symbol_name);
+        Symbol* symbol = m_st->lookup(p->m_attribute.m_scope, strdup(p->m_symname->spelling()));
+        // printf("symbol: %p\n", symbol);
+
+        int offset = symbol->get_offset() + 4;
+        fprintf(m_outputfile, "movl $%d, %%eax\n", offset);       // offset
+        fprintf(m_outputfile, "subl %%ebp, %%eax\n");             // relative position
+        fprintf(m_outputfile, "neg %%eax\n");                 
+        fprintf(m_outputfile, "pushl %%eax\n");                   
     }
 
     void visitDerefVariable(DerefVariable* p) {
         fprintf(m_outputfile, "#-- DerefVariable --#\n");
+
+        int offset = m_st->lookup(p->m_symname->spelling())->get_offset() + 4;
+        fprintf(m_outputfile, "pushl -%d(%%ebp)", offset);      // get the value at that position directly
     }
 
     void visitArrayElement(ArrayElement* p) {
         fprintf(m_outputfile, "#-- ArrayElement --#\n");
+
+        p->m_expr->accept(this);
+
+        Symbol* s = m_st->lookup(p->m_symname->spelling());
+        int offset = s->get_offset() + 4;
+
+        fprintf(m_outputfile, "popl %%eax");                // index
+        fprintf(m_outputfile, "shl, $2, %%eax");            // real address
+        fprintf(m_outputfile, "addl $%d, %%eax", offset);   // position
+        fprintf(m_outputfile, "neg, %%eax");
+        fprintf(m_outputfile, "addl %%ebp, %%eax");         // element address
+        fprintf(m_outputfile, "pushl 0(%%eax)");            // get element
     }
 
 
@@ -544,10 +579,15 @@ class Codegen : public Visitor
     // Pointer
     void visitAddressOf(AddressOf* p) {
         fprintf(m_outputfile, "#-- AddressOf --#\n");
+        p->visit_children(this);
     }
 
     void visitDeref(Deref* p) {
         fprintf(m_outputfile, "#-- Deref --#\n");
+        p->visit_children(this);                    // get the address
+
+        fprintf( m_outputfile, "popl %%eax");       // pop address
+        fprintf( m_outputfile, "pushl 0(%%eax)");   // get the value
     }
 
     const char* lhs_to_id(Lhs* lhs) {
